@@ -4,594 +4,609 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta name="theme-color" content="#0b1020" />
-  <meta name="description" content="Avatar G — საქართველოს პირველი AI მედია პლატფორმა. Avatar, Image, Video, Voice, Music, Text გენერაცია ერთ სივრცეში." />
-  <meta name="keywords" content="AI, Avatar, Video, Voice, Music, Georgian AI, ქართული AI, მედია გენერაცია" />
+  <meta name="description" content="Avatar G — საქართველოს პირველი AI Workspace. Chat, Create, Generate - ყველაფერი ერთ სივრცეში." />
+  <meta name="keywords" content="AI, Avatar, Video, Voice, Music, Georgian AI, ქართული AI, AI Workspace" />
   <meta property="og:title" content="Avatar G — AI Workspace" />
-  <meta property="og:description" content="Georgian AI-powered Media Factory. Professional content generation in Georgian." />
+  <meta property="og:description" content="Georgian AI-powered Media Factory. Professional content generation with AI assistance." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <title>Avatar G — Georgian AI Workspace</title>
+  <title>Avatar G — AI Workspace</title>
 
   <style>
-    :root {
-      --bg0: #060815;
-      --bg1: #0b1020;
-      --glass: rgba(255, 255, 255, .08);
-      --glass2: rgba(255, 255, 255, .12);
-      --stroke: rgba(255, 255, 255, .14);
-      --strokeHover: rgba(34, 211, 238, .35);
-      --text: #e5e7eb;
-      --textBright: #f9fafb;
-      --muted: #93a3b8;
-      --shadow: 0 24px 80px rgba(0, 0, 0, .45);
-      --shadowHover: 0 28px 90px rgba(0, 0, 0, .55);
-      --radius: 18px;
-      --radiusSm: 14px;
-      --brand: #22d3ee;
-      --brand2: #3b82f6;
-      --brandGrad: linear-gradient(135deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .95));
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --cardPad: 20px;
-      --maxW: 1020px;
-      --transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-      --transitionFast: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+    :root{
+      --bg0:#060815;
+      --bg1:#0b1020;
+      --bg2:#10172a;
+      --glass:rgba(255,255,255,.08);
+      --glass2:rgba(255,255,255,.12);
+      --stroke:rgba(255,255,255,.14);
+      --strokeHover:rgba(34,211,238,.35);
+      --text:#e5e7eb;
+      --textBright:#f9fafb;
+      --muted:#93a3b8;
+      --shadow:0 24px 80px rgba(0,0,0,.45);
+      --shadowHover:0 28px 90px rgba(0,0,0,.55);
+      --radius:18px;
+      --radiusSm:14px;
+      --brand:#22d3ee;
+      --brand2:#3b82f6;
+      --brandGrad:linear-gradient(135deg, rgba(34,211,238,.95), rgba(59,130,246,.95));
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --purple:#a855f7;
+      --transition:all .24s cubic-bezier(.4,0,.2,1);
+      --transitionFast:all .16s cubic-bezier(.4,0,.2,1);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    html, body { height: 100%; overflow-x: hidden; }
-
-    body {
-      font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans Georgian", "Noto Sans", sans-serif;
-      color: var(--text);
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    html,body{height:100%;overflow:hidden}
+    body{
+      font-family:ui-sans-serif,system-ui,-apple-system,"SF Pro Display","Segoe UI",Roboto,"Noto Sans Georgian",sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(1100px 650px at 18% 8%, rgba(34, 211, 238, .24), transparent 58%),
-        radial-gradient(950px 650px at 82% 18%, rgba(59, 130, 246, .20), transparent 58%),
-        radial-gradient(950px 750px at 50% 85%, rgba(34, 197, 94, .12), transparent 62%),
+        radial-gradient(1100px 650px at 18% 8%, rgba(34,211,238,.24), transparent 58%),
+        radial-gradient(950px 650px at 82% 18%, rgba(59,130,246,.20), transparent 58%),
+        radial-gradient(950px 750px at 50% 85%, rgba(34,197,94,.12), transparent 62%),
         linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
-      background-attachment: fixed;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      background-attachment:fixed;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    ::selection { background: rgba(34, 211, 238, .25); color: var(--textBright); }
-    a { color: inherit; text-decoration: none; }
-    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
-    input, textarea, select { font-family: inherit; }
+    ::selection{background:rgba(34,211,238,.25);color:var(--textBright)}
+    button{font-family:inherit;cursor:pointer;border:none;outline:none}
+    input,textarea,select{font-family:inherit}
 
-    .wrap { width: min(var(--maxW), calc(100% - 28px)); margin: 0 auto; padding: 20px 0 48px; }
+    .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
-    /* ===== TOP HEADER ===== */
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between; gap: 14px;
-      padding: 16px 18px;
-      border: 1px solid var(--stroke);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .07));
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      margin-bottom: 24px;
-      transition: var(--transition);
-      position: sticky; top: 12px; z-index: 100;
-    }
-    .topbar:hover { border-color: var(--strokeHover); box-shadow: var(--shadowHover); }
-
-    .brand {
-      display: flex; align-items: center; gap: 12px; min-width: 0;
-      cursor: pointer; transition: var(--transitionFast);
-      outline: none;
-    }
-    .brand:hover { transform: translateX(2px); }
-    .brand:active { transform: scale(0.98); }
-    .brand:focus-visible { box-shadow: 0 0 0 3px rgba(34, 211, 238, .18); border-radius: 999px; }
-
-    .logo {
-      width: 48px; height: 48px; border-radius: 15px;
-      display: grid; place-items: center;
-      background: var(--brandGrad);
-      color: #071018;
-      font-weight: 900; font-size: 20px;
-      box-shadow: 0 14px 48px rgba(34, 211, 238, .22), inset 0 1px 0 rgba(255, 255, 255, .3);
-      flex: 0 0 auto;
-      transition: var(--transitionFast);
-    }
-    .brand:hover .logo { transform: rotate(-5deg) scale(1.05); }
-
-    .brandtext { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
-    .title {
-      font-weight: 800; letter-spacing: .3px; font-size: 16.5px; color: var(--textBright);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .subtitle {
-      font-size: 12px; color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-top: 1px;
+    .header{
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 18px;
+      border-bottom:1px solid var(--stroke);
+      background:linear-gradient(135deg, rgba(255,255,255,.11), rgba(255,255,255,.07));
+      backdrop-filter:blur(16px) saturate(180%);
+      -webkit-backdrop-filter:blur(16px) saturate(180%);
+      box-shadow:0 4px 24px rgba(0,0,0,.15);
+      z-index:100;
     }
 
-    .right { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-
-    .status {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12px; color: var(--muted);
-      padding: 9px 12px;
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      border-radius: 999px;
-      transition: var(--transitionFast);
+    .brand{
+      display:flex;align-items:center;gap:12px;cursor:pointer;
+      transition:var(--transitionFast);
+      outline:none;border-radius:12px;padding:4px 8px 4px 4px;
     }
-    .status:hover { background: rgba(255, 255, 255, .09); }
+    .brand:hover{background:rgba(255,255,255,.06)}
+    .brand:focus-visible{box-shadow:0 0 0 3px rgba(34,211,238,.18)}
 
-    .dot {
-      width: 10px; height: 10px; border-radius: 999px;
-      background: var(--ok);
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, .20), 0 0 12px rgba(34, 197, 94, .5);
-      animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.6 } }
-
-    .selectWrap { position: relative; }
-    .select {
-      appearance: none; -webkit-appearance: none;
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 38px 10px 14px;
-      font-weight: 700; font-size: 13px;
-      cursor: pointer; outline: none; min-width: 70px;
-      transition: var(--transitionFast);
-    }
-    .select:hover { background: rgba(255, 255, 255, .09); border-color: var(--strokeHover); }
-    .select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(34, 211, 238, .15); }
-    .selectWrap:after {
-      content: "▾";
-      position: absolute; right: 13px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted); pointer-events: none; font-size: 13px;
+    .logo{
+      width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+      background:var(--brandGrad);
+      color:#071018;font-weight:900;font-size:18px;
+      box-shadow:0 12px 40px rgba(34,211,238,.22);
+      flex:0 0 auto;
+      user-select:none;
     }
 
-    .miniBtn {
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-weight: 900;
-      font-size: 12.5px;
-      transition: var(--transitionFast);
-      white-space: nowrap;
-    }
-    .miniBtn:hover { background: rgba(255, 255, 255, .10); border-color: var(--strokeHover); transform: translateY(-1px); }
-    .miniBtn:active { transform: translateY(0); }
+    .brandtext{display:flex;flex-direction:column;line-height:1.15}
+    .title{font-weight:800;font-size:15px;color:var(--textBright);letter-spacing:.3px}
+    .subtitle{font-size:11px;color:var(--muted)}
 
-    /* ===== GRID ===== */
-    .grid {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
+    .headerRight{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
-    .card {
-      border: 1px solid var(--stroke);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .07));
-      border-radius: var(--radius);
-      padding: var(--cardPad);
-      box-shadow: 0 20px 75px rgba(0, 0, 0, .38);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      cursor: pointer;
-      transition: var(--transition);
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-      min-height: 115px;
-      outline: none;
+    .creditBadge{
+      display:flex;align-items:center;gap:8px;padding:8px 12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      font-size:12.5px;font-weight:800;color:var(--brand);
+      transition:var(--transitionFast);
+      white-space:nowrap;
     }
+    .creditBadge:hover{background:rgba(255,255,255,.09)}
+    .creditBadge span{color:var(--text)}
 
-    .card:focus-visible { box-shadow: 0 0 0 3px rgba(34, 211, 238, .18), 0 20px 75px rgba(0, 0, 0, .38); }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-        rgba(34, 211, 238, .08), transparent 40%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
+    .miniBtn{
+      padding:9px 12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      font-weight:800;font-size:12.5px;color:var(--text);
+      transition:var(--transitionFast);
+      white-space:nowrap;
     }
-    .card:hover::before { opacity: 1; }
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: var(--strokeHover);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .08));
-      box-shadow: 0 24px 90px rgba(0, 0, 0, .45);
-    }
-    .card:active { transform: translateY(-1px); }
+    .miniBtn:hover{background:rgba(255,255,255,.10);border-color:var(--strokeHover);transform:translateY(-1px)}
+    .miniBtn:active{transform:translateY(0)}
 
-    .cardTop { display: flex; align-items: flex-start; gap: 12px; }
-    .icon {
-      width: 42px; height: 42px;
-      border-radius: var(--radiusSm);
-      display: grid; place-items: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      flex: 0 0 auto;
-      font-size: 20px;
-      transition: var(--transitionFast);
+    .selectWrap{position:relative}
+    .select{
+      appearance:none;
+      padding:9px 32px 9px 12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      color:var(--text);
+      font-weight:800;font-size:12.5px;
+      cursor:pointer;outline:none;
+      transition:var(--transitionFast);
     }
-    .card:hover .icon { transform: scale(1.08) rotate(-3deg); background: rgba(255, 255, 255, .11); }
-
-    .card h3 { font-size: 16.5px; font-weight: 850; letter-spacing: .3px; color: var(--textBright); }
-    .card p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
-
-    .badge {
-      position: absolute; right: 16px; top: 16px;
-      font-size: 10.5px; font-weight: 800;
-      color: rgba(229, 231, 235, .95);
-      padding: 6px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .08);
-      backdrop-filter: blur(8px);
-      letter-spacing: .5px;
-    }
-    .badge.new {
-      background: linear-gradient(135deg, rgba(34, 211, 238, .25), rgba(59, 130, 246, .25));
-      border-color: rgba(34, 211, 238, .3);
-      color: var(--brand);
-    }
-    .badge.pro {
-      background: linear-gradient(135deg, rgba(168, 85, 247, .25), rgba(217, 70, 239, .25));
-      border-color: rgba(168, 85, 247, .3);
-      color: #c084fc;
-    }
-    .badge.safe {
-      background: linear-gradient(135deg, rgba(34, 197, 94, .25), rgba(74, 222, 128, .25));
-      border-color: rgba(34, 197, 94, .3);
-      color: #4ade80;
+    .select:hover{background:rgba(255,255,255,.09);border-color:var(--strokeHover)}
+    .select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+    .selectWrap:after{
+      content:"▾";
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      color:var(--muted);pointer-events:none;font-size:12px;
     }
 
-    .wide { grid-column: 1 / -1; min-height: 105px; }
+    .container{flex:1 1 auto;display:flex;overflow:hidden;position:relative}
 
-    /* ===== CTA ===== */
-    .cta { margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .btn {
-      font-weight: 900; font-size: 15px; letter-spacing: .3px;
-      padding: 16px 28px;
-      border-radius: var(--radiusSm);
-      color: #051018;
-      background: var(--brandGrad);
-      box-shadow: 0 22px 75px rgba(34, 211, 238, .20), inset 0 1px 0 rgba(255, 255, 255, .3);
-      transition: var(--transition);
-      min-width: 200px;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn::before {
-      content: '';
-      position: absolute; top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .3), transparent);
-      transition: left 0.5s ease;
-    }
-    .btn:hover::before { left: 100%; }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 28px 90px rgba(34, 211, 238, .28); }
-    .btn:active { transform: translateY(0); }
-
-    .creditPreview {
-      font-size: 13px;
-      color: var(--muted);
-      text-align: center;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      max-width: 520px;
-      line-height: 1.45;
-    }
-    .creditPreview strong { color: var(--brand); font-weight: 800; }
-
-    .footer {
-      margin-top: 24px;
-      text-align: center;
-      color: rgba(147, 163, 184, .85);
-      font-size: 12.5px;
-      padding: 16px;
-    }
-    .footer a { color: var(--brand); transition: var(--transitionFast); }
-    .footer a:hover { color: var(--textBright); text-decoration: underline; }
-
-    /* ===== MODAL ===== */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, .60);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-      animation: fadeIn 0.25s ease-out;
-    }
-    @keyframes fadeIn { from {opacity:0} to {opacity:1} }
-    .overlay.show { display: flex; }
-
-    .modal {
-      width: min(760px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--stroke);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .07));
-      box-shadow: 0 32px 140px rgba(0, 0, 0, .60);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      animation: modalSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      outline: none;
-    }
-    @keyframes modalSlideIn {
-      from { opacity:0; transform: translateY(-30px) scale(0.96); }
-      to { opacity:1; transform: translateY(0) scale(1); }
+    .sidebar{
+      flex:0 0 280px;
+      display:flex;flex-direction:column;gap:12px;
+      padding:16px;
+      border-right:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      overflow-y:auto;
     }
 
-    .modalHead {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .04);
-      position: sticky;
-      top: 0;
-      z-index: 1;
+    .sidebarTitle{
+      font-size:13px;font-weight:900;color:var(--muted);
+      letter-spacing:.8px;text-transform:uppercase;
+      margin-bottom:6px;padding:0 4px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
     }
 
-    .modalTitle { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .modalTitle strong { font-size: 15px; letter-spacing: .3px; color: var(--textBright); font-weight: 800; }
-
-    .close {
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: 12px;
-      width: 38px; height: 38px;
-      display: grid; place-items: center;
-      transition: var(--transitionFast);
-      flex-shrink: 0;
-      font-weight: 900;
-      font-size: 18px;
-    }
-    .close:hover { background: rgba(239, 68, 68, .15); border-color: rgba(239, 68, 68, .3); color: var(--danger); transform: rotate(90deg); }
-    .close:focus-visible { box-shadow: 0 0 0 3px rgba(34, 211, 238, .18); }
-
-    .modalBody { padding: 20px; }
-
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      margin: 0 0 16px;
-      line-height: 1.5;
-      padding: 12px 14px;
-      background: rgba(34, 211, 238, .08);
-      border-left: 3px solid var(--brand);
-      border-radius: 8px;
+    .activeChip{
+      font-size:10px;font-weight:900;
+      padding:4px 8px;border-radius:999px;
+      background:rgba(34,211,238,.14);
+      border:1px solid rgba(34,211,238,.28);
+      color:var(--brand);
+      letter-spacing:.5px;
+      white-space:nowrap;
     }
 
-    .formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field { display: flex; flex-direction: column; gap: 7px; }
-
-    label { font-size: 12.5px; color: var(--textBright); font-weight: 800; letter-spacing: .2px; }
-
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: var(--radiusSm);
-      padding: 13px 14px;
-      outline: none;
-      font-size: 13.5px;
-      transition: var(--transition);
+    .serviceCard{
+      padding:14px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid var(--stroke);
+      border-radius:var(--radiusSm);
+      cursor:pointer;
+      transition:var(--transition);
+      position:relative;overflow:hidden;
+      outline:none;
     }
-    input:hover, textarea:hover, select:hover { background: rgba(255, 255, 255, .09); }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--brand);
-      background: rgba(255, 255, 255, .08);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
+    .serviceCard:hover{
+      background:linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.08));
+      border-color:var(--strokeHover);
+      transform:translateX(3px);
     }
-    input.error, textarea.error, select.error {
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, .15);
-    }
-    textarea { min-height: 105px; resize: vertical; line-height: 1.5; }
-
-    .full { grid-column: 1 / -1; }
-
-    .fileInput { position: relative; cursor: pointer; }
-    .fileInput input[type="file"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-    .fileLabel {
-      display: flex; align-items: center; gap: 10px;
-      padding: 13px 14px;
-      border: 1px dashed var(--stroke);
-      background: rgba(255, 255, 255, .04);
-      border-radius: var(--radiusSm);
-      transition: var(--transitionFast);
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .fileInput:hover .fileLabel { border-color: var(--brand); background: rgba(34, 211, 238, .08); color: var(--text); }
-
-    .filePreview {
-      margin-top: 10px;
-      padding: 10px 12px;
-      background: rgba(34, 211, 238, .08);
-      border: 1px solid rgba(34, 211, 238, .2);
-      border-radius: 10px;
-      font-size: 12px;
-      color: var(--brand);
-      display: none;
-      align-items: center;
-      gap: 8px;
-      word-break: break-word;
+    .serviceCard:active{transform:translateX(1px)}
+    .serviceCard:focus-visible{box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+    .serviceCard.active{
+      border-color:rgba(34,211,238,.55);
+      box-shadow:0 10px 40px rgba(34,211,238,.10);
+      background:linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.09));
     }
 
-    .consentBox {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 14px;
-      background: rgba(245, 158, 11, .08);
-      border: 1px solid rgba(245, 158, 11, .25);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: var(--transitionFast);
+    .serviceCard::before{
+      content:'';
+      position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:var(--brand);opacity:0;transition:opacity .2s ease;
     }
-    .consentBox:hover { background: rgba(245, 158, 11, .12); }
-    .consentBox input[type="checkbox"] {
-      width: 18px; height: 18px; margin-top: 2px; cursor: pointer;
-      accent-color: var(--brand);
-    }
-    .consentBox label {
-      font-size: 13px; line-height: 1.5; color: var(--text);
-      font-weight: 600; cursor: pointer; flex: 1;
+    .serviceCard:hover::before, .serviceCard.active::before{opacity:1}
+
+    .serviceTop{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+
+    .serviceIcon{
+      width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      font-size:18px;flex:0 0 auto;
     }
 
-    .row {
-      display: flex; gap: 12px;
-      align-items: center; justify-content: flex-end;
-      margin-top: 18px; flex-wrap: wrap;
+    .serviceCard h4{font-size:14.5px;font-weight:850;color:var(--textBright);letter-spacing:.2px}
+    .serviceCard p{font-size:12px;color:var(--muted);line-height:1.4}
+
+    .serviceBadge{
+      position:absolute;right:10px;top:10px;
+      font-size:9px;font-weight:900;padding:4px 8px;border-radius:999px;
+      background:rgba(34,211,238,.2);
+      color:var(--brand);
+      border:1px solid rgba(34,211,238,.3);
+      letter-spacing:.5px;
+      user-select:none;
     }
 
-    .btn2 {
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: var(--radiusSm);
-      padding: 13px 18px;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 14px;
-      transition: var(--transition);
-      letter-spacing: .2px;
-      position: relative;
-      overflow: hidden;
+    .costLine{
+      margin-top:10px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      font-size:11px;color:var(--muted);
+      padding-top:10px;border-top:1px dashed rgba(255,255,255,.10);
     }
-    .btn2:hover { background: rgba(255, 255, 255, .10); border-color: var(--strokeHover); transform: translateY(-1px); }
-    .btn2:active { transform: translateY(0); }
+    .costLine strong{color:var(--textBright);font-weight:900}
 
-    .btnPrimary {
-      border: 0;
-      color: #051018;
-      background: var(--brandGrad);
-      box-shadow: 0 20px 65px rgba(34, 211, 238, .20);
-    }
-    .btnPrimary:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+    .main{flex:1 1 auto;display:flex;flex-direction:column;overflow:hidden;position:relative}
 
-    .loading { pointer-events: none; opacity: .8; }
-    .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 18px; height: 18px;
-      margin: -9px 0 0 -9px;
-      border: 2px solid transparent;
-      border-top-color: rgba(5, 16, 24, .85);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ===== TOAST ===== */
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%);
-      background: rgba(11, 16, 32, .95);
-      border: 1px solid var(--stroke);
-      color: var(--text);
-      padding: 14px 18px;
-      border-radius: var(--radiusSm);
-      font-size: 13.5px;
-      font-weight: 700;
-      box-shadow: 0 24px 100px rgba(0, 0, 0, .60);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      display: none;
-      z-index: 1001;
-      max-width: min(560px, calc(100% - 32px));
-      text-align: center;
-      animation: toastSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @keyframes toastSlideUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(30px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-    .toast.show { display: block; }
-    .toast.success { border-color: rgba(34, 197, 94, .4); background: rgba(34, 197, 94, .15); color: #86efac; }
-    .toast.error { border-color: rgba(239, 68, 68, .4); background: rgba(239, 68, 68, .15); color: #fecaca; }
-    .toast.warning { border-color: rgba(245, 158, 11, .4); background: rgba(245, 158, 11, .15); color: #fde68a; }
-
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, .03); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .15); border-radius: 5px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .25); }
-
-    /* ===== ACCESSIBILITY ===== */
-    .sr-only {
-      position: absolute; width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0, 0, 0, 0);
-      white-space: nowrap; border-width: 0;
+    .chatContainer{
+      flex:1 1 auto;overflow-y:auto;padding:20px;
+      display:flex;flex-direction:column;gap:16px;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    .emptyState{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:18px;padding:40px 20px;text-align:center;
     }
 
-    /* ===== MOBILE ===== */
-    @media (max-width: 640px) {
-      .wrap { padding: 16px 0 36px; }
-      .topbar { padding: 14px 16px; flex-wrap: wrap; top: 8px; }
-      .logo { width: 44px; height: 44px; }
-      .title { font-size: 15px; }
-      .subtitle { font-size: 11px; }
-      .grid { grid-template-columns: 1fr; gap: 14px; }
-      .wide { grid-column: auto; }
-      .formGrid { grid-template-columns: 1fr; }
-      .btn { width: 100%; }
-      .row { justify-content: stretch; }
-      .btn2 { flex: 1; }
-      .modal { max-height: 85vh; }
+    .emptyIcon{
+      width:80px;height:80px;border-radius:20px;display:grid;place-items:center;
+      background:var(--brandGrad);font-size:40px;
+      box-shadow:0 20px 60px rgba(34,211,238,.25);
+      animation:float 3s ease-in-out infinite;
     }
+
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+    .emptyState h2{font-size:24px;font-weight:900;color:var(--textBright);letter-spacing:.3px}
+    .emptyState p{font-size:14px;color:var(--muted);max-width:420px;line-height:1.6}
+
+    .quickActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+
+    .quickBtn{
+      padding:10px 16px;background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);border-radius:12px;
+      font-size:13px;font-weight:700;color:var(--text);
+      transition:var(--transitionFast);
+    }
+    .quickBtn:hover{background:rgba(255,255,255,.12);border-color:var(--brand);transform:translateY(-2px)}
+
+    .message{display:flex;gap:12px;align-items:flex-start;animation:messageIn .3s ease-out}
+    @keyframes messageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .messageAvatar{
+      width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+      flex:0 0 auto;font-size:18px;background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      user-select:none;
+    }
+    .message.user .messageAvatar{background:linear-gradient(135deg, rgba(168,85,247,.35), rgba(217,70,239,.35));border-color:rgba(168,85,247,.4)}
+    .message.assistant .messageAvatar{background:var(--brandGrad)}
+
+    .messageContent{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+    .messageMeta{display:flex;align-items:center;gap:8px;font-size:12px}
+    .messageName{font-weight:800;color:var(--textBright)}
+    .messageTime{color:var(--muted);font-size:11px}
+
+    .messageText{
+      padding:14px 16px;background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      border-radius:var(--radiusSm);
+      line-height:1.6;font-size:13.5px;color:var(--text);
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .message.assistant .messageText{
+      background:linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
+      border-color:rgba(34,211,238,.25);
+    }
+
+    .attachmentPills{
+      display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;
+    }
+    .pill{
+      font-size:11px;font-weight:800;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      display:flex;align-items:center;gap:8px;
+      max-width:100%;
+    }
+    .pill span{color:var(--muted);font-weight:900}
+    .pill button{
+      width:18px;height:18px;border-radius:50%;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted);
+      transition:var(--transitionFast);
+    }
+    .pill button:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.35);color:#fecaca}
+
+    .inputArea{
+      flex:0 0 auto;padding:16px 20px;border-top:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);backdrop-filter:blur(12px);
+    }
+
+    .inputWrapper{display:flex;gap:10px;align-items:flex-end}
+
+    .inputBox{
+      flex:1;display:flex;flex-direction:column;gap:10px;
+      padding:12px 14px;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      border-radius:var(--radiusSm);
+      transition:var(--transition);
+      min-width:0;
+    }
+    .inputBox:focus-within{border-color:var(--brand);background:rgba(255,255,255,.10);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+
+    .inputTop{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+    .serviceTag{
+      padding:4px 10px;background:rgba(34,211,238,.18);
+      border:1px solid rgba(34,211,238,.3);
+      border-radius:8px;font-size:11px;font-weight:900;color:var(--brand);
+      letter-spacing:.3px;display:flex;align-items:center;gap:6px;
+      user-select:none;
+    }
+    .serviceTag .costMini{
+      padding:2px 8px;border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--text);
+      font-size:10px;font-weight:900;
+    }
+    .serviceTag button{
+      background:none;color:inherit;padding:0;width:14px;height:14px;
+      display:grid;place-items:center;border-radius:50%;font-size:10px;
+      transition:var(--transitionFast);
+    }
+    .serviceTag button:hover{background:rgba(239,68,68,.25);color:var(--danger)}
+
+    textarea{
+      width:100%;border:none;background:transparent;color:var(--text);
+      resize:none;outline:none;font-size:14px;line-height:1.5;min-height:24px;max-height:120px;
+    }
+    textarea::placeholder{color:var(--muted)}
+
+    .inputActions{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    .leftActions{display:flex;gap:6px;align-items:center}
+    .rightActions{display:flex;gap:10px;align-items:center}
+
+    .hintMini{
+      font-size:11px;color:var(--muted);
+      display:flex;align-items:center;gap:8px;white-space:nowrap;
+    }
+    .hintMini strong{color:var(--textBright);font-weight:900}
+
+    .iconBtn{
+      width:32px;height:32px;display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      border-radius:10px;font-size:16px;
+      transition:var(--transitionFast);flex:0 0 auto;
+    }
+    .iconBtn:hover{background:rgba(255,255,255,.12);border-color:var(--brand);transform:translateY(-1px)}
+    .iconBtn:active{transform:translateY(0)}
+
+    .sendBtn{
+      padding:12px 18px;background:var(--brandGrad);
+      border:none;border-radius:12px;color:#051018;
+      font-weight:900;font-size:14px;display:flex;align-items:center;gap:6px;
+      transition:var(--transition);
+      box-shadow:0 12px 40px rgba(34,211,238,.25);
+      flex:0 0 auto;
+      white-space:nowrap;
+    }
+    .sendBtn:hover{transform:translateY(-2px);box-shadow:0 16px 50px rgba(34,211,238,.35)}
+    .sendBtn:active{transform:translateY(0)}
+    .sendBtn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+    .aiHelper{
+      position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:50%;
+      background:var(--brandGrad);
+      box-shadow:0 20px 60px rgba(34,211,238,.35);
+      display:grid;place-items:center;font-size:28px;cursor:pointer;
+      transition:var(--transition);z-index:999;
+      animation:pulse 2s ease-in-out infinite;
+    }
+    .aiHelper:hover{transform:scale(1.1) rotate(-10deg);box-shadow:0 24px 70px rgba(34,211,238,.45)}
+    @keyframes pulse{0%,100%{box-shadow:0 20px 60px rgba(34,211,238,.35)}50%{box-shadow:0 20px 80px rgba(34,211,238,.55)}}
+
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.65);
+      backdrop-filter:blur(10px);
+      display:none;align-items:center;justify-content:center;padding:20px;
+      z-index:1000;
+      animation:fadeIn .25s ease-out;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .overlay.show{display:flex}
+
+    .modal{
+      width:min(760px,100%);max-height:85vh;overflow-y:auto;
+      border-radius:var(--radius);
+      border:1px solid var(--stroke);
+      background:linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+      box-shadow:0 36px 150px rgba(0,0,0,.70);
+      backdrop-filter:blur(24px) saturate(180%);
+      animation:modalSlideIn .35s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes modalSlideIn{from{opacity:0;transform:translateY(-30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+    .modalHead{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:18px 20px;border-bottom:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      position:sticky;top:0;z-index:1;
+    }
+
+    .modalTitle{display:flex;align-items:center;gap:12px}
+    .modalTitle strong{font-size:16px;font-weight:900;color:var(--textBright);letter-spacing:.3px}
+
+    .closeBtn{
+      width:36px;height:36px;display:grid;place-items:center;
+      background:rgba(255,255,255,.08);border:1px solid var(--stroke);
+      border-radius:10px;font-size:18px;font-weight:900;color:var(--text);
+      transition:var(--transitionFast);
+    }
+    .closeBtn:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.35);color:var(--danger);transform:rotate(90deg)}
+
+    .modalBody{padding:20px}
+
+    .hint{
+      padding:12px 14px;background:rgba(34,211,238,.10);
+      border-left:3px solid var(--brand);border-radius:8px;
+      font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:18px;
+    }
+
+    .formGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{display:flex;flex-direction:column;gap:7px}
+
+    label{font-size:12.5px;font-weight:800;color:var(--textBright);letter-spacing:.2px}
+
+    input,select{
+      width:100%;padding:12px 14px;background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);border-radius:var(--radiusSm);
+      color:var(--text);font-size:13.5px;outline:none;transition:var(--transition);
+    }
+    input:hover,select:hover{background:rgba(255,255,255,.11)}
+    input:focus,select:focus{background:rgba(255,255,255,.10);border-color:var(--brand);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+    .promptArea{min-height:120px;resize:vertical;line-height:1.6}
+    .full{grid-column:1/-1}
+
+    .templateList{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto}
+    .templateItem{
+      padding:12px 14px;background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);border-radius:12px;
+      cursor:pointer;transition:var(--transitionFast);
+      display:flex;align-items:flex-start;gap:10px;
+      outline:none;
+    }
+    .templateItem:hover,.templateItem:focus-visible{background:rgba(255,255,255,.12);border-color:var(--brand);transform:translateX(3px)}
+    .templateItem strong{font-size:13px;color:var(--textBright);display:block;margin-bottom:4px}
+    .templateItem p{font-size:12px;color:var(--muted);line-height:1.4}
+
+    .btnRow{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+    .btn{padding:12px 20px;border-radius:var(--radiusSm);font-weight:900;font-size:14px;transition:var(--transition);letter-spacing:.2px}
+
+    .btnSecondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);color:var(--text);
+    }
+    .btnSecondary:hover{background:rgba(255,255,255,.12);border-color:var(--strokeHover);transform:translateY(-1px)}
+
+    .btnDanger{
+      background:rgba(239,68,68,.18);
+      border:1px solid rgba(239,68,68,.35);
+      color:#fecaca;
+    }
+    .btnDanger:hover{transform:translateY(-1px);background:rgba(239,68,68,.24)}
+
+    .btnPrimary{
+      background:var(--brandGrad);border:none;color:#051018;
+      box-shadow:0 18px 60px rgba(34,211,238,.25);
+    }
+    .btnPrimary:hover{transform:translateY(-2px);box-shadow:0 22px 70px rgba(34,211,238,.35)}
+    .btnPrimary:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+    .historyList{
+      display:flex;flex-direction:column;gap:10px;
+      max-height:420px;overflow:auto;
+    }
+    .historyItem{
+      padding:12px 14px;border-radius:12px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      display:flex;gap:12px;align-items:flex-start;
+    }
+    .historyRole{
+      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      flex:0 0 auto;
+      user-select:none;
+    }
+    .historyRole.user{background:linear-gradient(135deg, rgba(168,85,247,.35), rgba(217,70,239,.35));border-color:rgba(168,85,247,.35)}
+    .historyRole.assistant{background:linear-gradient(135deg, rgba(34,211,238,.30), rgba(59,130,246,.24));border-color:rgba(34,211,238,.25)}
+    .historyBody{flex:1;min-width:0}
+    .historyMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .historyMeta strong{color:var(--textBright);font-weight:900;font-size:12px}
+    .historyMeta span{color:var(--muted);font-size:11px}
+    .historyText{color:var(--text);font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+
+    .toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      padding:14px 20px;background:rgba(11,16,32,.95);
+      border:1px solid var(--stroke);border-radius:var(--radiusSm);
+      color:var(--text);font-size:13.5px;font-weight:700;
+      box-shadow:0 24px 100px rgba(0,0,0,.65);
+      backdrop-filter:blur(16px);
+      display:none;z-index:1001;
+      max-width:min(520px, calc(100% - 40px));
+      text-align:center;
+      animation:toastSlideUp .35s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes toastSlideUp{from{opacity:0;transform:translateX(-50%) translateY(30px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    .toast.show{display:block}
+    .toast.success{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.18);color:#86efac}
+    .toast.error{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.18);color:#fecaca}
+    .toast.warning{border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.18);color:#fde68a}
+
+    ::-webkit-scrollbar{width:8px;height:8px}
+    ::-webkit-scrollbar-track{background:rgba(255,255,255,.03)}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
+
+    @media (max-width: 768px){
+      .sidebar{flex:0 0 100%;order:2;border-right:none;border-top:1px solid var(--stroke);max-height:42vh}
+      .main{order:1}
+      .container{flex-direction:column}
+      .formGrid{grid-template-columns:1fr}
+      .aiHelper{width:52px;height:52px;font-size:24px;right:16px;bottom:16px}
+      .hintMini{display:none}
+      .headerRight{gap:8px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    }
+
+    .sr-only{
+      position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+      clip:rect(0,0,0,0);white-space:nowrap;border-width:0;
+    }
+
+    .loading{position:relative;pointer-events:none;opacity:.7}
+    .loading::after{
+      content:'';position:absolute;top:50%;left:50%;
+      width:16px;height:16px;margin:-8px 0 0 -8px;
+      border:2px solid transparent;border-top-color:currentColor;border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header class="topbar" role="banner">
-      <div class="brand" role="button" aria-label="Avatar G Home" tabindex="0" id="homeBtn">
+  <div class="app">
+    <header class="header">
+      <div class="brand" role="button" tabindex="0" id="homeBtn" aria-label="Go to welcome">
         <div class="logo" aria-hidden="true">G</div>
         <div class="brandtext">
-          <div class="title" id="t_title">Avatar G — AI Workspace</div>
-          <div class="subtitle" id="t_subtitle">Avatar • Image • Video • Voice • Music • Text</div>
+          <div class="title" id="t_title">Avatar G</div>
+          <div class="subtitle" id="t_subtitle">AI Workspace</div>
         </div>
       </div>
 
-      <div class="right">
-        <button class="miniBtn" id="requestsBtn" type="button" aria-label="View saved requests">Requests</button>
-
-        <div class="status" title="Service status" role="status" aria-live="polite">
-          <span class="dot" aria-hidden="true"></span>
-          <span id="t_status">Online</span>
+      <div class="headerRight">
+        <div class="creditBadge" id="creditBadge" title="Credits balance">
+          <span id="t_creditsLabel">Credits:</span> <strong id="creditNum">100</strong>
         </div>
 
-        <div class="selectWrap" title="Language">
-          <label for="lang" class="sr-only">აირჩიეთ ენა / Select Language</label>
-          <select class="select" id="lang" aria-label="Language selection">
+        <button class="miniBtn" id="historyBtn" type="button">History</button>
+
+        <button class="miniBtn" id="resetCreditsBtn" type="button" title="Reset credits (demo)">Reset</button>
+
+        <div class="selectWrap">
+          <select class="select" id="lang" aria-label="Language">
             <option value="ka" selected>KA</option>
             <option value="en">EN</option>
           </select>
@@ -599,194 +614,262 @@
       </div>
     </header>
 
-    <main role="main">
-      <section class="grid" aria-label="AI Services" id="servicesGrid">
-        <div class="card" data-service="avatar" tabindex="0" role="button" aria-label="Avatar service: Create avatars with photo/video, style, and script">
-          <div class="badge new" id="b_avatar">NEW</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">🧑‍🎭</div>
-            <div>
-              <h3 id="t_avatar_h">Avatar</h3>
-              <p id="t_avatar_p">ავატარის შექმნა (ფოტო/ვიდეო) + სტილი + სცენარი</p>
+    <div class="container">
+      <aside class="sidebar" aria-label="Services sidebar">
+        <div class="sidebarTitle">
+          <span id="t_services">Services</span>
+          <span class="activeChip" id="activeChip" style="display:none;">ACTIVE</span>
+        </div>
+
+        <div class="serviceCard" data-service="avatar" tabindex="0" role="button" aria-label="Avatar service">
+          <div class="serviceBadge">NEW</div>
+          <div class="serviceTop">
+            <div class="serviceIcon">🧑‍🎭</div>
+            <h4 id="s_avatar">Avatar</h4>
+          </div>
+          <p id="sd_avatar">ავატარის შექმნა AI-ით</p>
+          <div class="costLine"><span id="t_cost">Cost</span> <strong id="c_avatar">20</strong></div>
+        </div>
+
+        <div class="serviceCard" data-service="image" tabindex="0" role="button" aria-label="Image service">
+          <div class="serviceTop">
+            <div class="serviceIcon">🖼️</div>
+            <h4 id="s_image">Image</h4>
+          </div>
+          <p id="sd_image">ფოტო გენერაცია/რედაქტირება</p>
+          <div class="costLine"><span id="t_cost2">Cost</span> <strong id="c_image">12</strong></div>
+        </div>
+
+        <div class="serviceCard" data-service="video" tabindex="0" role="button" aria-label="Video service">
+          <div class="serviceBadge" style="background: rgba(168, 85, 247, .2); border-color: rgba(168, 85, 247, .3); color: #c084fc;">PRO</div>
+          <div class="serviceTop">
+            <div class="serviceIcon">🎬</div>
+            <h4 id="s_video">Video</h4>
+          </div>
+          <p id="sd_video">ვიდეო სცენარი და შექმნა</p>
+          <div class="costLine"><span id="t_cost3">Cost</span> <strong id="c_video">25</strong></div>
+        </div>
+
+        <div class="serviceCard" data-service="voice" tabindex="0" role="button" aria-label="Voice service">
+          <div class="serviceTop">
+            <div class="serviceIcon">🎤</div>
+            <h4 id="s_voice">Voice</h4>
+          </div>
+          <p id="sd_voice">ხმის გენერაცია და კლონირება</p>
+          <div class="costLine"><span id="t_cost4">Cost</span> <strong id="c_voice">18</strong></div>
+        </div>
+
+        <div class="serviceCard" data-service="music" tabindex="0" role="button" aria-label="Music service">
+          <div class="serviceTop">
+            <div class="serviceIcon">🎵</div>
+            <h4 id="s_music">Music</h4>
+          </div>
+          <p id="sd_music">მუსიკის შექმნა AI-ით</p>
+          <div class="costLine"><span id="t_cost5">Cost</span> <strong id="c_music">10</strong></div>
+        </div>
+
+        <div class="serviceCard" data-service="text" tabindex="0" role="button" aria-label="Text service">
+          <div class="serviceTop">
+            <div class="serviceIcon">✍️</div>
+            <h4 id="s_text">Text</h4>
+          </div>
+          <p id="sd_text">ტექსტის გენერაცია და რედაქტირება</p>
+          <div class="costLine"><span id="t_cost6">Cost</span> <strong id="c_text">6</strong></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="chatContainer" id="chatContainer">
+          <div class="emptyState" id="emptyState">
+            <div class="emptyIcon">🤖</div>
+            <h2 id="t_welcome">გამარჯობა! 👋</h2>
+            <p id="t_welcomeText">
+              მოგესალმებით Avatar G AI Workspace-ში.<br/>
+              აირჩიეთ სერვისი და დაიწყეთ შექმნა.
+            </p>
+            <div class="quickActions">
+              <button class="quickBtn" data-quick="avatar" id="q_avatar">შექმენი ავატარი</button>
+              <button class="quickBtn" data-quick="video" id="q_video">გააკეთე ვიდეო</button>
+              <button class="quickBtn" data-quick="text" id="q_text">დაწერე ტექსტი</button>
             </div>
           </div>
         </div>
 
-        <div class="card" data-service="image" tabindex="0" role="button" aria-label="Image service: Generate and edit photos and designs">
-          <div class="badge" aria-label="AI powered">AI</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">🖼️</div>
-            <div>
-              <h3 id="t_image_h">Image</h3>
-              <p id="t_image_p">ფოტო/დიზაინის გენერაცია და რედაქტირება</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" data-service="video" tabindex="0" role="button" aria-label="Video service: AI video scenarios, shorts, reels">
-          <div class="badge pro" aria-label="Pro feature">PRO</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">🎬</div>
-            <div>
-              <h3 id="t_video_h">Video</h3>
-              <p id="t_video_p">AI ვიდეო სცენარები, შორტები, რილსები</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" data-service="voice" tabindex="0" role="button" aria-label="Voice service: Voiceover and voice cloning with consent">
-          <div class="badge safe" aria-label="Safe and ethical">SAFE</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">🎤</div>
-            <div>
-              <h3 id="t_voice_h">Voice</h3>
-              <p id="t_voice_p">voiceover + ხმის კლონირება (თანხმობით)</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" data-service="music" tabindex="0" role="button" aria-label="Music service: AI music ideas, lyrics, mood and style">
-          <div class="badge new" aria-label="New feature">NEW</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">🎵</div>
-            <div>
-              <h3 id="t_music_h">Music</h3>
-              <p id="t_music_p">AI მუსიკის იდეა, ტექსტი, mood & style</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card wide" data-service="text" tabindex="0" role="button" aria-label="Text service: Copywriting, posts, scripts, CTA, promo">
-          <div class="badge" aria-label="Fast generation">FAST</div>
-          <div class="cardTop">
-            <div class="icon" aria-hidden="true">✍️</div>
-            <div>
-              <h3 id="t_text_h">Text</h3>
-              <p id="t_text_p">კოპირაითინგი, პოსტი, სცენარი, CTA, პრომო</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="cta">
-        <button class="btn" id="demoBtn" aria-label="Start Demo">დაიწყე Demo</button>
-        <div class="creditPreview" id="t_creditPreview"></div>
-      </div>
-
-      <footer class="footer" role="contentinfo">
-        <div id="t_footer">© 2026 <strong>Avatar G</strong> • Georgian AI Workspace</div>
-        <div style="margin-top: 8px; font-size: 11.5px;">Made with ❤️ in Georgia</div>
-      </footer>
-    </main>
-  </div>
-
-  <!-- Service Modal -->
-  <div class="overlay" id="overlay" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal" id="modal" tabindex="-1" aria-labelledby="modalTitleText">
-      <div class="modalHead">
-        <div class="modalTitle">
-          <span class="icon" id="modalIcon" aria-hidden="true">✨</span>
-          <strong id="modalTitleText">Service</strong>
-        </div>
-        <button class="close" id="closeBtn" aria-label="Close dialog">✕</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="hint" id="modalHint" role="status">შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.</div>
-
-        <form id="serviceForm" novalidate>
-          <div class="formGrid">
-            <div class="field">
-              <label id="l_goal" for="goal">მიზანი *</label>
-              <input id="goal" type="text" placeholder="მაგ: Instagram Reel, პროდუქტის პრომო..." required aria-required="true" />
-            </div>
-
-            <div class="field">
-              <label id="l_lang" for="outLang">ენა *</label>
-              <select id="outLang" required aria-required="true">
-                <option value="" disabled selected>—</option>
-                <option value="ka">ქართული</option>
-                <option value="en">English</option>
-                <option value="ru">Русский</option>
-              </select>
-            </div>
-
-            <div class="field full">
-              <label id="l_details" for="details">დეტალები / მოთხოვნა *</label>
-              <textarea id="details" placeholder="მოკლედ აღწერე: სტილი, ტონი, აუდიტორია, მაგალითები…" required aria-required="true"></textarea>
-            </div>
-
-            <div class="field">
-              <label id="l_files" for="files">ფაილები (სურვილისამებრ)</label>
-              <div class="fileInput">
-                <input id="files" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.docx" aria-label="Upload files" />
-                <div class="fileLabel">
-                  <span>📎</span>
-                  <span id="fileText">აირჩიეთ ფაილები</span>
+        <div class="inputArea">
+          <div class="inputWrapper">
+            <div class="inputBox">
+              <div class="inputTop" id="serviceTagContainer" style="display:none;">
+                <div class="serviceTag" id="activeServiceTag">
+                  <span id="tagServiceName">Service</span>
+                  <span class="costMini" id="tagCost">—</span>
+                  <button type="button" id="removeServiceTag" aria-label="Remove service">✕</button>
                 </div>
               </div>
-              <div id="filePreview" class="filePreview"></div>
-            </div>
 
-            <div class="field">
-              <label id="l_notes" for="notes">შენიშვნები</label>
-              <input id="notes" type="text" placeholder="მაგ: brand colors, ლოგო, დრო (6s/10s)…" aria-label="Additional notes" />
-            </div>
+              <div class="attachmentPills" id="attachPills" style="display:none;"></div>
 
-            <div class="field full" id="consentWrap" style="display:none;">
-              <div class="consentBox">
-                <input type="checkbox" id="consent" aria-required="true" />
-                <label for="consent" id="t_consent">
-                  ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).
-                </label>
+              <textarea id="mainInput" placeholder="რას შევქმნათ დღეს? აღწერეთ თქვენი იდეა..." rows="1"></textarea>
+
+              <div class="inputActions">
+                <div class="leftActions">
+                  <button class="iconBtn" id="attachBtn" type="button" title="Attach" aria-label="Attach files">📎</button>
+                  <button class="iconBtn" id="promptBtn" type="button" title="Prompt Builder" aria-label="Open prompt builder">✨</button>
+                </div>
+                <div class="rightActions">
+                  <div class="hintMini" id="costPreview" style="display:none;">
+                    <span id="t_costPreview">Cost:</span> <strong id="costPreviewNum">—</strong>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="field full">
-              <div class="hint" id="creditLine" style="margin:0;">Credits: —</div>
-            </div>
+            <button class="sendBtn" id="sendBtn" type="button">
+              <span id="t_send">გაგზავნა</span>
+              <span>→</span>
+            </button>
           </div>
 
-          <div class="row">
-            <button type="button" class="btn2" id="clearBtn">გასუფთავება</button>
-            <button type="submit" class="btn2 btnPrimary" id="submitBtn">გაგზავნა</button>
-          </div>
-        </form>
-      </div>
+          <input id="fileInput" type="file" class="sr-only" multiple />
+        </div>
+      </main>
     </div>
+
+    <button class="aiHelper" id="aiHelperBtn" type="button" aria-label="AI Helper" title="AI Assistant">🤖</button>
   </div>
 
-  <!-- Requests Modal -->
-  <div class="overlay" id="reqOverlay" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal" id="reqModal" tabindex="-1" aria-labelledby="reqTitle">
+  <!-- Prompt Builder Modal -->
+  <div class="overlay" id="promptOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Prompt Builder">
       <div class="modalHead">
         <div class="modalTitle">
-          <span class="icon" aria-hidden="true">📦</span>
-          <strong id="reqTitle">Requests (Demo)</strong>
+          <span style="font-size:24px;">✨</span>
+          <strong id="t_promptBuilder">Prompt Builder</strong>
         </div>
-        <button class="close" id="reqClose" aria-label="Close dialog">✕</button>
+        <button class="closeBtn" id="promptCloseBtn" aria-label="Close">✕</button>
       </div>
       <div class="modalBody">
-        <div class="hint" id="reqHint">აქ ინახება დემო მოთხოვნები (localStorage). Production-ში აქ იქნება API/DB.</div>
-        <div id="reqList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <div class="hint" id="promptHint">აირჩიეთ template ან შექმენით custom prompt თქვენი სერვისისთვის.</div>
 
-        <div class="row" style="justify-content:space-between;">
-          <button type="button" class="btn2" id="exportBtn">Export JSON</button>
-          <button type="button" class="btn2" id="wipeBtn" style="border-color: rgba(239,68,68,.35);">Clear All</button>
+        <div class="formGrid">
+          <div class="field">
+            <label id="l_service">Service</label>
+            <select id="promptService">
+              <option value="">— არჩევა —</option>
+              <option value="avatar">Avatar</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+              <option value="voice">Voice</option>
+              <option value="music">Music</option>
+              <option value="text">Text</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label id="l_style">Style / Tone</label>
+            <select id="promptStyle">
+              <option value="">— არჩევა —</option>
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+              <option value="creative">Creative</option>
+              <option value="technical">Technical</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label id="l_custom">Custom Prompt</label>
+            <textarea id="customPrompt" class="promptArea" placeholder="მაგ: Create a 15-second Instagram Reel with upbeat music..."></textarea>
+          </div>
+        </div>
+
+        <div style="margin:18px 0;">
+          <label style="margin-bottom:10px; display:block;" id="l_templates">Templates</label>
+          <div class="templateList" id="templateList"></div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn btnSecondary" id="promptCancelBtn">Cancel</button>
+          <button class="btn btnPrimary" id="promptUseBtn">Use Prompt</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast" role="alert" aria-live="assertive">Done</div>
+  <!-- AI Helper Modal -->
+  <div class="overlay" id="helperOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="AI Helper">
+      <div class="modalHead">
+        <div class="modalTitle">
+          <span style="font-size:24px;">🤖</span>
+          <strong id="t_aiHelper">AI Helper</strong>
+        </div>
+        <button class="closeBtn" id="helperCloseBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="hint" id="helperHint">გამარჯობა! მე ვარ Avatar G-ის AI ასისტენტი. გეხმარებით იდეების გენერირებასა და prompt-ების შექმნაში.</div>
+
+        <div class="formGrid">
+          <div class="field full">
+            <label id="l_question">რაში გჭირდებათ დახმარება?</label>
+            <textarea id="helperQuestion" class="promptArea" placeholder="მაგ: როგორ შევქმნა ეფექტური Instagram Reel?"></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn btnSecondary" id="helperCancelBtn">Close</button>
+          <button class="btn btnPrimary" id="helperAskBtn">Ask AI</button>
+        </div>
+
+        <div id="helperResponse" style="margin-top:18px; display:none;">
+          <label style="margin-bottom:10px; display:block; font-weight:800;">AI Response:</label>
+          <div style="padding:14px; background: rgba(34, 211, 238, .10); border: 1px solid rgba(34, 211, 238, .25); border-radius: 12px; line-height: 1.6; font-size: 13.5px;">
+            <div id="helperResponseText"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div class="overlay" id="historyOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="History">
+      <div class="modalHead">
+        <div class="modalTitle">
+          <span style="font-size:24px;">🗂️</span>
+          <strong id="t_history">History</strong>
+        </div>
+        <button class="closeBtn" id="historyCloseBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="hint" id="historyHint">აქ ნახავთ ჩატის ისტორიას (localStorage). შეგიძლიათ გასუფთავება ან ექსპორტი.</div>
+
+        <div class="btnRow" style="justify-content:flex-start; margin-top:0; margin-bottom:14px;">
+          <button class="btn btnSecondary" id="exportBtn">Export JSON</button>
+          <button class="btn btnDanger" id="clearBtn">Clear History</button>
+        </div>
+
+        <div class="historyList" id="historyList"></div>
+
+        <div class="btnRow">
+          <button class="btn btnSecondary" id="historyCancelBtn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="alert">Done</div>
 
   <script>
-    // ===== Demo Credits + Storage Keys =====
-    const STORE_REQ = "avatar_g_requests";
-    const STORE_CREDITS = "avatar_g_credits";
+    // ===== Storage Keys =====
+    const STORE_MESSAGES = "avatar_g_messages_v2";
+    const STORE_CREDITS  = "avatar_g_credits_v2";
+    const STORE_LANG     = "avatar_g_lang_v2";
+    const STORE_SERVICE  = "avatar_g_active_service_v2";
 
     const CREDIT_DEFAULT = 100;
     const CREDIT_COST = { avatar: 20, image: 12, video: 25, voice: 18, music: 10, text: 6 };
+
+    // ===== Helpers =====
+    const safeJSONParse = (s, fallback) => { try { return JSON.parse(s); } catch { return fallback; } };
 
     function getCredits() {
       const v = Number(localStorage.getItem(STORE_CREDITS));
@@ -794,577 +877,833 @@
     }
     function setCredits(v) {
       localStorage.setItem(STORE_CREDITS, String(Math.max(0, Math.floor(v))));
-      renderCreditPreview();
+      updateCreditsDisplay();
     }
-    function initDemoStorage() {
-      if (!localStorage.getItem(STORE_REQ)) localStorage.setItem(STORE_REQ, JSON.stringify([]));
-      if (!localStorage.getItem(STORE_CREDITS)) localStorage.setItem(STORE_CREDITS, String(CREDIT_DEFAULT));
+    function updateCreditsDisplay() {
+      document.getElementById("creditNum").textContent = getCredits();
+    }
+
+    function initStorage() {
+      if (!localStorage.getItem(STORE_MESSAGES)) localStorage.setItem(STORE_MESSAGES, JSON.stringify([]));
+      if (!localStorage.getItem(STORE_CREDITS))  localStorage.setItem(STORE_CREDITS, String(CREDIT_DEFAULT));
+      if (!localStorage.getItem(STORE_LANG))     localStorage.setItem(STORE_LANG, "ka");
+      if (!localStorage.getItem(STORE_SERVICE))  localStorage.setItem(STORE_SERVICE, "");
     }
 
     // ===== i18n =====
     const I18N = {
       ka: {
-        title: "Avatar G — AI Workspace",
-        subtitle: "Avatar • Image • Video • Voice • Music • Text",
-        status: "Online",
-        footer: "© 2026 Avatar G • Georgian AI Workspace",
-        demo: "დაიწყე Demo",
-        new: "NEW",
-        creditPreview: (credits) => `<strong>${credits} კრედიტი</strong> დემო რეჟიმში • თითო სერვისს აქვს ფასი`,
-        creditLine: (credits, cost) => `Credits: <strong>${credits}</strong> • ამ სერვისის ფასი: <strong>${cost}</strong>`,
-        avatarH: "Avatar",
-        avatarP: "ავატარის შექმნა (ფოტო/ვიდეო) + სტილი + სცენარი",
-        imageH: "Image",
-        imageP: "ფოტო/დიზაინის გენერაცია და რედაქტირება",
-        videoH: "Video",
-        videoP: "AI ვიდეო სცენარები, შორტები, რილსები",
-        voiceH: "Voice",
-        voiceP: "voiceover + ხმის კლონირება (თანხმობით)",
-        musicH: "Music",
-        musicP: "AI მუსიკის იდეა, ტექსტი, mood & style",
-        textH: "Text",
-        textP: "კოპირაითინგი, პოსტი, სცენარი, CTA, პრომო",
-
-        modalHint: "შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.",
-        l_goal: "მიზანი *",
-        l_lang: "ენა *",
-        l_details: "დეტალები / მოთხოვნა *",
-        l_files: "ფაილები (სურვილისამებრ)",
-        l_notes: "შენიშვნები",
-        submit: "გაგზავნა",
-        clear: "გასუფთავება",
-        consent: "ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).",
-        fileText: "აირჩიეთ ფაილები",
-        filesSelected: (count) => `${count} ფაილი არჩეული`,
-        svcTitles: {
-          avatar: "Avatar — ავატარის შექმნა",
-          image: "Image — გენერაცია/რედაქტირება",
-          video: "Video — ვიდეო სტრუქტურა/სცენარი",
-          voice: "Voice — VO/Cloning (Consent)",
-          music: "Music — მუსიკის იდეა",
-          text: "Text — კოპირაითინგი"
-        },
-        toastSent: "✅ მოთხოვნა შენახულია (Demo). შემდეგ ეტაპზე API დავაერთოთ.",
-        toastCleared: "✅ ფორმა გასუფთავდა.",
-        toastConsent: "⚠️ ხმის კლონირებისთვის საჭიროა Consent.",
-        toastValidation: "⚠️ შეავსე ყველა სავალდებულო ველი (დეტალები მინ. 10 სიმბოლო).",
-        toastNoCredits: "⚠️ კრედიტები არ გყოფნის. Demo Reset გააკეთე (Storage).",
-        toastExported: "✅ Export მზადაა (ფაილი ჩამოტვირთე).",
-        toastWiped: "✅ ყველა მოთხოვნა წაიშალა.",
-        placeholders: {
-          avatar: "მაგ: სასაუბრო ავატარი, ბიზნეს ვიდეო, პროდუქტის pitch",
-          image: "მაგ: პოსტერი, ლოგოს შეცვლა, პროდუქტის ფოტო",
-          video: "მაგ: 6წ Reel, 15წ რეკლამა, storyboard",
-          voice: "მაგ: ქართული VO, მშვიდი ტონი, 10წ CTA",
-          music: "მაგ: ენერგიული, New Year vibe, ბრენდ ჯინგლი",
-          text: "მაგ: ლენდინგ ტექსტი, სათაური, CTA"
-        },
-        reqTitle: "Requests (Demo)",
-        reqHint: "აქ ინახება დემო მოთხოვნები (localStorage). Production-ში აქ იქნება API/DB.",
-        exportBtn: "Export JSON",
-        wipeBtn: "Clear All",
-        requestsBtn: "Requests"
+        title: "Avatar G",
+        subtitle: "AI Workspace",
+        services: "სერვისები",
+        cost: "Cost",
+        creditsLabel: "Credits:",
+        history: "History",
+        historyHint: "აქ ნახავთ ჩატის ისტორიას (localStorage). შეგიძლიათ გასუფთავება ან ექსპორტი.",
+        export: "Export JSON",
+        clear: "Clear History",
+        reset: "Reset",
+        s_avatar: "Avatar",
+        sd_avatar: "ავატარის შექმნა AI-ით",
+        s_image: "Image",
+        sd_image: "ფოტო გენერაცია/რედაქტირება",
+        s_video: "Video",
+        sd_video: "ვიდეო სცენარი და შექმნა",
+        s_voice: "Voice",
+        sd_voice: "ხმის გენერაცია და კლონირება",
+        s_music: "Music",
+        sd_music: "მუსიკის შექმნა AI-ით",
+        s_text: "Text",
+        sd_text: "ტექსტის გენერაცია და რედაქტირება",
+        welcome: "გამარჯობა! 👋",
+        welcomeText: "მოგესალმებით Avatar G AI Workspace-ში.<br/>აირჩიეთ სერვისი და დაიწყეთ შექმნა.",
+        q_avatar: "შექმენი ავატარი",
+        q_video: "გააკეთე ვიდეო",
+        q_text: "დაწერე ტექსტი",
+        send: "გაგზავნა",
+        costPreview: "Cost:",
+        promptBuilder: "Prompt Builder",
+        promptHint: "აირჩიეთ template ან შექმენით custom prompt თქვენი სერვისისთვის.",
+        aiHelper: "AI Helper",
+        helperHint: "გამარჯობა! მე ვარ Avatar G-ის AI ასისტენტი. გეხმარებით იდეების გენერირებასა და prompt-ების შექმნაში.",
+        l_service: "Service",
+        l_style: "Style / Tone",
+        l_custom: "Custom Prompt",
+        l_templates: "Templates",
+        l_question: "რაში გჭირდებათ დახმარება?",
+        inputPlaceholder: "რას შევქმნათ დღეს? აღწერეთ თქვენი იდეა...",
+        assistantName: "Avatar G AI",
+        userName: "თქვენ",
+        pickServiceWarn: "⚠️ გთხოვთ აირჩიოთ სერვისი",
+        notEnoughCredits: "⚠️ არ გაქვთ საკმარისი კრედიტები",
+        promptEmpty: "⚠️ შეიყვანეთ prompt",
+        promptAdded: "✅ Prompt დაემატა",
+        active: "ACTIVE",
+        attached: "Attached",
+        serviceActive: (s)=>`✅ ${String(s).toUpperCase()} აქტიურია`,
+        created: (c)=>`✅ შექმნილია! Credits: ${c}`,
+        historyEmpty: "ისტორია ცარიელია."
       },
-
       en: {
-        title: "Avatar G — AI Workspace",
-        subtitle: "Avatar • Image • Video • Voice • Music • Text",
-        status: "Online",
-        footer: "© 2026 Avatar G • AI Workspace",
-        demo: "Start Demo",
-        new: "NEW",
-        creditPreview: (credits) => `<strong>${credits} credits</strong> in demo mode • each service has a cost`,
-        creditLine: (credits, cost) => `Credits: <strong>${credits}</strong> • service cost: <strong>${cost}</strong>`,
-        avatarH: "Avatar",
-        avatarP: "Create an avatar (photo/video) + style + script",
-        imageH: "Image",
-        imageP: "Generate & edit images/design",
-        videoH: "Video",
-        videoP: "AI video scripts, shorts, reels",
-        voiceH: "Voice",
-        voiceP: "Voiceover + voice cloning (with consent)",
-        musicH: "Music",
-        musicP: "Music idea, lyrics, mood & style",
-        textH: "Text",
-        textP: "Copywriting, posts, scripts, CTA, promo",
-
-        modalHint: "Fill in brief details — we'll capture your request and prepare the result.",
-        l_goal: "Goal *",
-        l_lang: "Language *",
-        l_details: "Details / Request *",
-        l_files: "Files (optional)",
-        l_notes: "Notes",
-        submit: "Submit",
-        clear: "Clear",
-        consent: "I confirm I have permission/consent for voice cloning.",
-        fileText: "Choose files",
-        filesSelected: (count) => `${count} files selected`,
-        svcTitles: {
-          avatar: "Avatar — Create an avatar",
-          image: "Image — Generate/Edit",
-          video: "Video — Script/Structure",
-          voice: "Voice — VO/Cloning (Consent)",
-          music: "Music — Create music idea",
-          text: "Text — Copywriting"
-        },
-        toastSent: "✅ Request saved (Demo). We can connect real APIs next.",
-        toastCleared: "✅ Form cleared.",
-        toastConsent: "⚠️ Consent required for voice cloning.",
-        toastValidation: "⚠️ Fill all required fields (details min 10 chars).",
-        toastNoCredits: "⚠️ Not enough credits. Reset demo storage.",
-        toastExported: "✅ Export ready (download the file).",
-        toastWiped: "✅ All requests deleted.",
-        placeholders: {
-          avatar: "e.g., Talking avatar, business intro, product pitch",
-          image: "e.g., poster, logo tweak, product image",
-          video: "e.g., 6s Reel, 15s ad, storyboard",
-          voice: "e.g., Georgian VO, calm tone, 10s CTA",
-          music: "e.g., upbeat, NY vibe, brand jingle",
-          text: "e.g., landing copy, ad headline, CTA"
-        },
-        reqTitle: "Requests (Demo)",
-        reqHint: "Demo requests stored in localStorage. Production will use API/DB.",
-        exportBtn: "Export JSON",
-        wipeBtn: "Clear All",
-        requestsBtn: "Requests"
+        title: "Avatar G",
+        subtitle: "AI Workspace",
+        services: "Services",
+        cost: "Cost",
+        creditsLabel: "Credits:",
+        history: "History",
+        historyHint: "Here is your chat history (localStorage). You can clear it or export.",
+        export: "Export JSON",
+        clear: "Clear History",
+        reset: "Reset",
+        s_avatar: "Avatar",
+        sd_avatar: "Create AI avatars",
+        s_image: "Image",
+        sd_image: "Generate & edit images",
+        s_video: "Video",
+        sd_video: "Video scripts & creation",
+        s_voice: "Voice",
+        sd_voice: "Voice generation & cloning",
+        s_music: "Music",
+        sd_music: "AI music creation",
+        s_text: "Text",
+        sd_text: "Text generation & editing",
+        welcome: "Hello! 👋",
+        welcomeText: "Welcome to Avatar G AI Workspace.<br/>Choose a service and start creating.",
+        q_avatar: "Create Avatar",
+        q_video: "Make Video",
+        q_text: "Write Text",
+        send: "Send",
+        costPreview: "Cost:",
+        promptBuilder: "Prompt Builder",
+        promptHint: "Choose a template or create a custom prompt for your service.",
+        aiHelper: "AI Helper",
+        helperHint: "Hi! I'm Avatar G's AI assistant. I can help you with ideas and prompt creation.",
+        l_service: "Service",
+        l_style: "Style / Tone",
+        l_custom: "Custom Prompt",
+        l_templates: "Templates",
+        l_question: "What do you need help with?",
+        inputPlaceholder: "What shall we create today? Describe your idea...",
+        assistantName: "Avatar G AI",
+        userName: "You",
+        pickServiceWarn: "⚠️ Please select a service",
+        notEnoughCredits: "⚠️ Not enough credits",
+        promptEmpty: "⚠️ Enter a prompt",
+        promptAdded: "✅ Prompt added",
+        active: "ACTIVE",
+        attached: "Attached",
+        serviceActive: (s)=>`✅ ${String(s).toUpperCase()} active`,
+        created: (c)=>`✅ Done! Credits: ${c}`,
+        historyEmpty: "History is empty."
       }
     };
 
-    // ===== UI refs =====
-    const langSel = document.getElementById("lang");
-    const overlay = document.getElementById("overlay");
-    const modal = document.getElementById("modal");
-    const closeBtn = document.getElementById("closeBtn");
-    const demoBtn = document.getElementById("demoBtn");
-    const toast = document.getElementById("toast");
-    const serviceForm = document.getElementById("serviceForm");
-    const creditPreview = document.getElementById("t_creditPreview");
-    const creditLine = document.getElementById("creditLine");
-
-    const modalTitle = document.getElementById("modalTitleText");
-    const modalIcon = document.getElementById("modalIcon");
-    const modalHint = document.getElementById("modalHint");
-
-    const goal = document.getElementById("goal");
-    const outLang = document.getElementById("outLang");
-    const details = document.getElementById("details");
-    const files = document.getElementById("files");
-    const fileText = document.getElementById("fileText");
-    const filePreview = document.getElementById("filePreview");
-    const notes = document.getElementById("notes");
-    const consentWrap = document.getElementById("consentWrap");
-    const consent = document.getElementById("consent");
-
-    const clearBtn = document.getElementById("clearBtn");
-    const submitBtn = document.getElementById("submitBtn");
-    const homeBtn = document.getElementById("homeBtn");
-
-    // Requests modal
-    const requestsBtn = document.getElementById("requestsBtn");
-    const reqOverlay = document.getElementById("reqOverlay");
-    const reqModal = document.getElementById("reqModal");
-    const reqClose = document.getElementById("reqClose");
-    const reqTitle = document.getElementById("reqTitle");
-    const reqHint = document.getElementById("reqHint");
-    const reqList = document.getElementById("reqList");
-    const exportBtn = document.getElementById("exportBtn");
-    const wipeBtn = document.getElementById("wipeBtn");
-
-    let currentService = "avatar";
-    let lastFocusEl = null;
-
-    const serviceMeta = {
-      avatar: { icon: "🧑‍🎭" },
-      image: { icon: "🖼️" },
-      video: { icon: "🎬" },
-      voice: { icon: "🎤" },
-      music: { icon: "🎵" },
-      text: { icon: "✍️" }
+    // ===== Templates =====
+    const TEMPLATES = {
+      avatar: [
+        { name: "Professional Avatar", prompt: "Create a professional talking avatar for business presentation, neutral background, formal attire" },
+        { name: "Social Media Avatar", prompt: "Casual talking avatar for Instagram/TikTok, trendy background, energetic vibe" },
+        { name: "Product Demo Avatar", prompt: "Avatar presenting a product, enthusiastic tone, demonstration style" }
+      ],
+      image: [
+        { name: "Social Post", prompt: "Create an eye-catching social media image, vibrant colors, modern design" },
+        { name: "Product Photo", prompt: "Professional product photography, clean background, studio lighting" },
+        { name: "Banner Design", prompt: "Web banner design, brand colors, call-to-action focus" }
+      ],
+      video: [
+        { name: "Instagram Reel", prompt: "15-second Instagram Reel, fast-paced, trending music, attention-grabbing" },
+        { name: "Tutorial Video", prompt: "Step-by-step tutorial video, clear instructions, educational tone" },
+        { name: "Promo Video", prompt: "30-second promotional video, highlight key features, persuasive messaging" }
+      ],
+      voice: [
+        { name: "Voiceover - Professional", prompt: "Professional voiceover, clear articulation, authoritative tone" },
+        { name: "Voiceover - Friendly", prompt: "Warm and friendly voiceover, conversational style, approachable tone" },
+        { name: "Narration", prompt: "Documentary-style narration, engaging storytelling, measured pace" }
+      ],
+      music: [
+        { name: "Upbeat Background", prompt: "Upbeat background music, energetic, positive vibes, instrumental" },
+        { name: "Calm Ambient", prompt: "Calm ambient music, relaxing atmosphere, subtle melody" },
+        { name: "Corporate", prompt: "Corporate background music, professional, motivating, modern" }
+      ],
+      text: [
+        { name: "Social Caption", prompt: "Engaging social media caption, emoji usage, call-to-action, hashtags" },
+        { name: "Email Copy", prompt: "Professional email copy, clear structure, persuasive content" },
+        { name: "Ad Copy", prompt: "Attention-grabbing ad copy, benefits-focused, strong CTA" }
+      ]
     };
 
-    // ===== Language =====
-    function t() { return I18N[langSel.value] || I18N.ka; }
+    // ===== State =====
+    let currentLang = "ka";
+    let activeService = null;
+    let messages = [];
+    let attachments = []; // {name, size}
 
-    function renderCreditPreview() {
-      const credits = getCredits();
-      creditPreview.innerHTML = t().creditPreview(credits);
-    }
+    // ===== UI Elements =====
+    const langSel = document.getElementById("lang");
+    const chatContainer = document.getElementById("chatContainer");
+    const emptyState = document.getElementById("emptyState");
+    const mainInput = document.getElementById("mainInput");
+    const sendBtn = document.getElementById("sendBtn");
 
-    function renderCreditLine() {
-      const credits = getCredits();
-      const cost = CREDIT_COST[currentService] ?? 0;
-      creditLine.innerHTML = t().creditLine(credits, cost);
-    }
+    const serviceTagContainer = document.getElementById("serviceTagContainer");
+    const tagServiceName = document.getElementById("tagServiceName");
+    const tagCost = document.getElementById("tagCost");
+    const removeServiceTag = document.getElementById("removeServiceTag");
+
+    const costPreview = document.getElementById("costPreview");
+    const costPreviewNum = document.getElementById("costPreviewNum");
+
+    const attachBtn = document.getElementById("attachBtn");
+    const fileInput = document.getElementById("fileInput");
+    const attachPills = document.getElementById("attachPills");
+
+    const promptOverlay = document.getElementById("promptOverlay");
+    const promptBtn = document.getElementById("promptBtn");
+    const promptCloseBtn = document.getElementById("promptCloseBtn");
+    const promptCancelBtn = document.getElementById("promptCancelBtn");
+    const promptUseBtn = document.getElementById("promptUseBtn");
+    const promptService = document.getElementById("promptService");
+    const promptStyle = document.getElementById("promptStyle");
+    const customPrompt = document.getElementById("customPrompt");
+    const templateList = document.getElementById("templateList");
+
+    const helperOverlay = document.getElementById("helperOverlay");
+    const aiHelperBtn = document.getElementById("aiHelperBtn");
+    const helperCloseBtn = document.getElementById("helperCloseBtn");
+    const helperCancelBtn = document.getElementById("helperCancelBtn");
+    const helperAskBtn = document.getElementById("helperAskBtn");
+    const helperQuestion = document.getElementById("helperQuestion");
+    const helperResponse = document.getElementById("helperResponse");
+    const helperResponseText = document.getElementById("helperResponseText");
+
+    const historyBtn = document.getElementById("historyBtn");
+    const historyOverlay = document.getElementById("historyOverlay");
+    const historyCloseBtn = document.getElementById("historyCloseBtn");
+    const historyCancelBtn = document.getElementById("historyCancelBtn");
+    const historyList = document.getElementById("historyList");
+    const exportBtn = document.getElementById("exportBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const homeBtn = document.getElementById("homeBtn");
+    const activeChip = document.getElementById("activeChip");
+
+    const resetCreditsBtn = document.getElementById("resetCreditsBtn");
+    const toast = document.getElementById("toast");
+
+    // ===== Functions =====
+    function tr() { return I18N[currentLang] || I18N.ka; }
 
     function applyLang(code) {
-      const tr = I18N[code] || I18N.ka;
-      document.documentElement.lang = code;
+      currentLang = code;
+      localStorage.setItem(STORE_LANG, code);
+      const t = tr();
 
-      document.getElementById("t_title").textContent = tr.title;
-      document.getElementById("t_subtitle").textContent = tr.subtitle;
-      document.getElementById("t_status").textContent = tr.status;
-      document.getElementById("t_footer").innerHTML = tr.footer;
-      demoBtn.textContent = tr.demo;
+      document.getElementById("t_title").textContent = t.title;
+      document.getElementById("t_subtitle").textContent = t.subtitle;
 
-      fileText.textContent = tr.fileText;
-      document.getElementById("b_avatar").textContent = tr.new;
+      document.getElementById("t_services").textContent = t.services;
+      document.getElementById("t_cost").textContent = t.cost;
+      document.getElementById("t_cost2").textContent = t.cost;
+      document.getElementById("t_cost3").textContent = t.cost;
+      document.getElementById("t_cost4").textContent = t.cost;
+      document.getElementById("t_cost5").textContent = t.cost;
+      document.getElementById("t_cost6").textContent = t.cost;
 
-      document.getElementById("t_avatar_h").textContent = tr.avatarH;
-      document.getElementById("t_avatar_p").textContent = tr.avatarP;
-      document.getElementById("t_image_h").textContent = tr.imageH;
-      document.getElementById("t_image_p").textContent = tr.imageP;
-      document.getElementById("t_video_h").textContent = tr.videoH;
-      document.getElementById("t_video_p").textContent = tr.videoP;
-      document.getElementById("t_voice_h").textContent = tr.voiceH;
-      document.getElementById("t_voice_p").textContent = tr.voiceP;
-      document.getElementById("t_music_h").textContent = tr.musicH;
-      document.getElementById("t_music_p").textContent = tr.musicP;
-      document.getElementById("t_text_h").textContent = tr.textH;
-      document.getElementById("t_text_p").textContent = tr.textP;
+      document.getElementById("t_creditsLabel").textContent = t.creditsLabel;
 
-      modalHint.textContent = tr.modalHint;
-      document.getElementById("l_goal").textContent = tr.l_goal;
-      document.getElementById("l_lang").textContent = tr.l_lang;
-      document.getElementById("l_details").textContent = tr.l_details;
-      document.getElementById("l_files").textContent = tr.l_files;
-      document.getElementById("l_notes").textContent = tr.l_notes;
-      submitBtn.textContent = tr.submit;
-      clearBtn.textContent = tr.clear;
-      document.getElementById("t_consent").textContent = tr.consent;
+      document.getElementById("historyBtn").textContent = t.history;
+      document.getElementById("resetCreditsBtn").textContent = t.reset;
 
-      requestsBtn.textContent = tr.requestsBtn;
-      reqTitle.textContent = tr.reqTitle;
-      reqHint.textContent = tr.reqHint;
-      exportBtn.textContent = tr.exportBtn;
-      wipeBtn.textContent = tr.wipeBtn;
+      document.getElementById("s_avatar").textContent = t.s_avatar;
+      document.getElementById("sd_avatar").textContent = t.sd_avatar;
+      document.getElementById("s_image").textContent = t.s_image;
+      document.getElementById("sd_image").textContent = t.sd_image;
+      document.getElementById("s_video").textContent = t.s_video;
+      document.getElementById("sd_video").textContent = t.sd_video;
+      document.getElementById("s_voice").textContent = t.s_voice;
+      document.getElementById("sd_voice").textContent = t.sd_voice;
+      document.getElementById("s_music").textContent = t.s_music;
+      document.getElementById("sd_music").textContent = t.sd_music;
+      document.getElementById("s_text").textContent = t.s_text;
+      document.getElementById("sd_text").textContent = t.sd_text;
 
-      // modal title refresh
-      modalTitle.textContent = tr.svcTitles[currentService] || "Service";
-      renderCreditPreview();
-      renderCreditLine();
+      document.getElementById("t_welcome").textContent = t.welcome;
+      document.getElementById("t_welcomeText").innerHTML = t.welcomeText;
+      document.getElementById("q_avatar").textContent = t.q_avatar;
+      document.getElementById("q_video").textContent = t.q_video;
+      document.getElementById("q_text").textContent = t.q_text;
+
+      document.getElementById("t_send").textContent = t.send;
+      document.getElementById("t_costPreview").textContent = t.costPreview;
+
+      mainInput.placeholder = t.inputPlaceholder;
+
+      document.getElementById("t_promptBuilder").textContent = t.promptBuilder;
+      document.getElementById("promptHint").textContent = t.promptHint;
+
+      document.getElementById("t_aiHelper").textContent = t.aiHelper;
+      document.getElementById("helperHint").textContent = t.helperHint;
+
+      document.getElementById("l_service").textContent = t.l_service;
+      document.getElementById("l_style").textContent = t.l_style;
+      document.getElementById("l_custom").textContent = t.l_custom;
+      document.getElementById("l_templates").textContent = t.l_templates;
+      document.getElementById("l_question").textContent = t.l_question;
+
+      document.getElementById("t_history").textContent = t.history;
+      document.getElementById("historyHint").textContent = t.historyHint;
+      exportBtn.textContent = t.export;
+      clearBtn.textContent = t.clear;
+      historyCancelBtn.textContent = "Close";
+
+      activeChip.textContent = t.active;
+
+      // re-render messages labels in history list if open
+      if (historyOverlay.classList.contains("show")) renderHistory();
+      // re-render existing chat meta names if needed
+      rerenderChatFromState(false);
+      refreshCostUI();
     }
 
-    langSel.addEventListener("change", (e) => applyLang(e.target.value));
+    function refreshCostUI() {
+      if (!activeService) {
+        costPreview.style.display = "none";
+        activeChip.style.display = "none";
+        return;
+      }
+      const cost = CREDIT_COST[activeService] || 0;
+      costPreview.style.display = "flex";
+      costPreviewNum.textContent = cost;
+      activeChip.style.display = "inline-flex";
+    }
 
-    // ===== Mouse tracking (throttled) =====
-    const cards = document.querySelectorAll(".card");
-    cards.forEach(card => {
-      let raf = null;
-      card.addEventListener("mousemove", (e) => {
-        if (raf) return;
-        raf = requestAnimationFrame(() => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          card.style.setProperty("--mouse-x", `${x}px`);
-          card.style.setProperty("--mouse-y", `${y}px`);
-          raf = null;
-        });
+    function setActiveService(service) {
+      activeService = service || null;
+      localStorage.setItem(STORE_SERVICE, activeService || "");
+
+      // sidebar active state
+      document.querySelectorAll(".serviceCard").forEach(card => {
+        card.classList.toggle("active", card.dataset.service === activeService);
       });
-    });
 
-    // ===== Focus trap =====
-    function getFocusable(container) {
-      return Array.from(container.querySelectorAll(
-        'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
-      )).filter(el => !el.disabled && el.offsetParent !== null);
-    }
-
-    function trapFocus(e, container) {
-      if (e.key !== "Tab") return;
-      const focusable = getFocusable(container);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus();
-      }
-    }
-
-    // ===== Modal open/close =====
-    function openModal(service) {
-      lastFocusEl = document.activeElement;
-      currentService = service;
-
-      const tr = t();
-      modalIcon.textContent = (serviceMeta[service]?.icon || "✨");
-      modalTitle.textContent = tr.svcTitles[service] || "Service";
-
-      // Consent only for voice
-      if (service === "voice") consentWrap.style.display = "block";
-      else { consentWrap.style.display = "none"; consent.checked = false; }
-
-      // Reset fields
-      serviceForm.reset();
-      filePreview.style.display = "none";
-      filePreview.textContent = "";
-      fileText.textContent = tr.fileText;
-
-      // placeholders
-      goal.placeholder = tr.placeholders[service] || goal.placeholder;
-
-      // clear errors
-      [goal, details, outLang].forEach(el => el.classList.remove("error"));
-
-      overlay.classList.add("show");
-      overlay.setAttribute("aria-hidden", "false");
-      renderCreditLine();
-
-      setTimeout(() => {
-        modal.focus();
-        goal.focus();
-      }, 50);
-    }
-
-    function closeModal() {
-      overlay.classList.remove("show");
-      overlay.setAttribute("aria-hidden", "true");
-      [goal, details, outLang].forEach(el => el.classList.remove("error"));
-      if (lastFocusEl && lastFocusEl.focus) lastFocusEl.focus();
-    }
-
-    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
-    closeBtn.addEventListener("click", closeModal);
-
-    document.addEventListener("keydown", (e) => {
-      if (overlay.classList.contains("show")) {
-        if (e.key === "Escape") closeModal();
-        trapFocus(e, modal);
-      }
-      if (reqOverlay.classList.contains("show")) {
-        if (e.key === "Escape") closeRequests();
-        trapFocus(e, reqModal);
-      }
-    });
-
-    // Cards click + keyboard
-    cards.forEach(card => {
-      card.addEventListener("click", () => openModal(card.dataset.service));
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(card.dataset.service); }
-      });
-    });
-
-    // Demo button
-    demoBtn.addEventListener("click", () => openModal("avatar"));
-
-    // Home button
-    function goHome() { window.scrollTo({ top: 0, behavior: "smooth" }); }
-    homeBtn.addEventListener("click", goHome);
-    homeBtn.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); }
-    });
-
-    // ===== Files preview (XSS-safe) =====
-    files.addEventListener("change", function() {
-      const tr = t();
-      const list = Array.from(this.files || []);
-      if (list.length) {
-        fileText.textContent = tr.filesSelected(list.length);
-        filePreview.style.display = "flex";
-        filePreview.textContent = "📎 " + list.map(f => f.name).join(", ");
+      if (activeService) {
+        const cost = CREDIT_COST[activeService] || 0;
+        serviceTagContainer.style.display = "flex";
+        tagServiceName.textContent = String(activeService).toUpperCase();
+        tagCost.textContent = `${cost}`;
+        refreshCostUI();
+        mainInput.focus();
       } else {
-        fileText.textContent = tr.fileText;
-        filePreview.style.display = "none";
-        filePreview.textContent = "";
+        serviceTagContainer.style.display = "none";
+        attachments = [];
+        renderAttachments();
+        refreshCostUI();
       }
-    });
-
-    // Clear button
-    clearBtn.addEventListener("click", () => {
-      serviceForm.reset();
-      consent.checked = false;
-      filePreview.style.display = "none";
-      filePreview.textContent = "";
-      fileText.textContent = t().fileText;
-      [goal, details, outLang].forEach(el => el.classList.remove("error"));
-      toastMsg(t().toastCleared, "success");
-      renderCreditLine();
-    });
-
-    // Validation
-    function validateForm() {
-      let ok = true;
-      [goal, details, outLang].forEach(el => el.classList.remove("error"));
-
-      if (!goal.value.trim()) { goal.classList.add("error"); ok = false; }
-      if (!outLang.value) { outLang.classList.add("error"); ok = false; }
-      const d = details.value.trim();
-      if (!d || d.length < 10) { details.classList.add("error"); ok = false; }
-
-      if (currentService === "voice" && !consent.checked) {
-        toastMsg(t().toastConsent, "warning");
-        return false;
-      }
-      return ok;
     }
 
-    // Submit
-    serviceForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+    function formatBytes(bytes) {
+      if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+      const units = ["B","KB","MB","GB"];
+      let i = 0, v = bytes;
+      while (v >= 1024 && i < units.length-1) { v /= 1024; i++; }
+      return `${v.toFixed(v >= 10 || i===0 ? 0 : 1)} ${units[i]}`;
+    }
 
-      const tr = t();
-      if (!validateForm()) { toastMsg(tr.toastValidation, "warning"); return; }
+    function renderAttachments() {
+      if (!attachments.length) {
+        attachPills.style.display = "none";
+        attachPills.innerHTML = "";
+        return;
+      }
+      attachPills.style.display = "flex";
+      attachPills.innerHTML = "";
+      attachments.forEach((a, idx) => {
+        const pill = document.createElement("div");
+        pill.className = "pill";
+        const name = document.createElement("div");
+        name.style.overflow = "hidden";
+        name.style.textOverflow = "ellipsis";
+        name.style.whiteSpace = "nowrap";
+        name.textContent = a.name;
+
+        const size = document.createElement("span");
+        size.textContent = formatBytes(a.size);
+
+        const x = document.createElement("button");
+        x.type = "button";
+        x.setAttribute("aria-label", "Remove attachment");
+        x.textContent = "✕";
+        x.addEventListener("click", () => {
+          attachments.splice(idx, 1);
+          renderAttachments();
+        });
+
+        pill.appendChild(name);
+        pill.appendChild(size);
+        pill.appendChild(x);
+        attachPills.appendChild(pill);
+      });
+    }
+
+    function addMessage(role, content, files = []) {
+      const msg = {
+        role,
+        content,
+        files: (files || []).map(f => ({ name: f.name, size: f.size })),
+        timestamp: new Date().toISOString()
+      };
+      messages.push(msg);
+      localStorage.setItem(STORE_MESSAGES, JSON.stringify(messages));
+      renderMessageToDOM(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function renderMessageToDOM(msg) {
+      const t = tr();
+      const messageEl = document.createElement("div");
+      messageEl.className = `message ${msg.role}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = "messageAvatar";
+      avatar.textContent = msg.role === "user" ? "👤" : "🤖";
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "messageContent";
+
+      const meta = document.createElement("div");
+      meta.className = "messageMeta";
+
+      const name = document.createElement("span");
+      name.className = "messageName";
+      name.textContent = msg.role === "user" ? t.userName : t.assistantName;
+
+      const time = document.createElement("span");
+      time.className = "messageTime";
+      time.textContent = new Date(msg.timestamp).toLocaleTimeString();
+
+      meta.appendChild(name);
+      meta.appendChild(time);
+
+      const text = document.createElement("div");
+      text.className = "messageText";
+      text.textContent = msg.content;
+
+      contentDiv.appendChild(meta);
+      contentDiv.appendChild(text);
+
+      if (msg.files && msg.files.length) {
+        const list = document.createElement("div");
+        list.className = "attachmentPills";
+        msg.files.forEach(f => {
+          const pill = document.createElement("div");
+          pill.className = "pill";
+          const fn = document.createElement("div");
+          fn.style.overflow = "hidden";
+          fn.style.textOverflow = "ellipsis";
+          fn.style.whiteSpace = "nowrap";
+          fn.textContent = f.name;
+          const fs = document.createElement("span");
+          fs.textContent = formatBytes(f.size);
+          pill.appendChild(fn);
+          pill.appendChild(fs);
+          list.appendChild(pill);
+        });
+        contentDiv.appendChild(list);
+      }
+
+      messageEl.appendChild(avatar);
+      messageEl.appendChild(contentDiv);
+
+      if (emptyState.style.display !== "none") emptyState.style.display = "none";
+      chatContainer.appendChild(messageEl);
+    }
+
+    function rerenderChatFromState(scrollToBottom = true) {
+      // Keep empty state if no messages
+      chatContainer.innerHTML = "";
+      chatContainer.appendChild(emptyState);
+      if (!messages.length) {
+        emptyState.style.display = "";
+        return;
+      }
+      emptyState.style.display = "none";
+      messages.forEach(m => renderMessageToDOM(m));
+      if (scrollToBottom) chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function generateAIResponse(service, userText) {
+      const t = tr();
+      const responses = {
+        avatar: `${t.assistantName}: ${currentLang === "ka" ? "შექმნის ავატარს შენი მოთხოვნით" : "Will create an avatar for your request"}: "${userText}".`,
+        image: `${t.assistantName}: ${currentLang === "ka" ? "ამზადებს ფოტოს" : "Preparing an image"}: "${userText}".`,
+        video: `${t.assistantName}: ${currentLang === "ka" ? "ქმნის ვიდეოს თქვენი იდეით" : "Creating a video from your idea"}: "${userText}".`,
+        voice: `${t.assistantName}: ${currentLang === "ka" ? "გენერირებს ხმას" : "Generating voice"}: "${userText}".`,
+        music: `${t.assistantName}: ${currentLang === "ka" ? "ქმნის მუსიკას" : "Creating music"}: "${userText}".`,
+        text: `${t.assistantName}: ${currentLang === "ka" ? "წერს ტექსტს" : "Writing text"}: "${userText}".`
+      };
+      return responses[service] || `${t.assistantName} is working on your request.`;
+    }
+
+    function handleSend() {
+      const text = mainInput.value.trim();
+      if (!text) return;
+
+      const t = tr();
+
+      if (!activeService) {
+        toastMsg(t.pickServiceWarn, "warning");
+        return;
+      }
 
       const credits = getCredits();
-      const cost = CREDIT_COST[currentService] ?? 0;
-      if (credits < cost) { toastMsg(tr.toastNoCredits, "warning"); return; }
+      const cost = CREDIT_COST[activeService] || 0;
+      if (credits < cost) {
+        toastMsg(t.notEnoughCredits, "warning");
+        return;
+      }
 
-      submitBtn.classList.add("loading");
-      submitBtn.disabled = true;
+      const filesToAttach = attachments.slice();
+      addMessage("user", text, filesToAttach);
 
-      const payload = {
-        ts: new Date().toISOString(),
-        service: currentService,
-        goal: goal.value.trim(),
-        outLang: outLang.value,
-        details: details.value.trim(),
-        notes: notes.value.trim(),
-        files: Array.from(files.files || []).map(f => ({ name: f.name, type: f.type, size: f.size })),
-        consent: currentService === "voice" ? !!consent.checked : null,
-        cost
-      };
+      // reset input + attachments
+      mainInput.value = "";
+      mainInput.style.height = "auto";
+      attachments = [];
+      renderAttachments();
+
+      sendBtn.disabled = true;
+      sendBtn.classList.add("loading");
 
       setTimeout(() => {
-        try {
-          const existing = JSON.parse(localStorage.getItem(STORE_REQ) || "[]");
-          existing.push(payload);
-          localStorage.setItem(STORE_REQ, JSON.stringify(existing));
+        const response = generateAIResponse(activeService, text);
+        addMessage("assistant", response);
+        setCredits(credits - cost);
+        sendBtn.disabled = false;
+        sendBtn.classList.remove("loading");
+        toastMsg(t.created(getCredits()), "success");
+      }, 900);
+    }
 
-          setCredits(credits - cost);
-          renderCreditLine();
+    // ===== Prompt Builder =====
+    function openPromptBuilder() {
+      promptOverlay.classList.add("show");
+      promptOverlay.setAttribute("aria-hidden","false");
+      if (activeService) {
+        promptService.value = activeService;
+        renderTemplates(activeService);
+      } else {
+        renderTemplates(promptService.value);
+      }
+      setTimeout(() => customPrompt.focus(), 60);
+    }
+    function closePromptBuilder() {
+      promptOverlay.classList.remove("show");
+      promptOverlay.setAttribute("aria-hidden","true");
+    }
+    function renderTemplates(service) {
+      templateList.innerHTML = "";
+      if (!service || !TEMPLATES[service]) return;
 
-          submitBtn.classList.remove("loading");
-          submitBtn.disabled = false;
+      TEMPLATES[service].forEach(tpl => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "templateItem";
+        item.innerHTML = `
+          <div style="flex:1; text-align:left;">
+            <strong></strong>
+            <p></p>
+          </div>
+        `;
+        item.querySelector("strong").textContent = tpl.name;
+        item.querySelector("p").textContent = tpl.prompt;
+        item.addEventListener("click", () => { customPrompt.value = tpl.prompt; });
+        templateList.appendChild(item);
+      });
+    }
 
-          toastMsg(tr.toastSent, "success");
-          setTimeout(() => closeModal(), 900);
-        } catch (err) {
-          console.error(err);
-          submitBtn.classList.remove("loading");
-          submitBtn.disabled = false;
-          toastMsg("❌ Error saving request", "error");
+    function usePrompt() {
+      const t = tr();
+      const prompt = customPrompt.value.trim();
+      if (!prompt) {
+        toastMsg(t.promptEmpty, "warning");
+        return;
+      }
+
+      // Optional style prefix
+      const style = promptStyle.value;
+      const styled =
+        style
+          ? `Style/Tone: ${style}\n\n${prompt}`
+          : prompt;
+
+      mainInput.value = styled;
+
+      if (promptService.value) setActiveService(promptService.value);
+
+      closePromptBuilder();
+      toastMsg(t.promptAdded, "success");
+      mainInput.focus();
+    }
+
+    // ===== AI Helper =====
+    function openHelper() {
+      helperOverlay.classList.add("show");
+      helperOverlay.setAttribute("aria-hidden","false");
+      helperResponse.style.display = "none";
+      helperQuestion.value = "";
+      setTimeout(() => helperQuestion.focus(), 60);
+    }
+    function closeHelper() {
+      helperOverlay.classList.remove("show");
+      helperOverlay.setAttribute("aria-hidden","true");
+    }
+    function askHelper() {
+      const question = helperQuestion.value.trim();
+      const t = tr();
+      if (!question) {
+        toastMsg(t.promptEmpty, "warning");
+        return;
+      }
+
+      helperAskBtn.classList.add("loading");
+      helperAskBtn.disabled = true;
+
+      setTimeout(() => {
+        const answer =
+          currentLang === "ka"
+            ? `მადლობა კითხვისთვის! "${question}"\n\nსწრაფი ჩეკლისტი:\n1) მიზანი + აუდიტორია\n2) რა შედეგი გინდა (ფორმატი/სიგრძე)\n3) Style/Tone (Professional/Casual/Creative/Technical)\n4) Constraints (ენა, დრო, პლატფორმა)\n5) Reference (მაგალითი/ბრენდი)\n\nახლა გახსენი Prompt Builder ✨ და აირჩიე template — შემდეგ დავხვეწოთ ერთად.`
+            : `Thanks! "${question}"\n\nQuick checklist:\n1) Goal + audience\n2) Desired output (format/length)\n3) Style/Tone\n4) Constraints (language, platform)\n5) Reference\n\nOpen Prompt Builder ✨, pick a template, then we refine together.`;
+
+        helperResponseText.textContent = answer;
+        helperResponse.style.display = "block";
+        helperAskBtn.classList.remove("loading");
+        helperAskBtn.disabled = false;
+      }, 850);
+    }
+
+    // ===== History =====
+    function openHistory() {
+      historyOverlay.classList.add("show");
+      historyOverlay.setAttribute("aria-hidden","false");
+      renderHistory();
+    }
+    function closeHistory() {
+      historyOverlay.classList.remove("show");
+      historyOverlay.setAttribute("aria-hidden","true");
+    }
+    function renderHistory() {
+      const t = tr();
+      historyList.innerHTML = "";
+      if (!messages.length) {
+        const div = document.createElement("div");
+        div.className = "hint";
+        div.textContent = t.historyEmpty;
+        historyList.appendChild(div);
+        return;
+      }
+
+      messages.slice().reverse().forEach(m => {
+        const item = document.createElement("div");
+        item.className = "historyItem";
+
+        const role = document.createElement("div");
+        role.className = `historyRole ${m.role}`;
+        role.textContent = m.role === "user" ? "👤" : "🤖";
+
+        const body = document.createElement("div");
+        body.className = "historyBody";
+
+        const meta = document.createElement("div");
+        meta.className = "historyMeta";
+
+        const who = document.createElement("strong");
+        who.textContent = m.role === "user" ? t.userName : t.assistantName;
+
+        const when = document.createElement("span");
+        when.textContent = new Date(m.timestamp).toLocaleString();
+
+        meta.appendChild(who);
+        meta.appendChild(when);
+
+        const text = document.createElement("div");
+        text.className = "historyText";
+        text.textContent = m.content;
+
+        body.appendChild(meta);
+        body.appendChild(text);
+
+        if (m.files && m.files.length) {
+          const filesLine = document.createElement("div");
+          filesLine.style.marginTop = "10px";
+          filesLine.style.color = "var(--muted)";
+          filesLine.style.fontSize = "12px";
+          filesLine.textContent = `${t.attached}: ${m.files.map(f => f.name).join(", ")}`;
+          body.appendChild(filesLine);
         }
-      }, 650);
-    });
+
+        item.appendChild(role);
+        item.appendChild(body);
+        historyList.appendChild(item);
+      });
+    }
+
+    function exportHistory() {
+      const blob = new Blob([JSON.stringify({ messages, credits: getCredits(), lang: currentLang }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "avatar-g-history.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toastMsg("✅ Exported", "success");
+    }
+
+    function clearHistory() {
+      localStorage.setItem(STORE_MESSAGES, JSON.stringify([]));
+      messages = [];
+      rerenderChatFromState();
+      renderHistory();
+      toastMsg("✅ Cleared", "success");
+    }
 
     // ===== Toast =====
-    function toastMsg(msg, type = "") {
+    function toastMsg(msg, type="") {
       toast.textContent = msg;
       toast.className = "toast show";
       if (type) toast.classList.add(type);
       setTimeout(() => {
         toast.classList.remove("show");
-        setTimeout(() => toast.className = "toast", 260);
-      }, 2900);
+        setTimeout(() => toast.className = "toast", 250);
+      }, 2600);
     }
 
-    // ===== Requests modal =====
-    function openRequests() {
-      lastFocusEl = document.activeElement;
-      reqOverlay.classList.add("show");
-      reqOverlay.setAttribute("aria-hidden", "false");
-      renderRequests();
-      setTimeout(() => { reqModal.focus(); reqClose.focus(); }, 50);
-    }
-    function closeRequests() {
-      reqOverlay.classList.remove("show");
-      reqOverlay.setAttribute("aria-hidden", "true");
-      if (lastFocusEl && lastFocusEl.focus) lastFocusEl.focus();
-    }
-    function renderRequests() {
-      const data = JSON.parse(localStorage.getItem(STORE_REQ) || "[]");
-      reqList.innerHTML = "";
-      if (!data.length) {
-        const empty = document.createElement("div");
-        empty.className = "hint";
-        empty.textContent = "No requests yet.";
-        reqList.appendChild(empty);
-        return;
-      }
-      data.slice().reverse().forEach((r) => {
-        const item = document.createElement("div");
-        item.style.border = "1px solid rgba(255,255,255,.14)";
-        item.style.background = "rgba(255,255,255,.06)";
-        item.style.borderRadius = "14px";
-        item.style.padding = "12px 12px";
-        item.style.display = "flex";
-        item.style.flexDirection = "column";
-        item.style.gap = "6px";
+    // ===== Events =====
+    langSel.addEventListener("change", (e) => applyLang(e.target.value));
 
-        const top = document.createElement("div");
-        top.style.display = "flex";
-        top.style.justifyContent = "space-between";
-        top.style.gap = "10px";
-        top.style.alignItems = "center";
-
-        const left = document.createElement("div");
-        left.style.fontWeight = "900";
-        left.textContent = `${r.service.toUpperCase()} • ${r.outLang || "-"}`;
-
-        const right = document.createElement("div");
-        right.style.fontSize = "12px";
-        right.style.color = "#93a3b8";
-        right.textContent = new Date(r.ts).toLocaleString();
-
-        top.appendChild(left); top.appendChild(right);
-
-        const g = document.createElement("div");
-        g.style.color = "#e5e7eb";
-        g.style.fontSize = "13px";
-        g.textContent = "Goal: " + (r.goal || "");
-
-        const d = document.createElement("div");
-        d.style.color = "#93a3b8";
-        d.style.fontSize = "12.5px";
-        d.textContent = "Details: " + (r.details || "");
-
-        const c = document.createElement("div");
-        c.style.color = "#22d3ee";
-        c.style.fontWeight = "800";
-        c.style.fontSize = "12.5px";
-        c.textContent = "Cost: " + (r.cost ?? 0) + " credits";
-
-        item.appendChild(top);
-        item.appendChild(g);
-        item.appendChild(d);
-        item.appendChild(c);
-        reqList.appendChild(item);
+    document.querySelectorAll(".serviceCard").forEach(card => {
+      const activate = () => {
+        const service = card.dataset.service;
+        setActiveService(service);
+        toastMsg(tr().serviceActive(service), "success");
+      };
+      card.addEventListener("click", activate);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
       });
-    }
-
-    requestsBtn.addEventListener("click", openRequests);
-    reqClose.addEventListener("click", closeRequests);
-    reqOverlay.addEventListener("click", (e) => { if (e.target === reqOverlay) closeRequests(); });
-
-    exportBtn.addEventListener("click", () => {
-      const data = localStorage.getItem(STORE_REQ) || "[]";
-      const blob = new Blob([data], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "avatar_g_requests.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toastMsg(t().toastExported, "success");
     });
 
-    wipeBtn.addEventListener("click", () => {
-      localStorage.setItem(STORE_REQ, JSON.stringify([]));
-      toastMsg(t().toastWiped, "success");
-      renderRequests();
+    document.querySelectorAll("[data-quick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const service = btn.dataset.quick;
+        setActiveService(service);
+        mainInput.focus();
+      });
+    });
+
+    removeServiceTag.addEventListener("click", () => setActiveService(null));
+
+    sendBtn.addEventListener("click", handleSend);
+    mainInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    mainInput.addEventListener("input", function(){
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
+
+    // Attachments
+    attachBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => {
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) return;
+      const maxFiles = 6;
+      attachments = attachments.concat(files.slice(0, maxFiles - attachments.length)).map(f => ({ name: f.name, size: f.size }));
+      renderAttachments();
+      fileInput.value = "";
+      toastMsg("✅ Attached", "success");
+    });
+
+    // Prompt builder
+    promptBtn.addEventListener("click", openPromptBuilder);
+    promptCloseBtn.addEventListener("click", closePromptBuilder);
+    promptCancelBtn.addEventListener("click", closePromptBuilder);
+    promptUseBtn.addEventListener("click", usePrompt);
+    promptService.addEventListener("change", (e) => renderTemplates(e.target.value));
+
+    // Helper
+    aiHelperBtn.addEventListener("click", openHelper);
+    helperCloseBtn.addEventListener("click", closeHelper);
+    helperCancelBtn.addEventListener("click", closeHelper);
+    helperAskBtn.addEventListener("click", askHelper);
+
+    // History
+    historyBtn.addEventListener("click", openHistory);
+    historyCloseBtn.addEventListener("click", closeHistory);
+    historyCancelBtn.addEventListener("click", closeHistory);
+    exportBtn.addEventListener("click", exportHistory);
+    clearBtn.addEventListener("click", clearHistory);
+
+    // Home (welcome scroll + clear service)
+    function goHome() {
+      setActiveService(null);
+      if (!messages.length) {
+        emptyState.style.display = "";
+        chatContainer.scrollTop = 0;
+      } else {
+        chatContainer.scrollTop = 0;
+      }
+      toastMsg("✅ Home", "success");
+    }
+    homeBtn.addEventListener("click", goHome);
+    homeBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); }
+    });
+
+    // Reset credits (demo)
+    resetCreditsBtn.addEventListener("click", () => {
+      setCredits(CREDIT_DEFAULT);
+      toastMsg("✅ Credits reset", "success");
+    });
+
+    // Overlay click-to-close
+    [promptOverlay, helperOverlay, historyOverlay].forEach(ov => {
+      ov.addEventListener("click", (e) => { if (e.target === ov) ov.classList.contains("show") && (ov === promptOverlay ? closePromptBuilder() : ov === helperOverlay ? closeHelper() : closeHistory()); });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (promptOverlay.classList.contains("show")) closePromptBuilder();
+        if (helperOverlay.classList.contains("show")) closeHelper();
+        if (historyOverlay.classList.contains("show")) closeHistory();
+      }
     });
 
     // ===== Init =====
-    initDemoStorage();
-    applyLang("ka");
+    initStorage();
 
-    console.log("%c👋 Avatar G — AI Workspace", "font-size: 18px; font-weight: 900; color: #22d3ee;");
+    // Load persisted lang/service/messages
+    currentLang = localStorage.getItem(STORE_LANG) || "ka";
+    langSel.value = currentLang;
+    applyLang(currentLang);
+
+    updateCreditsDisplay();
+
+    messages = safeJSONParse(localStorage.getItem(STORE_MESSAGES) || "[]", []);
+    rerenderChatFromState();
+
+    const persistedService = (localStorage.getItem(STORE_SERVICE) || "").trim();
+    if (persistedService) setActiveService(persistedService);
+
+    // Console brand
+    console.log("%c🚀 Avatar G AI Workspace", "font-size:20px;font-weight:900;color:#22d3ee;");
+    console.log("%c✨ Ready to create!", "font-size:14px;color:#93a3b8;");
   </script>
 </body>
-            </html>
+</html>
+```0
