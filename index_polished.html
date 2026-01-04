@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Avatar G — AI Workspace</title>
+  <meta name="description" content="Avatar G — ერთიანი AI Workspace: ფოტო, ვიდეო, ხმა, მუსიკა და ტექსტი ერთ ეკრანზე. სწრაფი, მარტივი და მოქნილი."/>
+  <style>
+    :root{
+      --bg0:#05070a;
+      --bg1:#071018;
+      --panel:rgba(15,25,38,.62);
+      --panel2:rgba(14,22,34,.72);
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(34,211,238,.18);
+      --text:rgba(255,255,255,.90);
+      --muted:rgba(255,255,255,.66);
+      --muted2:rgba(255,255,255,.48);
+      --brand:#22d3ee;
+      --brand2:#3b82f6;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --shadow2: 0 10px 26px rgba(0,0,0,.45);
+      --r16:16px;
+      --r20:20px;
+      --r24:24px;
+      --pad: clamp(14px, 3.4vw, 22px);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font: 500 14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Noto Sans",sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(34,211,238,.20), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(59,130,246,.18), transparent 62%),
+        radial-gradient(1200px 900px at 50% 100%, rgba(124,58,237,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: calc(env(safe-area-inset-top) + var(--pad)) var(--pad) calc(env(safe-area-inset-bottom) + 28px);
+    }
+
+    /* Top bar */
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      backdrop-filter: blur(14px);
+      border-radius: var(--r24);
+      box-shadow: var(--shadow2);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;
+      background: radial-gradient(120% 120% at 30% 20%, rgba(34,211,238,.35), rgba(59,130,246,.22) 45%, rgba(255,255,255,.05) 100%);
+      border: 1px solid rgba(34,211,238,.22);
+      box-shadow: 0 12px 26px rgba(0,0,0,.35);
+      flex: 0 0 auto;
+    }
+    .logo svg{ width:22px;height:22px; opacity:.92; }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .title b{
+      font-size: 15px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .title span{
+      font-size: 12px;
+      color: var(--muted2);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:99px;background:var(--good);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.14);
+    }
+    .lang{
+      border-radius: 14px;
+      padding: 9px 10px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      display:flex;align-items:center;gap:8px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+    }
+    .lang:hover{ transform: translateY(-1px); border-color: rgba(34,211,238,.26); }
+    .lang:active{ transform: translateY(0px) scale(.99); }
+    .lang small{ color: var(--muted2); font-weight:600; }
+
+    /* Cards */
+    .card{
+      margin-top: 14px;
+      border-radius: var(--r24);
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px 10px;
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      color: var(--text);
+    }
+    .seg{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .seg .segPill{
+      border-radius: 999px;
+      padding: 7px 10px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Services */
+    .factories{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+    .factories button{
+      appearance:none;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 12px 12px;
+      text-align:left;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+      min-height: 72px;
+    }
+    .factories button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(34,211,238,.26);
+      background: rgba(34,211,238,.06);
+    }
+    .factories button.active{
+      border-color: rgba(34,211,238,.45);
+      background: linear-gradient(180deg, rgba(34,211,238,.14), rgba(59,130,246,.08));
+      box-shadow: 0 18px 40px rgba(34,211,238,.10);
+    }
+    .svcTop{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .svcTop .name{
+      display:flex;align-items:center;gap:10px;min-width:0;
+    }
+    .svcTop .name span{
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .svcTop .cost{
+      font-weight:700;
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+    }
+    .svcMeta{
+      margin-top: 6px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    /* Prompt */
+    .prompt{
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.02));
+    }
+    .promptTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .promptTop b{ font-size: 13px; letter-spacing:.2px; }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    textarea{
+      width:100%;
+      min-height: 132px;
+      resize: vertical;
+      border-radius: 18px;
+      padding: 14px 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    textarea::placeholder{ color: rgba(255,255,255,.34); }
+    textarea:focus{
+      border-color: rgba(34,211,238,.40);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.12);
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(34,211,238,.26);
+      background: rgba(34,211,238,.06);
+    }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btnPrimary{
+      border-color: rgba(34,211,238,.38);
+      background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(59,130,246,.10));
+      box-shadow: 0 18px 40px rgba(34,211,238,.10);
+    }
+    .btnGhost{ color: var(--muted); }
+    .hint{
+      margin-top: 10px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    /* Login overlay (optional demo lock) */
+    .gate{
+      position: fixed;
+      inset: 0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+      z-index: 50;
+    }
+    .gateCard{
+      width:min(420px, 92vw);
+      border-radius: 22px;
+      border: 1px solid var(--stroke);
+      background: rgba(12,18,28,.86);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .gateCard h3{ margin:0 0 6px; font-size: 15px; }
+    .gateCard p{ margin:0 0 12px; color: var(--muted2); font-size: 12px; }
+    .row{
+      display:flex; gap:10px; align-items:center;
+    }
+    input[type="password"]{
+      width:100%;
+      border-radius: 16px;
+      padding: 12px 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline:none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    input[type="password"]:focus{
+      border-color: rgba(34,211,238,.40);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.12);
+    }
+
+    /* Accessibility */
+    :focus-visible{
+      outline: 3px solid rgba(34,211,238,.42);
+      outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+    }
+
+    /* Mobile */
+    @media (max-width: 560px){
+      .top{ padding: 12px 12px; border-radius: 20px; }
+      .logo{ width:40px; height:40px; border-radius: 14px; }
+      .right{ gap:8px; }
+      .pill{ display:none; } /* keeps header clean on phones */
+      .factories{ grid-template-columns: 1fr; }
+      textarea{ min-height: 150px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- OPTIONAL: enable demo password gate by adding class "on" to .gate in JS -->
+  <div class="gate" id="gate" aria-hidden="true">
+    <div class="gateCard" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+      <h3 id="gateTitle">Password protected</h3>
+      <p>დემო ბლოკია. თუ გინდა რეალური ავტორიზაცია (Email/OTP/Stripe), ვაკეთებთ შემდეგ ეტაპზე.</p>
+      <div class="row">
+        <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+        <button class="btn btnPrimary" id="pwBtn">შესვლა</button>
+      </div>
+      <div class="hint" id="pwHint" style="display:none;color:rgba(239,68,68,.9)">Wrong password</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2.5l7.5 3.6v6.3c0 5.2-3.2 9-7.5 10.9C7.7 21.4 4.5 17.6 4.5 12.4V6.1L12 2.5z" stroke="rgba(255,255,255,.86)" stroke-width="1.4"/>
+            <path d="M9.2 12.3l1.8 1.9 3.9-4.1" stroke="rgba(34,211,238,.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="title">
+          <b>Avatar G — AI Workspace</b>
+          <span>Image • Video • Voice • Music • Text</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="pill" title="Status">
+          <span class="dot" aria-hidden="true"></span>
+          Online
+        </div>
+        <div class="pill" title="Credits and plan">
+          Credits: <b style="color:rgba(255,255,255,.86)">10</b> · Plan: <b style="color:rgba(255,255,255,.86)">Free</b>
+        </div>
+        <button class="lang" id="langBtn" aria-label="Toggle language">
+          🌐 <b>EN</b> <small>toggle</small>
+        </button>
+      </div>
+    </header>
+
+    <section class="card" aria-label="Services">
+      <div class="cardHeader">
+        <h2>სერვისები</h2>
+        <div class="seg">
+          <span class="segPill">Image (სურათი)</span>
+        </div>
+      </div>
+
+      <div class="factories" id="factories">
+        <button class="active" data-id="image" type="button">
+          <div class="svcTop">
+            <div class="name">🖼️ <span>Image (სურათი)</span></div>
+            <div class="cost">Cost 1</div>
+          </div>
+          <div class="svcMeta">ფოტო/იმიჯანი · GPT/DALL·E</div>
+        </button>
+
+        <button data-id="video" type="button">
+          <div class="svcTop">
+            <div class="name">🎬 <span>Video (ვიდეო)</span></div>
+            <div class="cost">Cost 2</div>
+          </div>
+          <div class="svcMeta">ვიდეო სერვისი · Pika/Runway</div>
+        </button>
+
+        <button data-id="voice" type="button">
+          <div class="svcTop">
+            <div class="name">🎙️ <span>Voice (ხმა)</span></div>
+            <div class="cost">Cost 2</div>
+          </div>
+          <div class="svcMeta">ხმის კლონირება · ElevenLabs</div>
+        </button>
+
+        <button data-id="music" type="button">
+          <div class="svcTop">
+            <div class="name">🎵 <span>Music (მუსიკა)</span></div>
+            <div class="cost">Cost 3</div>
+          </div>
+          <div class="svcMeta">Suno/ტრეკი · სტილი + ჟანრი</div>
+        </button>
+
+        <button data-id="text" type="button">
+          <div class="svcTop">
+            <div class="name">✍️ <span>Text (ტექსტი)</span></div>
+            <div class="cost">Cost 1</div>
+          </div>
+          <div class="svcMeta">კოპი/სკრიპტი · Prompt Engineering</div>
+        </button>
+      </div>
+
+      <div class="prompt">
+        <div class="promptTop">
+          <b>სამუშაო სივრცე</b>
+          <span class="badge">Cost: 1</span>
+        </div>
+        <textarea id="prompt" placeholder="მაგ: Tbilisi night cyberpunk, cinematic, ultra realistic..."></textarea>
+
+        <div class="actions">
+          <button class="btn btnPrimary" type="button" id="genBtn">🚀 გენერაცია</button>
+          <button class="btn btnGhost" type="button" id="copyBtn">📋 შედეგების კოპირება</button>
+          <button class="btn btnGhost" type="button" id="resetBtn">↩️ Reset</button>
+        </div>
+
+        <div class="hint">Tip: მოკლე, კონკრეტული prompt უკეთ მუშაობს. (Max 240 chars)</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // UI: service selection highlight + small label updates (demo)
+    const factories = document.getElementById('factories');
+    const prompt = document.getElementById('prompt');
+    const badge = document.querySelector('.badge');
+    const segPill = document.querySelector('.segPill');
+
+    const costs = {
+      image: 1,
+      video: 2,
+      voice: 2,
+      music: 3,
+      text: 1
+    };
+    const labels = {
+      image: "Image (სურათი)",
+      video: "Video (ვიდეო)",
+      voice: "Voice (ხმა)",
+      music: "Music (მუსიკა)",
+      text: "Text (ტექსტი)"
+    };
+
+    let active = "image";
+
+    factories.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      factories.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      active = btn.getAttribute('data-id') || "image";
+      const c = costs[active] ?? 1;
+      badge.textContent = "Cost: " + c;
+      segPill.textContent = labels[active] || "Service";
+      prompt.focus();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      prompt.value = "";
+      prompt.focus();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      const text = prompt.value.trim();
+      if(!text){ return; }
+      try{
+        await navigator.clipboard.writeText(text);
+        // quick toast using title attribute
+        const old = document.title;
+        document.title = "Copied ✓";
+        setTimeout(()=>document.title = old, 900);
+      }catch(e){
+        // fallback
+        prompt.select();
+        document.execCommand('copy');
+      }
+    });
+
+    document.getElementById('genBtn').addEventListener('click', ()=>{
+      // Demo: open external generators later. For now, just confirm action.
+      const old = document.getElementById('genBtn').textContent;
+      document.getElementById('genBtn').textContent = "⚙️ Running…";
+      setTimeout(()=>document.getElementById('genBtn').textContent = old, 900);
+    });
+
+    // Language toggle (demo only)
+    const langBtn = document.getElementById('langBtn');
+    let isEN = true;
+    langBtn.addEventListener('click', ()=>{
+      isEN = !isEN;
+      langBtn.querySelector('b').textContent = isEN ? "EN" : "KA";
+    });
+
+    // OPTIONAL demo password gate (not secure)
+    // If you want it ON, set gate.style.display = "grid"
+    const gate = document.getElementById('gate');
+    const pw = document.getElementById('pw');
+    const pwBtn = document.getElementById('pwBtn');
+    const pwHint = document.getElementById('pwHint');
+    const PASS = "avatarg"; // demo only
+
+    function openGate(){
+      gate.style.display = "grid";
+      gate.setAttribute("aria-hidden","false");
+      setTimeout(()=>pw.focus(), 50);
+    }
+    function closeGate(){
+      gate.style.display = "none";
+      gate.setAttribute("aria-hidden","true");
+      pw.value = "";
+      pwHint.style.display = "none";
+    }
+    pwBtn.addEventListener('click', ()=>{
+      if((pw.value || "").trim() === PASS){ closeGate(); }
+      else { pwHint.style.display = "block"; }
+    });
+    pw.addEventListener('keydown', (e)=>{ if(e.key==="Enter") pwBtn.click(); });
+
+    // openGate(); // uncomment to enable gate
+  </script>
+</body>
+</html>
