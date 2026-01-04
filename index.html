@@ -4,207 +4,1024 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="Avatar G — unified AI Workspace: Avatar, Image, Video, Voice, Music, Text. მარტივი და სწრაფი UI." />
   <title>Avatar G — AI Workspace</title>
-  <meta name="description" content="Avatar G არის თანამედროვე AI Workspace — image, video, voice, music და ტექსტის გენერაცია ერთ სივრცეში." />
-
   <style>
-    :root{
-      --bg0:#060815;
-      --bg1:#0b1020;
-      --glass:rgba(255,255,255,.08);
-      --glass2:rgba(255,255,255,.12);
-      --stroke:rgba(255,255,255,.14);
-      --brand:#22d3ee;
-      --brand2:#3b82f6;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --danger:#ef4444;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
-      --radius:18px;
-      --radius2:26px;
+    :root {
+      --bg0: #060815;
+      --bg1: #0b1020;
+      --glass: rgba(255, 255, 255, .08);
+      --glass2: rgba(255, 255, 255, .12);
+      --stroke: rgba(255, 255, 255, .14);
+      --text: #e5e7eb;
+      --muted: #93a3b8;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .45);
+      --radius: 18px;
+      --brand: #22d3ee;
+      --brand2: #3b82f6;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --cardPad: 18px;
+      --maxW: 980px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(1200px 900px at 20% 10%, rgba(34,211,238,.25), transparent 40%),
-        radial-gradient(900px 700px at 80% 20%, rgba(59,130,246,.18), transparent 45%),
-        linear-gradient(180deg,var(--bg0),var(--bg1));
+        radial-gradient(1000px 600px at 20% 10%, rgba(34, 211, 238, .22), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(59, 130, 246, .18), transparent 55%),
+        radial-gradient(900px 700px at 50% 80%, rgba(34, 197, 94, .10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .app{
-      max-width:1100px;
-      margin:0 auto;
-      padding:24px;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      padding:18px 22px;
-      border-radius:var(--radius2);
-      background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));
-      border:1px solid var(--stroke);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(10px);
+    button {
+      font-family: inherit;
+      cursor: pointer;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
+    .wrap {
+      width: min(var(--maxW), calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 42px;
     }
 
-    .logo{
-      width:46px;
-      height:46px;
-      border-radius:14px;
-      background:linear-gradient(135deg,var(--brand),var(--brand2));
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      color:#001018;
+    /* Top Header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .06));
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      margin-bottom: 20px;
     }
 
-    .status{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      color:var(--muted);
-      font-size:14px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      cursor: pointer;
     }
 
-    .dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:var(--ok);
-      box-shadow:0 0 12px rgba(34,197,94,.8);
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .95));
+      color: #071018;
+      font-weight: 900;
+      box-shadow: 0 12px 40px rgba(34, 211, 238, .18);
+      flex: 0 0 auto;
     }
 
-    .lang{
-      padding:8px 12px;
-      border-radius:12px;
-      border:1px solid var(--stroke);
-      background:var(--glass);
-      color:var(--text);
+    .brandtext {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      line-height: 1.15;
     }
 
-    .grid{
-      margin-top:28px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:18px;
+    .title {
+      font-weight: 800;
+      letter-spacing: .2px;
+      font-size: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .card{
-      padding:22px;
-      border-radius:var(--radius);
-      background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
-      border:1px solid var(--stroke);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(10px);
-      transition:.25s ease;
+    .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .card:hover{
-      transform:translateY(-4px);
-      border-color:var(--brand);
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
     }
 
-    .card h3{
-      margin:0 0 8px 0;
-      font-size:18px;
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 8px 10px;
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+      border-radius: 999px;
     }
 
-    .card p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, .18);
     }
 
-    .footer{
-      margin-top:36px;
-      padding:18px;
-      text-align:center;
-      color:var(--muted);
-      font-size:13px;
+    .select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 36px 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      position: relative;
+      min-width: 60px;
     }
 
-    .btn{
-      margin-top:16px;
-      padding:14px 22px;
-      border-radius:14px;
-      border:none;
-      cursor:pointer;
-      font-weight:600;
-      background:linear-gradient(135deg,var(--brand),var(--brand2));
-      color:#001018;
+    .selectWrap {
+      position: relative;
+    }
+
+    .selectWrap:after {
+      content: "▾";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    /* Grid */
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--stroke);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .06));
+      border-radius: var(--radius);
+      padding: var(--cardPad);
+      box-shadow: 0 18px 70px rgba(0, 0, 0, .35);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      min-height: 106px;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(34, 211, 238, .30);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .07));
+    }
+
+    .card:active {
+      transform: translateY(0);
+    }
+
+    .cardTop {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid var(--stroke);
+      flex: 0 0 auto;
+      font-size: 18px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 850;
+      letter-spacing: .2px;
+    }
+
+    .card p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    .badge {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      font-size: 11px;
+      color: rgba(229, 231, 235, .9);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+      min-height: 98px;
+    }
+
+    /* CTA */
+    .cta {
+      margin: 18px auto 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: .2px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      color: #051018;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .95));
+      box-shadow: 0 20px 70px rgba(34, 211, 238, .18);
+      transition: transform .14s ease, filter .14s ease;
+      min-width: 180px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .footer {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(147, 163, 184, .9);
+      font-size: 12px;
+    }
+
+    /* Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(720px, 100%);
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      box-shadow: 0 28px 120px rgba(0, 0, 0, .55);
+      overflow: hidden;
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modalHead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .modalTitle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .modalTitle strong {
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+
+    .close {
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 800;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+    }
+
+    .modalBody {
+      padding: 14px 16px 16px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12.5px;
+      margin: 0 0 12px;
+      line-height: 1.45;
+    }
+
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      color: rgba(229, 231, 235, .92);
+      font-weight: 800;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px;
+      outline: none;
+      font-size: 13px;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(34, 211, 238, .50);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn2 {
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+
+    .btn2:hover {
+      background: rgba(255, 255, 255, .10);
+    }
+
+    .btnPrimary {
+      border: 0;
+      color: #051018;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .95));
+      box-shadow: 0 18px 60px rgba(34, 211, 238, .18);
+    }
+
+    .btnPrimary:hover {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 1), rgba(59, 130, 246, 1));
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10, 15, 28, .82);
+      border: 1px solid var(--stroke);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 12.5px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 1001;
+      max-width: min(520px, calc(100% - 24px));
+      text-align: center;
+      animation: toastSlideUp 0.3s ease-out;
+    }
+
+    @keyframes toastSlideUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .wide {
+        grid-column: auto;
+      }
+      
+      .formGrid {
+        grid-template-columns: 1fr;
+      }
+      
+      .topbar {
+        padding: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .logo {
+        width: 42px;
+        height: 42px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .row {
+        justify-content: stretch;
+      }
+      
+      .btn2 {
+        flex: 1;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
-
-    <div class="header">
-      <div class="brand">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand" role="button" aria-label="Avatar G Home" tabindex="0" id="homeBtn">
         <div class="logo">G</div>
-        <div>
-          <strong>Avatar G — AI Workspace</strong><br/>
-          <small style="color:var(--muted)">Image • Video • Voice • Music • Text</small>
+        <div class="brandtext">
+          <div class="title" id="t_title">Avatar G — AI Workspace</div>
+          <div class="subtitle" id="t_subtitle">Avatar • Image • Video • Voice • Music • Text</div>
         </div>
       </div>
 
-      <div class="status">
-        <span class="dot"></span> Online
-        <select class="lang">
-          <option>KA</option>
-          <option>EN</option>
-        </select>
-      </div>
-    </div>
+      <div class="right">
+        <div class="status" title="Service status">
+          <span class="dot"></span>
+          <span id="t_status">Online</span>
+        </div>
 
-    <div class="grid">
-      <div class="card">
-        <h3>🖼 Image</h3>
-        <p>ფოტო / დიზაინის გენერაცია</p>
+        <div class="selectWrap" title="Language">
+          <select class="select" id="lang">
+            <option value="ka" selected>KA</option>
+            <option value="en">EN</option>
+          </select>
+        </div>
       </div>
-      <div class="card">
-        <h3>🎬 Video</h3>
-        <p>AI ვიდეო სცენებით</p>
-      </div>
-      <div class="card">
-        <h3>🎙 Voice</h3>
-        <p>ხმის კლონირება</p>
-      </div>
-      <div class="card">
-        <h3>🎵 Music</h3>
-        <p>AI მუსიკის შექმნა</p>
-      </div>
-      <div class="card">
-        <h3>✍️ Text</h3>
-        <p>კოპი / სკრიპტები</p>
-      </div>
-    </div>
+    </header>
 
-    <div style="text-align:center">
-      <button class="btn">დაიწყე Demo</button>
-    </div>
+    <main>
+      <section class="grid" aria-label="Services">
+        <div class="card" data-service="avatar">
+          <div class="badge" id="b_avatar">NEW</div>
+          <div class="cardTop">
+            <div class="icon">🧑‍🎭</div>
+            <div>
+              <h3 id="t_avatar_h">Avatar</h3>
+              <p id="t_avatar_p">ავატარის შექმნა (ფოტო/ვიდეო) + სტილი + სცენარი</p>
+            </div>
+          </div>
+        </div>
 
-    <div class="footer">
-      © 2026 Avatar G • Georgian AI Workspace
-    </div>
+        <div class="card" data-service="image">
+          <div class="badge">AI</div>
+          <div class="cardTop">
+            <div class="icon">🖼️</div>
+            <div>
+              <h3 id="t_image_h">Image</h3>
+              <p id="t_image_p">ფოტო/დიზაინის გენერაცია და რედაქტირება</p>
+            </div>
+          </div>
+        </div>
 
+        <div class="card" data-service="video">
+          <div class="badge">PRO</div>
+          <div class="cardTop">
+            <div class="icon">🎬</div>
+            <div>
+              <h3 id="t_video_h">Video</h3>
+              <p id="t_video_p">AI ვიდეო სცენარები, შორტები, რილსები</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-service="voice">
+          <div class="badge">SAFE</div>
+          <div class="cardTop">
+            <div class="icon">🎤</div>
+            <div>
+              <h3 id="t_voice_h">Voice</h3>
+              <p id="t_voice_p">voiceover + ხმის კლონირება (თანხმობით)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-service="music">
+          <div class="badge">NEW</div>
+          <div class="cardTop">
+            <div class="icon">🎵</div>
+            <div>
+              <h3 id="t_music_h">Music</h3>
+              <p id="t_music_p">AI მუსიკის იდეა, ტექსტი, mood & style</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card wide" data-service="text">
+          <div class="badge">FAST</div>
+          <div class="cardTop">
+            <div class="icon">✍️</div>
+            <div>
+              <h3 id="t_text_h">Text</h3>
+              <p id="t_text_p">კოპირაითინგი, პოსტი, სცენარი, CTA, პრომო</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="cta">
+        <button class="btn" id="demoBtn">დაიწყე Demo</button>
+      </div>
+
+      <div class="footer" id="t_footer">© 2026 Avatar G • Georgian AI Workspace</div>
+    </main>
   </div>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHead">
+        <div class="modalTitle">
+          <span class="icon" id="modalIcon">✨</span>
+          <strong id="modalTitleText">Service</strong>
+        </div>
+        <button class="close" id="closeBtn" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <p class="hint" id="modalHint">
+          შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.
+        </p>
+
+        <div class="formGrid">
+          <div class="field">
+            <label id="l_goal" for="goal">მიზანი</label>
+            <input id="goal" type="text" placeholder="მაგ: Instagram Reel, პროდუქტის პრომო, ავატარის ვიდეო…" />
+          </div>
+
+          <div class="field">
+            <label id="l_lang" for="outLang">ენა</label>
+            <select id="outLang">
+              <option value="ka" selected>ქართული</option>
+              <option value="en">English</option>
+              <option value="ru">Русский</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label id="l_details" for="details">დეტალები / მოთხოვნა</label>
+            <textarea id="details" placeholder="მოკლედ აღწერე: სტილი, ტონი, აუდიტორია, მაგალითები…"></textarea>
+          </div>
+
+          <div class="field">
+            <label id="l_files" for="files">ფაილები (სურვილისამებრ)</label>
+            <input id="files" type="file" multiple />
+          </div>
+
+          <div class="field">
+            <label id="l_notes" for="notes">შენიშვნები</label>
+            <input id="notes" type="text" placeholder="მაგ: brand colors, ლოგო, დრო (6s/10s)…" />
+          </div>
+
+          <div class="field full" id="consentWrap" style="display:none;">
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="consent" style="width: 16px; height: 16px; margin-top: 2px;" />
+              <span id="t_consent">
+                ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn2" id="clearBtn">გასუფთავება</button>
+          <button class="btn2 btnPrimary" id="submitBtn">გაგზავნა</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Done</div>
+
+  <script>
+    // ===== i18n =====
+    const I18N = {
+      ka: {
+        title: "Avatar G — AI Workspace",
+        subtitle: "Avatar • Image • Video • Voice • Music • Text",
+        status: "Online",
+        footer: "© 2026 Avatar G • Georgian AI Workspace",
+        demo: "დაიწყე Demo",
+        new: "NEW",
+        avatarH: "Avatar",
+        avatarP: "ავატარის შექმნა (ფოტო/ვიდეო) + სტილი + სცენარი",
+        imageH: "Image",
+        imageP: "ფოტო/დიზაინის გენერაცია და რედაქტირება",
+        videoH: "Video",
+        videoP: "AI ვიდეო სცენარები, შორტები, რილსები",
+        voiceH: "Voice",
+        voiceP: "voiceover + ხმის კლონირება (თანხმობით)",
+        musicH: "Music",
+        musicP: "AI მუსიკის იდეა, ტექსტი, mood & style",
+        textH: "Text",
+        textP: "კოპირაითინგი, პოსტი, სცენარი, CTA, პრომო",
+
+        modalHint: "შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.",
+        l_goal: "მიზანი",
+        l_lang: "ენა",
+        l_details: "დეტალები / მოთხოვნა",
+        l_files: "ფაილები (სურვილისამებრ)",
+        l_notes: "შენიშვნები",
+        submit: "გაგზავნა",
+        clear: "გასუფთავება",
+        consent: "ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).",
+
+        svcTitles: {
+          avatar: "Avatar — ავატარის შექმნა",
+          image: "Image — გენერაცია/რედაქტირება",
+          video: "Video — ვიდეო სტრუქტურა/სცენარი",
+          voice: "Voice — VO/Cloning (Consent)",
+          music: "Music — მუსიკის იდეა",
+          text: "Text — კოპირაითინგი"
+        },
+        toastSent: "✅ მოთხოვნა შენახულია (Demo). რეალურ ინტეგრაციაზე შემდეგ ეტაპზე დავაერთებთ.",
+        toastCleared: "✅ ფორმა გასუფთავდა.",
+        toastConsent: "⚠️ ხმის კლონირებისთვის საჭიროა Consent."
+      },
+
+      en: {
+        title: "Avatar G — AI Workspace",
+        subtitle: "Avatar • Image • Video • Voice • Music • Text",
+        status: "Online",
+        footer: "© 2026 Avatar G • AI Workspace",
+        demo: "Start Demo",
+        new: "NEW",
+        avatarH: "Avatar",
+        avatarP: "Create an avatar (photo/video) + style + script",
+        imageH: "Image",
+        imageP: "Generate & edit images/design",
+        videoH: "Video",
+        videoP: "AI video scripts, shorts, reels",
+        voiceH: "Voice",
+        voiceP: "Voiceover + voice cloning (with consent)",
+        musicH: "Music",
+        musicP: "Music idea, lyrics, mood & style",
+        textH: "Text",
+        textP: "Copywriting, posts, scripts, CTA, promo",
+
+        modalHint: "Fill the details — we'll capture your request and prepare the result.",
+        l_goal: "Goal",
+        l_lang: "Language",
+        l_details: "Details / Request",
+        l_files: "Files (optional)",
+        l_notes: "Notes",
+        submit: "Submit",
+        clear: "Clear",
+        consent: "I confirm I have permission/consent for voice cloning.",
+
+        svcTitles: {
+          avatar: "Avatar — Create an avatar",
+          image: "Image — Generate/Edit",
+          video: "Video — Script/Structure",
+          voice: "Voice — VO/Cloning (Consent)",
+          music: "Music — Create music idea",
+          text: "Text — Copywriting"
+        },
+        toastSent: "✅ Request saved (Demo). We can connect real integrations next.",
+        toastCleared: "✅ Form cleared.",
+        toastConsent: "⚠️ Consent required for voice cloning."
+      }
+    };
+
+    // ===== UI refs =====
+    const langSel = document.getElementById("lang");
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeBtn");
+    const demoBtn = document.getElementById("demoBtn");
+    const toast = document.getElementById("toast");
+
+    const modalTitle = document.getElementById("modalTitleText");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalHint = document.getElementById("modalHint");
+
+    const goal = document.getElementById("goal");
+    const outLang = document.getElementById("outLang");
+    const details = document.getElementById("details");
+    const files = document.getElementById("files");
+    const notes = document.getElementById("notes");
+    const consentWrap = document.getElementById("consentWrap");
+    const consent = document.getElementById("consent");
+
+    const clearBtn = document.getElementById("clearBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    let currentService = "avatar";
+
+    const serviceMeta = {
+      avatar: { icon: "🧑‍🎭" },
+      image: { icon: "🖼️" },
+      video: { icon: "🎬" },
+      voice: { icon: "🎤" },
+      music: { icon: "🎵" },
+      text: { icon: "✍️" }
+    };
+
+    // ===== Apply language =====
+    function applyLang(code) {
+      const t = I18N[code] || I18N.ka;
+
+      document.documentElement.lang = code;
+
+      document.getElementById("t_title").textContent = t.title;
+      document.getElementById("t_subtitle").textContent = t.subtitle;
+      document.getElementById("t_status").textContent = t.status;
+      document.getElementById("t_footer").textContent = t.footer;
+      demoBtn.textContent = t.demo;
+
+      document.getElementById("b_avatar").textContent = t.new;
+
+      document.getElementById("t_avatar_h").textContent = t.avatarH;
+      document.getElementById("t_avatar_p").textContent = t.avatarP;
+      document.getElementById("t_image_h").textContent = t.imageH;
+      document.getElementById("t_image_p").textContent = t.imageP;
+      document.getElementById("t_video_h").textContent = t.videoH;
+      document.getElementById("t_video_p").textContent = t.videoP;
+      document.getElementById("t_voice_h").textContent = t.voiceH;
+      document.getElementById("t_voice_p").textContent = t.voiceP;
+      document.getElementById("t_music_h").textContent = t.musicH;
+      document.getElementById("t_music_p").textContent = t.musicP;
+      document.getElementById("t_text_h").textContent = t.textH;
+      document.getElementById("t_text_p").textContent = t.textP;
+
+      modalHint.textContent = t.modalHint;
+      document.getElementById("l_goal").textContent = t.l_goal;
+      document.getElementById("l_lang").textContent = t.l_lang;
+      document.getElementById("l_details").textContent = t.l_details;
+      document.getElementById("l_files").textContent = t.l_files;
+      document.getElementById("l_notes").textContent = t.l_notes;
+      submitBtn.textContent = t.submit;
+      clearBtn.textContent = t.clear;
+      document.getElementById("t_consent").textContent = t.consent;
+
+      // Update modal title for currently open service
+      if (serviceMeta[currentService]) {
+        modalTitle.textContent = t.svcTitles[currentService] || "Service";
+      }
+    }
+
+    langSel.addEventListener("change", (e) => applyLang(e.target.value));
+
+    // ===== Modal helpers =====
+    function openModal(service) {
+      currentService = service;
+
+      const code = langSel.value;
+      const t = I18N[code] || I18N.ka;
+
+      modalIcon.textContent = (serviceMeta[service]?.icon || "✨");
+      modalTitle.textContent = t.svcTitles[service] || "Service";
+
+      // Show consent checkbox only for voice
+      if (service === "voice") {
+        consentWrap.style.display = "block";
+      } else {
+        consentWrap.style.display = "none";
+        consent.checked = false;
+      }
+
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
+
+      // UX: preload goal placeholder
+      const placeholders = {
+        avatar: code === "en" ? "e.g., Talking avatar, business intro, product pitch" : "მაგ: სასაუბრო ავატარი, ბიზნეს ვიდეო, პროდუქტის pitch",
+        image: code === "en" ? "e.g., poster, logo tweak, product image" : "მაგ: პოსტერი, ლოგოს შეცვლა, პროდუქტის ფოტო",
+        video: code === "en" ? "e.g., 6s Reel, 15s ad, storyboard" : "მაგ: 6წ Reel, 15წ რეკლამა, storyboard",
+        voice: code === "en" ? "e.g., Georgian VO, calm tone, 10s CTA" : "მაგ: ქართული VO, მშვიდი ტონი, 10წ CTA",
+        music: code === "en" ? "e.g., upbeat, NY vibe, brand jingle" : "მაგ: ენერგიული, New Year vibe, ბრენდ ჯინგლი",
+        text: code === "en" ? "e.g., landing copy, ad headline, CTA" : "მაგ: ლენდინგ ტექსტი, სათაური, CTA"
+      };
+
+      goal.placeholder = placeholders[service] || goal.placeholder;
+
+      // Clear previous inputs (except language)
+      goal.value = "";
+      details.value = "";
+      notes.value = "";
+      files.value = "";
+
+      // Focus
+      setTimeout(() => goal.focus(), 60);
+    }
+
+    function closeModal() {
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    closeBtn.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("show")) closeModal();
+    });
+
+    // Cards click
+    document.querySelectorAll(".card").forEach(card => {
+      card.addEventListener("click", () => {
+        openModal(card.dataset.service);
+      });
+    });
+
+    // Demo button opens avatar by default
+    demoBtn.addEventListener("click", () => openModal("avatar"));
+
+    // Clear
+    clearBtn.addEventListener("click", () => {
+      goal.value = "";
+      details.value = "";
+      notes.value = "";
+      files.value = "";
+      consent.checked = false;
+
+      const code = langSel.value;
+      const t = I18N[code] || I18N.ka;
+      toastMsg(t.toastCleared || "Cleared.");
+    });
+
+    // Submit (Demo local save)
+    submitBtn.addEventListener("click", () => {
+      // Voice consent check
+      if (currentService === "voice" && !consent.checked) {
+        const code = langSel.value;
+        const t = I18N[code] || I18N.ka;
+        toastMsg(t.toastConsent || "Consent required.");
+        return;
+      }
+
+      const payload = {
+        ts: new Date().toISOString(),
+        service: currentService,
+        goal: goal.value.trim(),
+        outLang: outLang.value,
+        details: details.value.trim(),
+        notes: notes.value.trim(),
+        filesCount: (files.files || []).length
+      };
+
+      try {
+        const key = "avatar_g_requests";
+        const existing = JSON.parse(localStorage.getItem(key) || "[]");
+        existing.push(payload);
+        localStorage.setItem(key, JSON.stringify(existing));
+      } catch (err) {
+        console.log("Local storage error (demo mode):", err);
+      }
+
+      const t = I18N[langSel.value] || I18N.ka;
+      toastMsg(t.toastSent);
+      setTimeout(() => closeModal(), 800);
+    });
+
+    function toastMsg(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    // Home click (smooth scroll top)
+    document.getElementById("homeBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    document.getElementById("homeBtn").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    // Form file input styling
+    files.addEventListener("change", function() {
+      const label = document.querySelector('[for="files"]');
+      if (this.files.length > 0) {
+        label.innerHTML = `ფაილები (${this.files.length} არჩეული)`;
+      }
+    });
+
+    // Initialize with Georgian language
+    applyLang("ka");
+
+    // Add service stats to localStorage (demo)
+    if (!localStorage.getItem('avatar_g_requests')) {
+      localStorage.setItem('avatar_g_requests', JSON.stringify([]));
+    }
+  </script>
 </body>
-</html>
+  </html>
