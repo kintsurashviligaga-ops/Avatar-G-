@@ -50,3 +50,8 @@
 ---
 
 © 2026 Avatar G — Georgian AI Workspace 🇬🇪
+
+
+
+## 🌐 Live Demo
+👉 https://kintsurashviligaga-ops.github.io/Avatar-G-/
