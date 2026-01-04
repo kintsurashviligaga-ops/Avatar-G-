@@ -11,7 +11,7 @@
 - 🖼️ **Image** — AI სურათების და დიზაინის გენერაცია  
 - 🎬 **Video** — მოკლე AI ვიდეო სცენების შექმნა  
 - 🎙️ **Voice** — ხმის გენერაცია და voiceover ტექსტები  
-- 🎵 **Music** — AI მუსიკის შექმნა (Suno-ready prompts)  
+- 🎵 **Music** — AI მუსიკის შექმნა  
 - ✍️ **Text** — რეკლამა, სკრიპტები, copywriting
 
 ---
@@ -28,17 +28,15 @@
 
 ## 🌐 Live Demo
 
-👉 **GitHub Pages:**  
-https://kintsurashviligaga-ops.github.io/Avatar-G-/
+👉 https://kintsurashviligaga-ops.github.io/Avatar-G-/
 
 ---
 
 ## 🛠️ ტექნოლოგიები
 
-- Pure **HTML / CSS / JavaScript**
-- GitHub Pages hosting
-- Zero backend (Demo mode)
-- Mobile-first UI
+- HTML / CSS / JavaScript  
+- GitHub Pages  
+- Mobile-first UI  
 
 ---
 
@@ -51,5 +49,4 @@ https://kintsurashviligaga-ops.github.io/Avatar-G-/
 
 ---
 
-## © 2026 Avatar G  
-Georgian AI Workspace • Built with vision in Georgia 🇬🇪
+© 2026 Avatar G — Georgian AI Workspace 🇬🇪
