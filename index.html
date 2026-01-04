@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html><!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>Avatar G — AI Workspace</title>
+
+  <!-- NOTE: თუ რომელიმე პლატფორმა (Cloud/Host) სკრიპტებს ბლოკავს, შეგიძლია ეს CSP ხაზი დროებით წაშალო -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; img-src 'self' data: https:; media-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+
+  <style>
+    :root{
+      --bg0:#060815;
+      --bg1:#0b1020;
+      --glass:rgba(255,255,255,.08);
+      --glass2:rgba(255,255,255,.12);
+      --stroke:rgba(255,255,255,.14);
+      --brand:#22d3ee;
+      --brand2:#3b82f6;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:26px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans Georgian", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 20% 10%, rgba(34,211,238,.25), transparent 55%),
+        radial-gradient(1100px 900px at 80% 20%, rgba(59,130,246,.22), transparent 55%),
+        radial-gradient(900px 900px at 60% 90%, rgba(236,72,153,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 14px 70px;
+    }
+
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(10,14,30,.72), rgba(10,14,30,.45));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      padding: 14px 14px;
+      box-shadow: var(--shadow);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .badge{
+      width:44px; height:44px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(34,211,238,.25), rgba(59,130,246,.25));
+      border: 1px solid rgba(34,211,238,.25);
+      box-shadow: 0 10px 28px rgba(34,211,238,.10);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      font-size: 16px;
+      line-height: 1.2;
+      margin:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .brand .sub{
+      font-size: 12px; color:var(--muted); margin-top:2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    .status{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+      color: var(--text);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.15);
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      min-height: 40px;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn.primary{
+      border-color: rgba(34,211,238,.35);
+      background: linear-gradient(135deg, rgba(34,211,238,.20), rgba(59,130,246,.18));
+    }
+
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow:hidden;
+    }
+    .card-h{
+      padding: 14px 14px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .card-h h2{
+      margin:0;
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .card-b{ padding: 14px; }
+
+    .factories{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 420px){
+      .factories{ grid-template-columns: 1fr; }
+    }
+
+    .factory{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      padding: 12px 12px;
+      border-radius: 16px;
+      cursor:pointer;
+      min-height: 78px;
+      transition: border-color .2s ease, transform .08s ease, background .2s ease;
+      display:flex; flex-direction:column; gap:6px;
+      outline:none;
+    }
+    .factory:active{ transform: scale(.99); }
+    .factory strong{ font-size: 13px; }
+    .factory small{ color: var(--muted); font-size: 12px; }
+    .factory.active{
+      border-color: rgba(34,211,238,.55);
+      background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.10));
+      box-shadow: 0 18px 40px rgba(34,211,238,.08);
+    }
+
+    textarea{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding: 12px 12px;
+      min-height: 120px;
+      resize: vertical;
+      font-size: 14px;
+      outline:none;
+    }
+    textarea:focus{
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.12);
+    }
+
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .row .btn{ flex: 1 1 auto; }
+    .row .btn.icon{ min-width: 130px; }
+
+    .muted{ color:var(--muted); font-size: 12px; margin: 10px 0 0; }
+
+    .results{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+    @media (max-width: 820px){
+      .results{ grid-template-columns: 1fr; }
+    }
+
+    .res{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      padding: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .res .meta{
+      display:flex; justify-content:space-between; gap:10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .res .preview{
+      height: 160px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      color: rgba(229,231,235,.65);
+      background: linear-gradient(135deg, rgba(34,211,238,.06), rgba(59,130,246,.05));
+    }
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      min-width: 260px;
+      max-width: calc(100vw - 24px);
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(8,10,20,.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 999;
+      font-size: 13px;
+    }
+    .toast.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar" role="banner">
+      <div class="brand">
+        <div class="badge" aria-hidden="true">🛡️</div>
+        <div style="min-width:0">
+          <h1>Avatar G — AI Workspace</h1>
+          <div class="sub">Image • Video • Voice • Music • Text</div>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="pill" aria-label="Status Online">
+          <span class="dot" aria-hidden="true"></span> Online
+        </div>
+        <div class="pill" id="creditsPill">Credits: <strong id="credits">10</strong> | Plan: Free</div>
+        <button class="btn" id="langBtn" type="button" aria-label="Switch language">🌐 KA</button>
+      </div>
+    </div>
+
+    <div class="grid" role="main">
+      <section class="card" aria-label="Factories">
+        <div class="card-h">
+          <h2 id="factoriesTitle">Factories</h2>
+          <div class="pill" title="Active factory"><span id="activeFactoryLabel">Image</span></div>
+        </div>
+        <div class="card-b">
+          <div class="factories" id="factories"></div>
+          <p class="muted" id="hintText">
+            აირჩიე სერვისი და ჩაწერე მოთხოვნა. Generate შექმნის demo შედეგს და ჩამოგაკლებს კრედიტებს.
+          </p>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Workspace">
+        <div class="card-h">
+          <h2 id="workspaceTitle">Workspace</h2>
+          <div class="pill" id="costPill">Cost: <strong id="cost">1</strong></div>
+        </div>
+        <div class="card-b">
+          <label class="sr-only" for="prompt" id="promptLabel">Prompt</label>
+          <textarea id="prompt" maxlength="240" placeholder="მაგ: Tbilisi night cyberpunk, cinematic, ultra realistic..."></textarea>
+
+          <div class="row">
+            <button class="btn primary icon" id="genBtn" type="button">🚀 Generate</button>
+            <button class="btn icon" id="clearBtn" type="button">🗑️ Clear Results</button>
+            <button class="btn icon" id="resetBtn" type="button">↩️ Reset</button>
+          </div>
+
+          <p class="muted" id="metaText">Tip: მოკლე, კონკრეტული prompt უკეთ მუშაობს. (Max 240 chars)</p>
+        </div>
+
+        <div class="card-b" style="padding-top:0">
+          <div class="results" id="results" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const i18n = {
+      ka: {
+        factoriesTitle: "სერვისები",
+        workspaceTitle: "სამუშაო სივრცე",
+        hintText: "აირჩიე სერვისი და ჩაწერე მოთხოვნა. Generate შექმნის demo შედეგს და ჩამოგაკლებს კრედიტებს.",
+        metaText: "Tip: მოკლე, კონკრეტული prompt უკეთ მუშაობს. (Max 240 chars)",
+        promptPH: "მაგ: Tbilisi night cyberpunk, cinematic, ultra realistic...",
+        generate: "🚀 გენერაცია",
+        clear: "🗑️ შედეგების გასუფთავება",
+        reset: "↩️ Reset",
+        online: "Online",
+        cost: "ღირებულება",
+        credits: "კრედიტები",
+        plan: "გეგმა",
+        toastGen: "შედეგი შექმნილია (Demo)",
+        toastNoCredits: "კრედიტები არ გყოფნის",
+        toastReset: "ყველაფერი განულდა",
+        toastCleared: "შედეგები გასუფთავდა",
+      },
+      en: {
+        factoriesTitle: "Factories",
+        workspaceTitle: "Workspace",
+        hintText: "Pick a service and type a prompt. Generate creates a demo result and deducts credits.",
+        metaText: "Tip: Short, specific prompts work best. (Max 240 chars)",
+        promptPH: "e.g. Tbilisi night cyberpunk, cinematic, ultra realistic...",
+        generate: "🚀 Generate",
+        clear: "🗑️ Clear Results",
+        reset: "↩️ Reset",
+        online: "Online",
+        cost: "Cost",
+        credits: "Credits",
+        plan: "Plan",
+        toastGen: "Generated (Demo)",
+        toastNoCredits: "Not enough credits",
+        toastReset: "Reset complete",
+        toastCleared: "Results cleared",
+      }
+    };
+
+    const factories = [
+      { id:"image",  name:{ka:"Image (სურათი)", en:"Image"},  cost:1, icon:"🖼️", desc:{ka:"ფოტო/დიზაინი", en:"Photo / design"} },
+      { id:"video",  name:{ka:"Video (ვიდეო)", en:"Video"},  cost:2, icon:"🎬", desc:{ka:"ვიდეო სცენა", en:"Video scene"} },
+      { id:"voice",  name:{ka:"Voice (ხმა)", en:"Voice"},  cost:2, icon:"🎙️", desc:{ka:"ხმის კლონირება", en:"Voice / TTS"} },
+      { id:"music",  name:{ka:"Music (მუსიკა)", en:"Music"},  cost:3, icon:"🎵", desc:{ka:"Suno/ტრეკი", en:"Track / Suno"} },
+      { id:"text",   name:{ka:"Text (ტექსტი)", en:"Text"},   cost:1, icon:"✍️", desc:{ka:"კოპი/სკრიპტი", en:"Copy / script"} },
+    ];
+
+    const $ = (id)=>document.getElementById(id);
+
+    const stateKey = "avatarg_workspace_state_v1";
+    const defaultState = { lang:"ka", credits:10, active:"image", results:[] };
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(stateKey);
+        if(!raw) return {...defaultState};
+        const s = JSON.parse(raw);
+        return {
+          lang: (s.lang==="en"?"en":"ka"),
+          credits: clampInt(s.credits, 0, 9999, 10),
+          active: factories.some(f=>f.id===s.active) ? s.active : "image",
+          results: Array.isArray(s.results) ? s.results.slice(0,50) : []
+        };
+      }catch(e){
+        return {...defaultState};
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(stateKey, JSON.stringify(appState));
+    }
+
+    function clampInt(v,min,max,def){
+      const n = Number(v);
+      if(!Number.isFinite(n)) return def;
+      return Math.max(min, Math.min(max, Math.floor(n)));
+    }
+
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._tm);
+      toast._tm = setTimeout(()=>t.classList.remove("show"), 1400);
+    }
+
+    let appState = loadState();
+
+    function t(key){
+      return i18n[appState.lang][key];
+    }
+
+    function renderFactories(){
+      const root = $("factories");
+      root.innerHTML = "";
+      factories.forEach(f=>{
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "factory" + (appState.active===f.id ? " active":"");
+        btn.setAttribute("data-id", f.id);
+        btn.setAttribute("aria-pressed", appState.active===f.id ? "true":"false");
+        btn.innerHTML = `
+          <strong>${f.icon} ${f.name[appState.lang]}</strong>
+          <small>${f.desc[appState.lang]} • Cost ${f.cost}</small>
+        `;
+        root.appendChild(btn);
+      });
+    }
+
+    function renderHeader(){
+      $("factoriesTitle").textContent = t("factoriesTitle");
+      $("workspaceTitle").textContent = t("workspaceTitle");
+      $("hintText").textContent = t("hintText");
+      $("metaText").textContent = t("metaText");
+      $("prompt").placeholder = t("promptPH");
+
+      $("genBtn").textContent = t("generate");
+      $("clearBtn").textContent = t("clear");
+      $("resetBtn").textContent = t("reset");
+
+      $("credits").textContent = String(appState.credits);
+
+      const f = factories.find(x=>x.id===appState.active);
+      $("activeFactoryLabel").textContent = f ? f.name[appState.lang] : "Image";
+      $("cost").textContent = f ? String(f.cost) : "1";
+
+      $("langBtn").textContent = appState.lang==="ka" ? "🌐 EN" : "🌐 KA";
+    }
+
+    function renderResults(){
+      const root = $("results");
+      root.innerHTML = "";
+      appState.results.slice().reverse().forEach(r=>{
+        const el = document.createElement("div");
+        el.className = "res";
+        const when = new Date(r.ts).toLocaleString();
+        el.innerHTML = `
+          <div class="meta">
+            <span>#${r.id} • ${r.type}</span>
+            <span>${when} • -${r.cost}</span>
+          </div>
+          <div class="preview">${r.preview}</div>
+          <div class="meta"><span>${r.prompt}</span></div>
+        `;
+        root.appendChild(el);
+      });
+    }
+
+    function setActive(id){
+      if(!factories.some(f=>f.id===id)) return;
+      appState.active = id;
+      saveState();
+      render();
+    }
+
+    function sanitizePrompt(p){
+      p = (p||"").trim().slice(0,240);
+      return p.replace(/\s+/g," ");
+    }
+
+    function generate(){
+      const f = factories.find(x=>x.id===appState.active);
+      const cost = f ? f.cost : 1;
+      if(appState.credits < cost){
+        toast(t("toastNoCredits"));
+        return;
+      }
+      const prompt = sanitizePrompt($("prompt").value);
+      if(!prompt){
+        $("prompt").focus();
+        return;
+      }
+      appState.credits -= cost;
+
+      const id = String(Math.random()).slice(2,8);
+      const preview = f.id==="image" ? "🖼️ Image Placeholder"
+                    : f.id==="video" ? "🎬 Video Placeholder"
+                    : f.id==="voice" ? "🎙️ Voice Placeholder"
+                    : f.id==="music" ? "🎵 Music Placeholder"
+                    : "✍️ Text Placeholder";
+
+      appState.results.push({
+        id,
+        type: f.name[appState.lang],
+        cost,
+        ts: Date.now(),
+        prompt,
+        preview
+      });
+      if(appState.results.length>50) appState.results = appState.results.slice(-50);
+
+      saveState();
+      render();
+      toast(t("toastGen"));
+    }
+
+    function clearResults(){
+      appState.results = [];
+      saveState();
+      render();
+      toast(t("toastCleared"));
+    }
+
+    function resetAll(){
+      appState = {...defaultState};
+      saveState();
+      render();
+      toast(t("toastReset"));
+    }
+
+    function toggleLang(){
+      appState.lang = appState.lang==="ka" ? "en" : "ka";
+      saveState();
+      render();
+    }
+
+    function render(){
+      renderFactories();
+      renderHeader();
+      renderResults();
+    }
+
+    // Events (no inline handlers)
+    $("factories").addEventListener("click", (e)=>{
+      const btn = e.target.closest(".factory");
+      if(!btn) return;
+      setActive(btn.getAttribute("data-id"));
+    });
+
+    $("genBtn").addEventListener("click", generate);
+    $("clearBtn").addEventListener("click", clearResults);
+    $("resetBtn").addEventListener("click", resetAll);
+    $("langBtn").addEventListener("click", toggleLang);
+
+    render();
+  </script>
+</body>
+</html>                                                  </html>
