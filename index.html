@@ -1,1668 +1,584 @@
 <!DOCTYPE html>
-<html lang="ka">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta name="theme-color" content="#0b1020" />
-  <meta name="description" content="Avatar G — საქართველოს პირველი AI Workspace. Chat, Create, Generate - ყველაფერი ერთ სივრცეში." />
-  <meta name="keywords" content="AI, Avatar, Video, Voice, Music, Georgian AI, ქართული AI, AI Workspace" />
-  <meta property="og:title" content="Avatar G — AI Workspace" />
-  <meta property="og:description" content="Georgian AI-powered Media Factory. Professional content generation with AI assistance." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Avatar G — Unified AI Workspace</title>
+  <meta name="description" content="Avatar G is a unified AI workspace: chat + projects + private storage + prompts + voice + video + music. Built for fast production and monetization." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Avatar G — Unified AI Workspace" />
+  <meta property="og:description" content="One window for AI Chat, Projects, Private Storage, Prompts, Voice, Video, Music — built for real work." />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%2322d3ee'/><stop offset='1' stop-color='%233b82f6'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><text x='32' y='41' font-size='30' text-anchor='middle' font-family='Arial' font-weight='900' fill='%23051018'>G</text></svg>">
-  <title>Avatar G — AI Workspace</title>
+  <meta property="og:image" content="https://dummyimage.com/1200x630/0b1220/22d3ee.png&text=Avatar+G" />
 
   <style>
-    :root {
-      --bg0: #060815;
-      --bg1: #0b1020;
-      --bg2: #10172a;
-      --glass: rgba(255, 255, 255, .08);
-      --glass2: rgba(255, 255, 255, .12);
-      --stroke: rgba(255, 255, 255, .14);
-      --strokeHover: rgba(34, 211, 238, .35);
-      --text: #e5e7eb;
-      --textBright: #f9fafb;
-      --muted: #93a3b8;
-      --shadow: 0 24px 80px rgba(0, 0, 0, .45);
-      --shadowHover: 0 28px 90px rgba(0, 0, 0, .55);
+    :root{
+      --bg0:#070b12;
+      --bg1:#0b1220;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(0,0,0,.24);
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.66);
+      --accent:#22d3ee;
+      --accent2:#3b82f6;
+      --good:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 20px 80px rgba(0,0,0,.40);
       --radius: 18px;
-      --radiusSm: 14px;
-      --brand: #22d3ee;
-      --brand2: #3b82f6;
-      --brandGrad: linear-gradient(135deg, rgba(34, 211, 238, .95), rgba(59, 130, 246, .95));
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --purple: #a855f7;
-      --transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-      --transitionFast: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius2: 14px;
+      --max: 1120px;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; height: 100%; }
-    body { height: 100%; overflow: hidden; }
-
-    body {
-      font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif;
-      color: var(--text);
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
       background:
-        radial-gradient(1100px 650px at 18% 8%, rgba(34, 211, 238, .24), transparent 58%),
-        radial-gradient(950px 650px at 82% 18%, rgba(59, 130, 246, .20), transparent 58%),
-        radial-gradient(950px 750px at 50% 85%, rgba(34, 197, 94, .12), transparent 62%),
-        linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
-      background-attachment: fixed;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+        radial-gradient(900px 500px at 20% 10%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(59,130,246,.14), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, rgba(34,211,238,.08), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
     }
-
-    ::selection { background: rgba(34, 211, 238, .25); color: var(--textBright); }
-    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
-    input, textarea, select { font-family: inherit; }
-
-    /* ===== LAYOUT (Fixed mobile 100vh issues) ===== */
-    .app {
-      display: flex;
-      flex-direction: column;
-      height: 100vh; /* fallback */
-      overflow: hidden;
-      min-height: 0;
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:var(--max); margin:0 auto; padding: 18px; }
+    .topbar{
+      position: sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(7,11,18,.55);
+      border-bottom:1px solid rgba(255,255,255,.06);
     }
-    @supports (height: 100dvh) {
-      .app { height: 100dvh; }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding: 12px 18px;
+      max-width:var(--max); margin:0 auto;
     }
-    @supports (height: 100svh) {
-      .app { height: 100svh; }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900; letter-spacing:.2px;
     }
-
-    .header {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--stroke);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .07));
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, .15);
-      z-index: 100;
+    .logo{
+      width:36px; height:36px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(34,211,238,.34), rgba(59,130,246,.22));
+      border:1px solid rgba(34,211,238,.25);
+      box-shadow: 0 10px 30px rgba(34,211,238,.12);
+      display:grid; place-items:center;
+      position:relative; overflow:hidden;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: var(--transitionFast);
-      outline: none;
-      border-radius: 12px;
-      padding: 4px 8px 4px 4px;
-      user-select: none;
+    .logo:before{
+      content:"";
+      position:absolute; inset:-20%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), transparent 55%);
+      transform: rotate(15deg);
     }
-    .brand:hover { background: rgba(255, 255, 255, .06); }
-    .brand:focus-visible { box-shadow: 0 0 0 3px rgba(34, 211, 238, .18); }
-
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: var(--brandGrad);
-      color: #071018;
-      font-weight: 900;
-      font-size: 18px;
-      box-shadow: 0 12px 40px rgba(34, 211, 238, .22);
-      flex: 0 0 auto;
+    .logo svg{ position:relative; z-index:1; opacity:.95 }
+    .nav{
+      display:flex; gap:14px; align-items:center;
+      color:var(--muted); font-weight:700; font-size:13px;
     }
-
-    .brandtext { display: flex; flex-direction: column; line-height: 1.15; }
-    .title { font-weight: 800; font-size: 15px; color: var(--textBright); letter-spacing: .3px; }
-    .subtitle { font-size: 11px; color: var(--muted); }
-
-    .headerRight {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 0 0 auto;
+    .nav a{ padding:8px 10px; border-radius:12px; }
+    .nav a:hover{ background: rgba(255,255,255,.06); color:var(--text); }
+    .actions{ display:flex; gap:10px; align-items:center; }
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border .15s ease;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      user-select:none;
     }
-
-    .creditBadge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, .06);
-      border: 1px solid var(--stroke);
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .btn.primary{
+      border:none;
+      background: linear-gradient(135deg, rgba(34,211,238,.60), rgba(59,130,246,.34));
+      box-shadow: 0 14px 40px rgba(34,211,238,.16);
+    }
+    .btn.primary:hover{ filter: brightness(1.02); }
+    .btn.ghost{
+      background: transparent;
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .hero{
+      padding: 26px 0 10px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .panel{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-left{
+      padding: 18px;
+      position:relative;
+    }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      padding: 7px 10px;
       border-radius: 999px;
-      font-size: 12.5px;
-      font-weight: 800;
-      color: var(--brand);
-      transition: var(--transitionFast);
-      user-select: none;
-      white-space: nowrap;
+      border:1px solid rgba(34,211,238,.25);
+      background: rgba(34,211,238,.10);
+      color: var(--accent);
+      font-weight:900;
+      font-size:12px;
     }
-    .creditBadge:hover { background: rgba(255, 255, 255, .09); }
-    .creditBadge span { color: var(--text); }
-
-    .miniBtn {
-      padding: 9px 12px;
-      background: rgba(255, 255, 255, .06);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 12.5px;
-      color: var(--text);
-      transition: var(--transitionFast);
-      white-space: nowrap;
+    h1{
+      margin: 14px 0 10px;
+      font-size: 36px;
+      line-height: 1.08;
+      letter-spacing: -0.3px;
     }
-    .miniBtn:hover { background: rgba(255, 255, 255, .10); border-color: var(--strokeHover); transform: translateY(-1px); }
-    .miniBtn:active { transform: translateY(0); }
-
-    .selectWrap { position: relative; }
-    .select {
-      appearance: none;
-      padding: 9px 32px 9px 12px;
-      background: rgba(255, 255, 255, .06);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      color: var(--text);
-      font-weight: 800;
-      font-size: 12.5px;
-      cursor: pointer;
-      outline: none;
-      transition: var(--transitionFast);
-    }
-    .select:hover { background: rgba(255, 255, 255, .09); border-color: var(--strokeHover); }
-    .select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(34, 211, 238, .15); }
-    .selectWrap:after {
-      content: "▾";
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
+    .sub{
       color: var(--muted);
-      pointer-events: none;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 14px;
+      max-width: 62ch;
+    }
+    .cta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+    .mini{
+      margin-top: 12px;
+      display:flex; flex-wrap:wrap; gap:10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:700;
+    }
+    .mini span{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+    }
+
+    .hero-right{
+      display:grid;
+      grid-template-rows: auto 1fr;
+    }
+    .demo-head{
+      padding: 14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
+    }
+    .demo-title{
+      font-weight:900; letter-spacing:.2px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .demo-title small{
+      font-size:12px; color: var(--muted); font-weight:800;
+    }
+    .terminal{
+      padding: 14px;
+      background: rgba(0,0,0,.22);
+      height: 100%;
+    }
+    .bubble{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255,255,255,.06);
+      line-height:1.55;
+      font-size: 13px;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+    }
+    .bubble.user{
+      border-color: rgba(34,211,238,.24);
+      background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
+      margin-left: 26px;
+    }
+    .bubble.ai{ margin-right: 26px; }
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top: 18px;
+    }
+    .kpi{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+    }
+    .kpi b{ display:block; font-size: 16px; }
+    .kpi span{ color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .section{ padding: 18px 0; }
+    .section h2{
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.2px;
+    }
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      padding: 14px;
+    }
+    .card h3{ margin:0 0 6px; font-size: 15px; }
+    .card p{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .pricing{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .price{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .price.featured{
+      border-color: rgba(34,211,238,.28);
+      box-shadow: 0 20px 90px rgba(34,211,238,.10);
+      background: linear-gradient(135deg, rgba(34,211,238,.10), rgba(59,130,246,.06));
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      font-weight: 900;
       font-size: 12px;
     }
-
-    .container {
-      flex: 1 1 auto;
-      display: flex;
-      overflow: hidden;
-      position: relative;
-      min-height: 0; /* FIX: allows inner scroll areas */
-      min-width: 0;
+    .price h3{ margin: 10px 0 6px; font-size: 16px; }
+    .amount{
+      font-size: 30px; font-weight: 1000; letter-spacing: -0.4px;
+      margin: 6px 0 8px;
     }
+    .amount small{ font-size: 12px; color: var(--muted); font-weight: 800; }
+    ul{ margin: 10px 0 12px; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .fine{ color: var(--muted); font-size: 12px; line-height: 1.6; }
 
-    .sidebar {
-      flex: 0 0 280px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px;
-      border-right: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .03);
-      overflow-y: auto;
-      min-height: 0; /* FIX */
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+    .faq{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    details{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      padding: 12px;
     }
-
-    .sidebarTitle {
-      font-size: 13px;
+    summary{
+      cursor:pointer;
       font-weight: 900;
+      outline:none;
+    }
+    details p{ color: var(--muted); margin: 10px 0 0; line-height: 1.65; }
+
+    footer{
+      padding: 26px 0 40px;
       color: var(--muted);
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      padding: 0 4px;
+      font-size: 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 22px;
+    }
+    .foot{
+      display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap;
+      align-items:center;
     }
 
-    .serviceCard {
-      padding: 14px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .06));
-      border: 1px solid var(--stroke);
-      border-radius: var(--radiusSm);
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-      user-select: none;
+    /* responsive */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .pricing{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+      .faq{ grid-template-columns: 1fr; }
+      h1{ font-size: 30px; }
+      .nav{ display:none; }
     }
-    .serviceCard:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .08));
-      border-color: var(--strokeHover);
-      transform: translateX(3px);
-    }
-    .serviceCard:active { transform: translateX(1px); }
-    .serviceCard.active {
-      border-color: rgba(34, 211, 238, .55);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .12);
-    }
-
-    .serviceCard::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: var(--brand);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    .serviceCard:hover::before, .serviceCard.active::before { opacity: 1; }
-
-    .serviceTop { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-
-    .serviceIcon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      font-size: 18px;
-      flex: 0 0 auto;
-    }
-
-    .serviceCard h4 {
-      font-size: 14.5px;
-      font-weight: 850;
-      color: var(--textBright);
-      letter-spacing: .2px;
-    }
-
-    .serviceCard p { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-    .serviceBadge {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      font-size: 9px;
-      font-weight: 900;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(34, 211, 238, .2);
-      color: var(--brand);
-      border: 1px solid rgba(34, 211, 238, .3);
-      letter-spacing: .5px;
-      user-select: none;
-    }
-
-    .main {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      min-height: 0; /* FIX */
-      min-width: 0;  /* FIX */
-    }
-
-    .chatContainer {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-height: 0; /* FIX */
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-    }
-
-    .emptyState {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      padding: 40px 20px;
-      text-align: center;
-    }
-
-    .emptyIcon {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      background: var(--brandGrad);
-      font-size: 40px;
-      box-shadow: 0 20px 60px rgba(34, 211, 238, .25);
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .emptyState h2 { font-size: 24px; font-weight: 900; color: var(--textBright); letter-spacing: .3px; }
-
-    .emptyState p {
-      font-size: 14px;
-      color: var(--muted);
-      max-width: 400px;
-      line-height: 1.6;
-    }
-
-    .quickActions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 10px; }
-
-    .quickBtn {
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      transition: var(--transitionFast);
-    }
-    .quickBtn:hover {
-      background: rgba(255, 255, 255, .12);
-      border-color: var(--brand);
-      transform: translateY(-2px);
-    }
-
-    .message {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      animation: messageIn 0.3s ease-out;
-    }
-    @keyframes messageIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .messageAvatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      font-size: 18px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      user-select: none;
-    }
-    .message.user .messageAvatar {
-      background: linear-gradient(135deg, rgba(168, 85, 247, .35), rgba(217, 70, 239, .35));
-      border-color: rgba(168, 85, 247, .4);
-    }
-    .message.assistant .messageAvatar { background: var(--brandGrad); }
-
-    .messageContent { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-
-    .messageMeta { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-    .messageName { font-weight: 800; color: var(--textBright); }
-    .messageTime { color: var(--muted); font-size: 11px; }
-
-    .messageText {
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radiusSm);
-      line-height: 1.6;
-      font-size: 13.5px;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .message.assistant .messageText {
-      background: linear-gradient(135deg, rgba(34, 211, 238, .12), rgba(59, 130, 246, .08));
-      border-color: rgba(34, 211, 238, .25);
-    }
-
-    .inputArea {
-      flex: 0 0 auto;
-      padding: 16px 20px;
-      border-top: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .04);
-      backdrop-filter: blur(12px);
-      padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    }
-
-    .inputWrapper { display: flex; gap: 10px; align-items: flex-end; }
-
-    .inputBox {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radiusSm);
-      transition: var(--transition);
-      min-width: 0;
-    }
-    .inputBox:focus-within {
-      border-color: var(--brand);
-      background: rgba(255, 255, 255, .10);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
-    }
-
-    .inputTop { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-    .serviceTag {
-      padding: 4px 10px;
-      background: rgba(34, 211, 238, .18);
-      border: 1px solid rgba(34, 211, 238, .3);
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 900;
-      color: var(--brand);
-      letter-spacing: .3px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
-    }
-    .serviceTag .costPill{
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      color: var(--text);
-      font-weight: 900;
-      font-size: 10px;
-    }
-
-    .serviceTag button {
-      background: none;
-      color: inherit;
-      padding: 0;
-      width: 14px;
-      height: 14px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      font-size: 10px;
-      transition: var(--transitionFast);
-    }
-    .serviceTag button:hover { background: rgba(239, 68, 68, .25); color: var(--danger); }
-
-    textarea {
-      width: 100%;
-      border: none;
-      background: transparent;
-      color: var(--text);
-      resize: none;
-      outline: none;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 24px;
-      max-height: 120px;
-    }
-    textarea::placeholder { color: var(--muted); }
-
-    .inputActions { display: flex; gap: 6px; align-items: center; }
-
-    .iconBtn {
-      width: 32px;
-      height: 32px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: 10px;
-      font-size: 16px;
-      transition: var(--transitionFast);
-      flex: 0 0 auto;
-      user-select: none;
-    }
-    .iconBtn:hover { background: rgba(255, 255, 255, .12); border-color: var(--brand); transform: translateY(-1px); }
-    .iconBtn:active { transform: translateY(0); }
-
-    .sendBtn {
-      padding: 12px 18px;
-      background: var(--brandGrad);
-      border: none;
-      border-radius: 12px;
-      color: #051018;
-      font-weight: 900;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition);
-      box-shadow: 0 12px 40px rgba(34, 211, 238, .25);
-      flex: 0 0 auto;
-      user-select: none;
-      white-space: nowrap;
-    }
-    .sendBtn:hover { transform: translateY(-2px); box-shadow: 0 16px 50px rgba(34, 211, 238, .35); }
-    .sendBtn:active { transform: translateY(0); }
-    .sendBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-    .aiHelper {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--brandGrad);
-      box-shadow: 0 20px 60px rgba(34, 211, 238, .35);
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-      cursor: pointer;
-      transition: var(--transition);
-      z-index: 999;
-      animation: pulse 2s ease-in-out infinite;
-      border: 0;
-    }
-    .aiHelper:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 24px 70px rgba(34, 211, 238, .45); }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 20px 60px rgba(34, 211, 238, .35); }
-      50% { box-shadow: 0 20px 80px rgba(34, 211, 238, .55); }
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .65);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-      animation: fadeIn 0.25s ease-out;
-    }
-    @keyframes fadeIn { from {opacity:0} to {opacity:1} }
-    .overlay.show { display: flex; }
-
-    .modal {
-      width: min(720px, 100%);
-      max-height: 85vh;
-      overflow-y: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--stroke);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .08));
-      box-shadow: 0 36px 150px rgba(0, 0, 0, .70);
-      backdrop-filter: blur(24px) saturate(180%);
-      animation: modalSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      -webkit-overflow-scrolling: touch;
-    }
-    @keyframes modalSlideIn {
-      from { opacity:0; transform: translateY(-30px) scale(0.96); }
-      to { opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    .modalHead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .05);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    .modalTitle { display: flex; align-items: center; gap: 12px; }
-    .modalTitle strong { font-size: 16px; font-weight: 900; color: var(--textBright); letter-spacing: .3px; }
-
-    .closeBtn {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text);
-      transition: var(--transitionFast);
-      user-select: none;
-    }
-    .closeBtn:hover {
-      background: rgba(239, 68, 68, .18);
-      border-color: rgba(239, 68, 68, .35);
-      color: var(--danger);
-      transform: rotate(90deg);
-    }
-
-    .modalBody { padding: 20px; }
-
-    .hint {
-      padding: 12px 14px;
-      background: rgba(34, 211, 238, .10);
-      border-left: 3px solid var(--brand);
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-      margin-bottom: 18px;
-      white-space: pre-wrap;
-    }
-
-    .formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    .field { display: flex; flex-direction: column; gap: 7px; }
-
-    label { font-size: 12.5px; font-weight: 800; color: var(--textBright); letter-spacing: .2px; }
-
-    input, select {
-      width: 100%;
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radiusSm);
-      color: var(--text);
-      font-size: 13.5px;
-      outline: none;
-      transition: var(--transition);
-    }
-    input:hover, select:hover { background: rgba(255, 255, 255, .11); }
-    input:focus, select:focus {
-      background: rgba(255, 255, 255, .10);
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
-    }
-
-    .promptArea { min-height: 120px; resize: vertical; line-height: 1.6; }
-    .full { grid-column: 1 / -1; }
-
-    .templateList { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-
-    .templateItem {
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: var(--transitionFast);
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      user-select: none;
-    }
-    .templateItem:hover { background: rgba(255, 255, 255, .12); border-color: var(--brand); transform: translateX(3px); }
-
-    .templateItem strong { font-size: 13px; color: var(--textBright); display: block; margin-bottom: 4px; }
-    .templateItem p { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-    .btnRow { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
-
-    .btn {
-      padding: 12px 20px;
-      border-radius: var(--radiusSm);
-      font-weight: 900;
-      font-size: 14px;
-      transition: var(--transition);
-      letter-spacing: .2px;
-      user-select: none;
-    }
-
-    .btnSecondary {
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      color: var(--text);
-    }
-    .btnSecondary:hover { background: rgba(255, 255, 255, .12); border-color: var(--strokeHover); transform: translateY(-1px); }
-
-    .btnPrimary {
-      background: var(--brandGrad);
-      border: none;
-      color: #051018;
-      box-shadow: 0 18px 60px rgba(34, 211, 238, .25);
-    }
-    .btnPrimary:hover { transform: translateY(-2px); box-shadow: 0 22px 70px rgba(34, 211, 238, .35); }
-    .btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 14px 20px;
-      background: rgba(11, 16, 32, .95);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radiusSm);
-      color: var(--text);
-      font-size: 13.5px;
-      font-weight: 700;
-      box-shadow: 0 24px 100px rgba(0, 0, 0, .65);
-      backdrop-filter: blur(16px);
-      display: none;
-      z-index: 1001;
-      max-width: min(560px, calc(100% - 40px));
-      text-align: center;
-      animation: toastSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      white-space: pre-wrap;
-    }
-    @keyframes toastSlideUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(30px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-    .toast.show { display: block; }
-    .toast.success { border-color: rgba(34, 197, 94, .45); background: rgba(34, 197, 94, .18); color: #86efac; }
-    .toast.error { border-color: rgba(239, 68, 68, .45); background: rgba(239, 68, 68, .18); color: #fecaca; }
-    .toast.warning { border-color: rgba(245, 158, 11, .45); background: rgba(245, 158, 11, .18); color: #fde68a; }
-
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, .03); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .15); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .25); }
-
-    @media (max-width: 768px) {
-      .sidebar { flex: 0 0 auto; order: 2; border-right: none; border-top: 1px solid var(--stroke); max-height: 40vh; }
-      .main { order: 1; }
-      .container { flex-direction: column; }
-      .formGrid { grid-template-columns: 1fr; }
-      .aiHelper { width: 52px; height: 52px; font-size: 24px; right: 16px; bottom: 16px; }
-      .header { padding: 12px 12px; }
-      .chatContainer { padding: 14px; }
-      .inputArea { padding: 12px 12px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    }
-
-    .loading { position: relative; pointer-events: none; opacity: .7; }
-    .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 16px;
-      height: 16px;
-      margin: -8px 0 0 -8px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <header class="header">
-      <div class="brand" role="button" tabindex="0" id="homeBtn" aria-label="Go Home">
-        <div class="logo" aria-hidden="true">G</div>
-        <div class="brandtext">
-          <div class="title" id="t_title">Avatar G</div>
-          <div class="subtitle" id="t_subtitle">AI Workspace</div>
+  <!-- CONFIG -->
+  <script>
+    // ✅ Set your real app URL here (where Next.js app lives)
+    window.AVATARG_APP_URL = "YOUR_APP_URL_HERE"; // e.g. https://cloud.ai/avatarg or https://avatarg.app
+    window.AVATARG_CONTACT_EMAIL = "support@avatarg.app";
+  </script>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4Z" stroke="rgba(255,255,255,.92)" stroke-width="1.6"/>
+            <path d="M9 12c1.2-2 4.8-2 6 0" stroke="rgba(34,211,238,.95)" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M10 15c1.1 1 2.9 1 4 0" stroke="rgba(59,130,246,.95)" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:14px">Avatar G</div>
+          <div style="font-size:11px; color: rgba(255,255,255,.60); font-weight:800;">Unified AI Workspace</div>
         </div>
       </div>
 
-      <div class="headerRight">
-        <div class="creditBadge" id="creditBadge">
-          <span>Credits:</span> <strong id="creditNum">100</strong>
-        </div>
-
-        <button class="miniBtn" id="historyBtn" type="button">History</button>
-        <button class="miniBtn" id="resetBtn" type="button">Reset</button>
-
-        <div class="selectWrap">
-          <select class="select" id="lang" aria-label="Language">
-            <option value="ka" selected>KA</option>
-            <option value="en">EN</option>
-          </select>
-        </div>
+      <div class="nav">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
       </div>
-    </header>
 
-    <div class="container">
-      <aside class="sidebar">
-        <div class="sidebarTitle" id="t_services">Services</div>
+      <div class="actions">
+        <button class="btn ghost" id="openAppBtn">Open App</button>
+        <button class="btn primary" id="getStartedBtn">Get Started</button>
+      </div>
+    </div>
+  </div>
 
-        <div class="serviceCard" data-service="avatar" tabindex="0" role="button">
-          <div class="serviceBadge">NEW</div>
-          <div class="serviceTop">
-            <div class="serviceIcon">🧑‍🎭</div>
-            <h4 id="s_avatar">Avatar</h4>
+  <div class="wrap">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="panel hero-left">
+          <span class="badge">⚡ Production-ready • Projects • Private Storage • Billing-ready</span>
+
+          <h1>
+            One Window for <span style="color:var(--accent)">AI Work</span><br/>
+            Chat • Projects • Files • Prompts
+          </h1>
+
+          <p class="sub">
+            Avatar G combines everything into a single workspace:
+            AI chat (7 modes), project isolation, private file storage, and clean organization —
+            built for real execution and monetization.
+          </p>
+
+          <div class="cta-row">
+            <button class="btn primary" id="ctaStart">🚀 Launch Workspace</button>
+            <a class="btn" href="#pricing">💳 View Pricing</a>
+            <a class="btn" href="#features">✨ Explore Features</a>
           </div>
-          <p id="sd_avatar">ავატარის შექმნა AI-ით</p>
-        </div>
 
-        <div class="serviceCard" data-service="image" tabindex="0" role="button">
-          <div class="serviceTop">
-            <div class="serviceIcon">🖼️</div>
-            <h4 id="s_image">Image</h4>
+          <div class="mini">
+            <span>✅ Drag & Drop Uploads</span>
+            <span>✅ R2 Private Storage</span>
+            <span>✅ Projects / Folders</span>
+            <span>✅ Ready for Stripe</span>
           </div>
-          <p id="sd_image">ფოტო გენერაცია/რედაქტირება</p>
-        </div>
 
-        <div class="serviceCard" data-service="video" tabindex="0" role="button">
-          <div class="serviceBadge" style="background: rgba(168, 85, 247, .2); border-color: rgba(168, 85, 247, .3); color: #c084fc;">PRO</div>
-          <div class="serviceTop">
-            <div class="serviceIcon">🎬</div>
-            <h4 id="s_video">Video</h4>
-          </div>
-          <p id="sd_video">ვიდეო სცენარი და შექმნა</p>
-        </div>
-
-        <div class="serviceCard" data-service="voice" tabindex="0" role="button">
-          <div class="serviceTop">
-            <div class="serviceIcon">🎤</div>
-            <h4 id="s_voice">Voice</h4>
-          </div>
-          <p id="sd_voice">ხმის გენერაცია და კლონირება</p>
-        </div>
-
-        <div class="serviceCard" data-service="music" tabindex="0" role="button">
-          <div class="serviceTop">
-            <div class="serviceIcon">🎵</div>
-            <h4 id="s_music">Music</h4>
-          </div>
-          <p id="sd_music">მუსიკის შექმნა AI-ით</p>
-        </div>
-
-        <div class="serviceCard" data-service="text" tabindex="0" role="button">
-          <div class="serviceTop">
-            <div class="serviceIcon">✍️</div>
-            <h4 id="s_text">Text</h4>
-          </div>
-          <p id="sd_text">ტექსტის გენერაცია და რედაქტირება</p>
-        </div>
-      </aside>
-
-      <main class="main">
-        <div class="chatContainer" id="chatContainer">
-          <div class="emptyState" id="emptyState">
-            <div class="emptyIcon">🤖</div>
-            <h2 id="t_welcome">გამარჯობა! 👋</h2>
-            <p id="t_welcomeText">
-              მოგესალმებით Avatar G AI Workspace-ში.<br/>
-              აირჩიეთ სერვისი და დაიწყეთ შექმნა.
-            </p>
-            <div class="quickActions">
-              <button class="quickBtn" data-quick="avatar" id="q_avatar">შექმენი ავატარი</button>
-              <button class="quickBtn" data-quick="video" id="q_video">გააკეთე ვიდეო</button>
-              <button class="quickBtn" data-quick="text" id="q_text">დაწერე ტექსტი</button>
+          <div class="kpis">
+            <div class="kpi">
+              <b>7 Modes</b>
+              <span>Chat • Avatar • Voice • Music • Video • Photo • Marketing</span>
+            </div>
+            <div class="kpi">
+              <b>Project Isolation</b>
+              <span>Every client/project separated & clean</span>
+            </div>
+            <div class="kpi">
+              <b>Private Storage</b>
+              <span>Signed URLs • Delete • Preview</span>
             </div>
           </div>
         </div>
 
-        <div class="inputArea">
-          <div class="inputWrapper">
-            <div class="inputBox">
-              <div class="inputTop" id="serviceTagContainer" style="display:none;">
-                <div class="serviceTag" id="activeServiceTag">
-                  <span id="tagServiceName">Service</span>
-                  <span class="costPill" id="tagCost">Cost: 0</span>
-                  <button type="button" id="removeServiceTag" aria-label="Remove">✕</button>
-                </div>
-              </div>
-
-              <textarea id="mainInput" placeholder="რას შევქმნათ დღეს? აღწერეთ თქვენი იდეა..." rows="1"></textarea>
-
-              <div class="inputActions">
-                <button class="iconBtn" id="attachBtn" type="button" title="Attach" aria-label="Attach files">📎</button>
-                <button class="iconBtn" id="promptBtn" type="button" title="Prompt Builder" aria-label="Open prompt builder">✨</button>
-              </div>
-              <input id="fileInput" type="file" multiple style="display:none;" />
+        <div class="panel hero-right">
+          <div class="demo-head">
+            <div class="demo-title">
+              <div>💬 Live Workflow Preview</div>
+              <small>What it feels like</small>
             </div>
+          </div>
 
-            <button class="sendBtn" id="sendBtn" type="button">
-              <span id="t_send">გაგზავნა</span>
-              <span>→</span>
-            </button>
+          <div class="terminal" id="demo">
+            <div class="bubble ai">
+              👋 Hi! I’m Avatar G Workspace.<br/>
+              Choose a service and tell me what you want:
+              <br/>• Prompt packs • Scripts • Video storyboards • Branding • Growth
+              <br/><br/>📎 Drag & Drop files to secure storage.
+            </div>
+            <div class="bubble user">Create a project: “GAS Empire Video Campaign”.</div>
+            <div class="bubble ai">✅ Done. Upload your assets and I’ll generate: scripts, prompts, storyboard + delivery pack.</div>
+            <div class="bubble user">Upload 3 images + a PDF and organize them.</div>
+            <div class="bubble ai">✅ Uploaded to private storage and saved inside your project folder. Ready for generation pipeline.</div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
 
-    <button class="aiHelper" id="aiHelperBtn" type="button" aria-label="AI Helper" title="AI Assistant">
-      🤖
-    </button>
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <h2>✨ What you get</h2>
+      <div class="grid3">
+        <div class="card">
+          <h3>📁 Projects / Folders</h3>
+          <p>Create unlimited organized workspaces (plan-based). Switch instantly and keep assets isolated.</p>
+        </div>
+        <div class="card">
+          <h3>🔒 Private File Storage</h3>
+          <p>Secure uploads, thumbnails, signed preview links, and delete controls — production patterns.</p>
+        </div>
+        <div class="card">
+          <h3>⚡ Unified AI Chat</h3>
+          <p>One chat window, multiple service modes: Avatar, Voice, Music, Video, Photo, Marketing.</p>
+        </div>
+        <div class="card">
+          <h3>🎬 Prompt + Pipeline Ready</h3>
+          <p>Suno / Pika / Runway prompts, scene breakdowns, scripts, and export-friendly structure.</p>
+        </div>
+        <div class="card">
+          <h3>💳 Monetization Ready</h3>
+          <p>Plans, upgrades, usage limits, and team tiers can be enforced immediately.</p>
+        </div>
+        <div class="card">
+          <h3>🏢 Enterprise Foundation</h3>
+          <p>Designed to add auth, billing, teams, audit logs, and compliance without rewrites.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section" id="pricing">
+      <h2>💳 Pricing</h2>
+      <p class="sub" style="margin-top:-4px">
+        Simple plans. Start free, upgrade when you scale. (Prices are placeholders — connect Stripe later.)
+      </p>
+
+      <div class="pricing">
+        <div class="price">
+          <span class="pill">FREE</span>
+          <h3>Starter</h3>
+          <div class="amount">$0 <small>/ month</small></div>
+          <ul>
+            <li>Up to <b>2</b> projects</li>
+            <li>Private uploads (basic)</li>
+            <li>7 service modes</li>
+            <li>Standard generation workflow</li>
+          </ul>
+          <button class="btn primary" style="width:100%" id="freeBtn">Start Free</button>
+          <div class="fine">Best for testing and first clients.</div>
+        </div>
+
+        <div class="price featured">
+          <span class="pill" style="border-color: rgba(34,211,238,.28); color: var(--accent);">PRO • most popular</span>
+          <h3>Pro</h3>
+          <div class="amount">$19 <small>/ month</small></div>
+          <ul>
+            <li>Up to <b>10</b> projects</li>
+            <li>Higher storage + faster workflow</li>
+            <li>Client-ready delivery packs</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn primary" style="width:100%" id="proBtn">Upgrade to Pro</button>
+          <div class="fine">Perfect for creators & agencies.</div>
+        </div>
+
+        <div class="price">
+          <span class="pill">STUDIO</span>
+          <h3>Studio / Enterprise</h3>
+          <div class="amount">$49 <small>/ month</small></div>
+          <ul>
+            <li><b>Unlimited</b> projects</li>
+            <li>Team-ready foundation</li>
+            <li>Advanced usage limits</li>
+            <li>Custom integrations</li>
+          </ul>
+          <button class="btn primary" style="width:100%" id="studioBtn">Upgrade to Studio</button>
+          <div class="fine">For scaling teams & B2B.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <h2>❓ FAQ</h2>
+      <div class="faq">
+        <details>
+          <summary>Is this page the actual app?</summary>
+          <p>This is a fast, clean landing page for GitHub Pages. Your real Next.js app runs separately. Buttons here redirect to your app URL.</p>
+        </details>
+        <details>
+          <summary>Will it work after copy-paste?</summary>
+          <p>Yes. It’s a single HTML file (no dependencies). Commit it and enable GitHub Pages.</p>
+        </details>
+        <details>
+          <summary>How do I connect Stripe?</summary>
+          <p>Stripe lives inside your Next.js backend (API routes + webhooks). This landing only redirects to “Open App / Upgrade”.</p>
+        </details>
+        <details>
+          <summary>Can I edit colors/logo later?</summary>
+          <p>Yes. Everything is in this file: CSS variables at the top control the entire style.</p>
+        </details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="year"></span> Avatar G. All rights reserved.</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="#" id="contactBtn">Contact</a>
+          <a class="btn" href="#" id="openAppBtn2">Open App</a>
+        </div>
+      </div>
+    </footer>
   </div>
-
-  <!-- Prompt Builder Modal -->
-  <div class="overlay" id="promptOverlay">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Prompt Builder">
-      <div class="modalHead">
-        <div class="modalTitle">
-          <span style="font-size: 24px;">✨</span>
-          <strong id="t_promptBuilder">Prompt Builder</strong>
-        </div>
-        <button class="closeBtn" id="promptCloseBtn" aria-label="Close">✕</button>
-      </div>
-      <div class="modalBody">
-        <div class="hint" id="promptHint">აირჩიეთ template ან შექმენით custom prompt თქვენი სერვისისთვის.</div>
-
-        <div class="formGrid">
-          <div class="field">
-            <label id="l_service">Service</label>
-            <select id="promptService">
-              <option value="">— არჩევა —</option>
-              <option value="avatar">Avatar</option>
-              <option value="image">Image</option>
-              <option value="video">Video</option>
-              <option value="voice">Voice</option>
-              <option value="music">Music</option>
-              <option value="text">Text</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label id="l_style">Style / Tone</label>
-            <select id="promptStyle">
-              <option value="">— არჩევა —</option>
-              <option value="professional">Professional</option>
-              <option value="casual">Casual</option>
-              <option value="creative">Creative</option>
-              <option value="technical">Technical</option>
-            </select>
-          </div>
-
-          <div class="field full">
-            <label id="l_custom">Custom Prompt</label>
-            <textarea id="customPrompt" class="promptArea" placeholder="მაგ: Create a 15-second Instagram Reel with upbeat music..."></textarea>
-          </div>
-        </div>
-
-        <div style="margin: 18px 0;">
-          <label style="margin-bottom: 10px; display: block;" id="l_templates">Templates</label>
-          <div class="templateList" id="templateList"></div>
-        </div>
-
-        <div class="btnRow">
-          <button class="btn btnSecondary" id="promptCancelBtn">Cancel</button>
-          <button class="btn btnPrimary" id="promptUseBtn">Use Prompt</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI Helper Modal -->
-  <div class="overlay" id="helperOverlay">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="AI Helper">
-      <div class="modalHead">
-        <div class="modalTitle">
-          <span style="font-size: 24px;">🤖</span>
-          <strong id="t_aiHelper">AI Helper</strong>
-        </div>
-        <button class="closeBtn" id="helperCloseBtn" aria-label="Close">✕</button>
-      </div>
-      <div class="modalBody">
-        <div class="hint" id="helperHint">გამარჯობა! მე ვარ Avatar G-ის AI ასისტენტი. გეხმარებით იდეების გენერირებასა და prompt-ების შექმნაში.</div>
-
-        <div class="formGrid">
-          <div class="field full">
-            <label id="l_question">რაში გჭირდებათ დახმარება?</label>
-            <textarea id="helperQuestion" class="promptArea" placeholder="მაგ: როგორ შევქმნა ეფექტური Instagram Reel?"></textarea>
-          </div>
-        </div>
-
-        <div class="btnRow">
-          <button class="btn btnSecondary" id="helperCancelBtn">Close</button>
-          <button class="btn btnPrimary" id="helperAskBtn">Ask AI</button>
-        </div>
-
-        <div id="helperResponse" style="margin-top: 18px; display: none;">
-          <label style="margin-bottom: 10px; display: block; font-weight: 800;">AI Response:</label>
-          <div style="padding: 14px; background: rgba(34, 211, 238, .10); border: 1px solid rgba(34, 211, 238, .25); border-radius: 12px; line-height: 1.6; font-size: 13.5px;">
-            <div id="helperResponseText"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- History Modal -->
-  <div class="overlay" id="historyOverlay">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="History">
-      <div class="modalHead">
-        <div class="modalTitle">
-          <span style="font-size: 24px;">🕘</span>
-          <strong>History</strong>
-        </div>
-        <button class="closeBtn" id="historyCloseBtn" aria-label="Close">✕</button>
-      </div>
-      <div class="modalBody">
-        <div class="hint" id="historyHint">აქ ჩანს თქვენი ბოლო ჩატები (localStorage).</div>
-        <div id="historyList" class="templateList"></div>
-        <div class="btnRow">
-          <button class="btn btnSecondary" id="historyClearBtn">Clear History</button>
-          <button class="btn btnPrimary" id="historyOkBtn">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast" role="alert">Done</div>
 
   <script>
-    // ===== Storage & Config =====
-    const STORE_MESSAGES = "avatar_g_messages";
-    const STORE_CREDITS  = "avatar_g_credits";
-    const STORE_LANG     = "avatar_g_lang";
-    const STORE_SERVICE  = "avatar_g_active_service";
+    // ✅ Small helpers
+    const appUrl = (window.AVATARG_APP_URL || "").trim();
+    const email = (window.AVATARG_CONTACT_EMAIL || "").trim();
 
-    const CREDIT_DEFAULT = 100;
-    const CREDIT_COST = { avatar: 20, image: 12, video: 25, voice: 18, music: 10, text: 6 };
-
-    function safeJSONParse(v, fallback) {
-      try { return JSON.parse(v); } catch { return fallback; }
-    }
-
-    function getCredits() {
-      const v = Number(localStorage.getItem(STORE_CREDITS));
-      return Number.isFinite(v) && v >= 0 ? v : CREDIT_DEFAULT;
-    }
-    function setCredits(v) {
-      localStorage.setItem(STORE_CREDITS, String(Math.max(0, Math.floor(v))));
-      updateCreditsDisplay();
-    }
-    function updateCreditsDisplay() {
-      document.getElementById("creditNum").textContent = getCredits();
-    }
-
-    function initStorage() {
-      if (!localStorage.getItem(STORE_MESSAGES)) localStorage.setItem(STORE_MESSAGES, JSON.stringify([]));
-      if (!localStorage.getItem(STORE_CREDITS))  localStorage.setItem(STORE_CREDITS, String(CREDIT_DEFAULT));
-      if (!localStorage.getItem(STORE_LANG))     localStorage.setItem(STORE_LANG, "ka");
-    }
-
-    // ===== i18n =====
-    const I18N = {
-      ka: {
-        title: "Avatar G",
-        subtitle: "AI Workspace",
-        services: "სერვისები",
-        s_avatar: "Avatar",
-        sd_avatar: "ავატარის შექმნა AI-ით",
-        s_image: "Image",
-        sd_image: "ფოტო გენერაცია/რედაქტირება",
-        s_video: "Video",
-        sd_video: "ვიდეო სცენარი და შექმნა",
-        s_voice: "Voice",
-        sd_voice: "ხმის გენერაცია და კლონირება",
-        s_music: "Music",
-        sd_music: "მუსიკის შექმნა AI-ით",
-        s_text: "Text",
-        sd_text: "ტექსტის გენერაცია და რედაქტირება",
-        welcome: "გამარჯობა! 👋",
-        welcomeText: "მოგესალმებით Avatar G AI Workspace-ში.<br/>აირჩიეთ სერვისი და დაიწყეთ შექმნა.",
-        q_avatar: "შექმენი ავატარი",
-        q_video: "გააკეთე ვიდეო",
-        q_text: "დაწერე ტექსტი",
-        send: "გაგზავნა",
-        promptBuilder: "Prompt Builder",
-        promptHint: "აირჩიეთ template ან შექმენით custom prompt თქვენი სერვისისთვის.",
-        aiHelper: "AI Helper",
-        helperHint: "გამარჯობა! მე ვარ Avatar G-ის AI ასისტენტი. გეხმარებით იდეების გენერირებასა და prompt-ების შექმნაში.",
-        l_service: "Service",
-        l_style: "Style / Tone",
-        l_custom: "Custom Prompt",
-        l_templates: "Templates",
-        l_question: "რაში გჭირდებათ დახმარება?",
-        inputPlaceholder: "რას შევქმნათ დღეს? აღწერეთ თქვენი იდეა...",
-        assistantName: "Avatar G AI",
-        userName: "თქვენ",
-        needService: "⚠️ გთხოვთ აირჩიოთ სერვისი",
-        lowCredits: "⚠️ არ გაქვთ საკმარისი კრედიტები",
-        promptEmpty: "⚠️ შეიყვანეთ prompt",
-        promptAdded: "✅ Prompt დაემატა",
-        filesSelected: "✅ ფაილები მონიშნულია:",
-        resetDone: "✅ Reset შესრულდა"
-      },
-      en: {
-        title: "Avatar G",
-        subtitle: "AI Workspace",
-        services: "Services",
-        s_avatar: "Avatar",
-        sd_avatar: "Create AI avatars",
-        s_image: "Image",
-        sd_image: "Generate & edit images",
-        s_video: "Video",
-        sd_video: "Video scripts & creation",
-        s_voice: "Voice",
-        sd_voice: "Voice generation & cloning",
-        s_music: "Music",
-        sd_music: "AI music creation",
-        s_text: "Text",
-        sd_text: "Text generation & editing",
-        welcome: "Hello! 👋",
-        welcomeText: "Welcome to Avatar G AI Workspace.<br/>Choose a service and start creating.",
-        q_avatar: "Create Avatar",
-        q_video: "Make Video",
-        q_text: "Write Text",
-        send: "Send",
-        promptBuilder: "Prompt Builder",
-        promptHint: "Choose a template or create a custom prompt for your service.",
-        aiHelper: "AI Helper",
-        helperHint: "Hi! I'm Avatar G's AI assistant. I can help you with ideas and prompt creation.",
-        l_service: "Service",
-        l_style: "Style / Tone",
-        l_custom: "Custom Prompt",
-        l_templates: "Templates",
-        l_question: "What do you need help with?",
-        inputPlaceholder: "What shall we create today? Describe your idea...",
-        assistantName: "Avatar G AI",
-        userName: "You",
-        needService: "⚠️ Please select a service",
-        lowCredits: "⚠️ Not enough credits",
-        promptEmpty: "⚠️ Enter a prompt",
-        promptAdded: "✅ Prompt added",
-        filesSelected: "✅ Files selected:",
-        resetDone: "✅ Reset done"
+    function goApp(path="") {
+      if (!appUrl || appUrl === "YOUR_APP_URL_HERE") {
+        alert("⚠️ Please set AVATARG_APP_URL in the <script> near the top of this file.\n\nExample:\nwindow.AVATARG_APP_URL = \"https://your-app-domain.com\";");
+        return;
       }
+      const url = appUrl.replace(/\/+$/,"") + path;
+      window.location.href = url;
+    }
+
+    // Buttons
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.getElementById("openAppBtn").onclick = () => goApp("/");
+    document.getElementById("openAppBtn2").onclick = () => goApp("/");
+    document.getElementById("getStartedBtn").onclick = () => goApp("/");
+
+    document.getElementById("ctaStart").onclick = () => goApp("/");
+    document.getElementById("freeBtn").onclick = () => goApp("/?plan=free");
+    document.getElementById("proBtn").onclick = () => goApp("/?plan=pro");
+    document.getElementById("studioBtn").onclick = () => goApp("/?plan=studio");
+
+    document.getElementById("contactBtn").onclick = (e) => {
+      e.preventDefault();
+      if (!email) {
+        alert("Set window.AVATARG_CONTACT_EMAIL at the top (optional).");
+        return;
+      }
+      window.location.href = "mailto:" + email + "?subject=Avatar%20G%20Support";
     };
 
-    // ===== Templates =====
-    const TEMPLATES = {
-      avatar: [
-        { name: "Professional Avatar", prompt: "Create a professional talking avatar for business presentation, neutral background, formal attire" },
-        { name: "Social Media Avatar", prompt: "Casual talking avatar for Instagram/TikTok, trendy background, energetic vibe" },
-        { name: "Product Demo Avatar", prompt: "Avatar presenting a product, enthusiastic tone, demonstration style" }
-      ],
-      image: [
-        { name: "Social Post", prompt: "Create an eye-catching social media image, vibrant colors, modern design" },
-        { name: "Product Photo", prompt: "Professional product photography, clean background, studio lighting" },
-        { name: "Banner Design", prompt: "Web banner design, brand colors, call-to-action focus" }
-      ],
-      video: [
-        { name: "Instagram Reel", prompt: "15-second Instagram Reel, fast-paced, trending music, attention-grabbing" },
-        { name: "Tutorial Video", prompt: "Step-by-step tutorial video, clear instructions, educational tone" },
-        { name: "Promo Video", prompt: "30-second promotional video, highlight key features, persuasive messaging" }
-      ],
-      voice: [
-        { name: "Voiceover - Professional", prompt: "Professional voiceover, clear articulation, authoritative tone" },
-        { name: "Voiceover - Friendly", prompt: "Warm and friendly voiceover, conversational style, approachable tone" },
-        { name: "Narration", prompt: "Documentary-style narration, engaging storytelling, measured pace" }
-      ],
-      music: [
-        { name: "Upbeat Background", prompt: "Upbeat background music, energetic, positive vibes, instrumental" },
-        { name: "Calm Ambient", prompt: "Calm ambient music, relaxing atmosphere, subtle melody" },
-        { name: "Corporate", prompt: "Corporate background music, professional, motivating, modern" }
-      ],
-      text: [
-        { name: "Social Caption", prompt: "Engaging social media caption, emoji usage, call-to-action, hashtags" },
-        { name: "Email Copy", prompt: "Professional email copy, clear structure, persuasive content" },
-        { name: "Ad Copy", prompt: "Attention-grabbing ad copy, benefits-focused, strong CTA" }
-      ]
-    };
-
-    // ===== State =====
-    let currentLang = "ka";
-    let activeService = null;
-    let messages = [];
-
-    // ===== UI =====
-    const langSel = document.getElementById("lang");
-    const chatContainer = document.getElementById("chatContainer");
-    const emptyState = document.getElementById("emptyState");
-    const mainInput = document.getElementById("mainInput");
-    const sendBtn = document.getElementById("sendBtn");
-
-    const serviceTagContainer = document.getElementById("serviceTagContainer");
-    const tagServiceName = document.getElementById("tagServiceName");
-    const tagCost = document.getElementById("tagCost");
-    const removeServiceTag = document.getElementById("removeServiceTag");
-
-    const promptOverlay = document.getElementById("promptOverlay");
-    const promptBtn = document.getElementById("promptBtn");
-    const promptCloseBtn = document.getElementById("promptCloseBtn");
-    const promptCancelBtn = document.getElementById("promptCancelBtn");
-    const promptUseBtn = document.getElementById("promptUseBtn");
-    const promptService = document.getElementById("promptService");
-    const promptStyle = document.getElementById("promptStyle");
-    const customPrompt = document.getElementById("customPrompt");
-    const templateList = document.getElementById("templateList");
-
-    const helperOverlay = document.getElementById("helperOverlay");
-    const aiHelperBtn = document.getElementById("aiHelperBtn");
-    const helperCloseBtn = document.getElementById("helperCloseBtn");
-    const helperCancelBtn = document.getElementById("helperCancelBtn");
-    const helperAskBtn = document.getElementById("helperAskBtn");
-    const helperQuestion = document.getElementById("helperQuestion");
-    const helperResponse = document.getElementById("helperResponse");
-    const helperResponseText = document.getElementById("helperResponseText");
-
-    const historyBtn = document.getElementById("historyBtn");
-    const historyOverlay = document.getElementById("historyOverlay");
-    const historyCloseBtn = document.getElementById("historyCloseBtn");
-    const historyOkBtn = document.getElementById("historyOkBtn");
-    const historyClearBtn = document.getElementById("historyClearBtn");
-    const historyList = document.getElementById("historyList");
-
-    const resetBtn = document.getElementById("resetBtn");
-
-    const attachBtn = document.getElementById("attachBtn");
-    const fileInput = document.getElementById("fileInput");
-
-    const toast = document.getElementById("toast");
-
-    function t() { return I18N[currentLang] || I18N.ka; }
-
-    function applyLang(code) {
-      currentLang = code;
-      localStorage.setItem(STORE_LANG, code);
-      const tr = t();
-
-      document.getElementById("t_title").textContent = tr.title;
-      document.getElementById("t_subtitle").textContent = tr.subtitle;
-      document.getElementById("t_services").textContent = tr.services;
-
-      document.getElementById("s_avatar").textContent = tr.s_avatar;
-      document.getElementById("sd_avatar").textContent = tr.sd_avatar;
-      document.getElementById("s_image").textContent = tr.s_image;
-      document.getElementById("sd_image").textContent = tr.sd_image;
-      document.getElementById("s_video").textContent = tr.s_video;
-      document.getElementById("sd_video").textContent = tr.sd_video;
-      document.getElementById("s_voice").textContent = tr.s_voice;
-      document.getElementById("sd_voice").textContent = tr.sd_voice;
-      document.getElementById("s_music").textContent = tr.s_music;
-      document.getElementById("sd_music").textContent = tr.sd_music;
-      document.getElementById("s_text").textContent = tr.s_text;
-      document.getElementById("sd_text").textContent = tr.sd_text;
-
-      document.getElementById("t_welcome").textContent = tr.welcome;
-      document.getElementById("t_welcomeText").innerHTML = tr.welcomeText;
-      document.getElementById("q_avatar").textContent = tr.q_avatar;
-      document.getElementById("q_video").textContent = tr.q_video;
-      document.getElementById("q_text").textContent = tr.q_text;
-
-      document.getElementById("t_send").textContent = tr.send;
-      mainInput.placeholder = tr.inputPlaceholder;
-
-      document.getElementById("t_promptBuilder").textContent = tr.promptBuilder;
-      document.getElementById("promptHint").textContent = tr.promptHint;
-      document.getElementById("t_aiHelper").textContent = tr.aiHelper;
-      document.getElementById("helperHint").textContent = tr.helperHint;
-
-      document.getElementById("l_service").textContent = tr.l_service;
-      document.getElementById("l_style").textContent = tr.l_style;
-      document.getElementById("l_custom").textContent = tr.l_custom;
-      document.getElementById("l_templates").textContent = tr.l_templates;
-      document.getElementById("l_question").textContent = tr.l_question;
-
-      rerenderChatFromState(); // names update
-    }
-
-    function setActiveService(service) {
-      activeService = service || null;
-      localStorage.setItem(STORE_SERVICE, activeService || "");
-      document.querySelectorAll(".serviceCard").forEach(c => c.classList.toggle("active", c.dataset.service === activeService));
-
-      if (activeService) {
-        serviceTagContainer.style.display = "flex";
-        tagServiceName.textContent = activeService.toUpperCase();
-        tagCost.textContent = "Cost: " + (CREDIT_COST[activeService] || 0);
-
-        mainInput.focus();
-      } else {
-        serviceTagContainer.style.display = "none";
-      }
-    }
-
-    function addMessage(role, content) {
-      const msg = { role, content, timestamp: new Date().toISOString() };
-      messages.push(msg);
-      localStorage.setItem(STORE_MESSAGES, JSON.stringify(messages));
-      renderMessage(msg);
-    }
-
-    function renderMessage(msg) {
-      const tr = t();
-
-      const messageEl = document.createElement("div");
-      messageEl.className = `message ${msg.role}`;
-
-      const avatar = document.createElement("div");
-      avatar.className = "messageAvatar";
-      avatar.textContent = msg.role === "user" ? "👤" : "🤖";
-
-      const contentDiv = document.createElement("div");
-      contentDiv.className = "messageContent";
-
-      const meta = document.createElement("div");
-      meta.className = "messageMeta";
-
-      const name = document.createElement("span");
-      name.className = "messageName";
-      name.textContent = msg.role === "user" ? tr.userName : tr.assistantName;
-
-      const time = document.createElement("span");
-      time.className = "messageTime";
-      time.textContent = new Date(msg.timestamp).toLocaleTimeString();
-
-      meta.appendChild(name);
-      meta.appendChild(time);
-
-      const text = document.createElement("div");
-      text.className = "messageText";
-      text.textContent = msg.content;
-
-      contentDiv.appendChild(meta);
-      contentDiv.appendChild(text);
-
-      messageEl.appendChild(avatar);
-      messageEl.appendChild(contentDiv);
-
-      if (emptyState && emptyState.style.display !== "none") emptyState.style.display = "none";
-      chatContainer.appendChild(messageEl);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function rerenderChatFromState() {
-      chatContainer.innerHTML = "";
-      chatContainer.appendChild(emptyState);
-
-      if (messages.length === 0) {
-        emptyState.style.display = "flex";
-        return;
-      }
-      emptyState.style.display = "none";
-      messages.forEach(renderMessage);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function handleSend() {
-      const text = mainInput.value.trim();
-      if (!text) return;
-
-      const tr = t();
-
-      if (!activeService) {
-        toastMsg(tr.needService, "warning");
-        return;
-      }
-
-      const credits = getCredits();
-      const cost = CREDIT_COST[activeService] || 0;
-      if (credits < cost) {
-        toastMsg(tr.lowCredits, "warning");
-        return;
-      }
-
-      addMessage("user", text);
-      mainInput.value = "";
-      mainInput.style.height = "auto";
-
-      sendBtn.disabled = true;
-      sendBtn.classList.add("loading");
-
-      setTimeout(() => {
-        const response = generateAIResponse(activeService, text);
-        addMessage("assistant", response);
-        setCredits(credits - cost);
-
-        sendBtn.disabled = false;
-        sendBtn.classList.remove("loading");
-        toastMsg("✅ Done! Credits: " + getCredits(), "success");
-      }, 850);
-    }
-
-    function generateAIResponse(service, userText) {
-      const tr = t();
-      const responses = {
-        avatar: `${tr.assistantName} შექმნის ავატარს შენი მოთხოვნით: "${userText}".`,
-        image: `${tr.assistantName} ამზადებს ფოტოს: "${userText}".`,
-        video: `${tr.assistantName} ქმნის ვიდეოს თქვენი იდეით: "${userText}".`,
-        voice: `${tr.assistantName} გენერირებს ხმას: "${userText}".`,
-        music: `${tr.assistantName} ქმნის მუსიკას: "${userText}".`,
-        text: `${tr.assistantName} წერს ტექსტს: "${userText}".`
-      };
-      return responses[service] || `${tr.assistantName} მუშაობს შენს მოთხოვნაზე.`;
-    }
-
-    function openPromptBuilder() {
-      promptOverlay.classList.add("show");
-      if (activeService) {
-        promptService.value = activeService;
-        renderTemplates(activeService);
-      }
-      customPrompt.focus();
-    }
-    function closePromptBuilder() { promptOverlay.classList.remove("show"); }
-
-    function renderTemplates(service) {
-      templateList.innerHTML = "";
-      if (!service || !TEMPLATES[service]) return;
-
-      TEMPLATES[service].forEach(tpl => {
-        const item = document.createElement("div");
-        item.className = "templateItem";
-        item.innerHTML = `
-          <div style="flex:1;">
-            <strong>${tpl.name}</strong>
-            <p>${tpl.prompt}</p>
-          </div>
-        `;
-        item.addEventListener("click", () => { customPrompt.value = tpl.prompt; });
-        templateList.appendChild(item);
-      });
-    }
-
-    function usePrompt() {
-      const tr = t();
-      const base = customPrompt.value.trim();
-      if (!base) { toastMsg(tr.promptEmpty, "warning"); return; }
-
-      const style = promptStyle.value;
-      const service = promptService.value || activeService;
-
-      let finalPrompt = base;
-      if (style) finalPrompt = `[Tone: ${style}]\n` + finalPrompt;
-      if (service) finalPrompt = `[Service: ${service}]\n` + finalPrompt;
-
-      mainInput.value = finalPrompt;
-      if (service) setActiveService(service);
-
-      closePromptBuilder();
-      toastMsg(tr.promptAdded, "success");
-      mainInput.focus();
-    }
-
-    function openHelper() {
-      helperOverlay.classList.add("show");
-      helperResponse.style.display = "none";
-      helperQuestion.focus();
-    }
-    function closeHelper() { helperOverlay.classList.remove("show"); }
-
-    function askHelper() {
-      const tr = t();
-      const question = helperQuestion.value.trim();
-      if (!question) { toastMsg("⚠️ " + tr.l_question, "warning"); return; }
-
-      helperAskBtn.classList.add("loading");
-      helperAskBtn.disabled = true;
-
-      setTimeout(() => {
-        const answer =
-`მადლობა კითხვისთვის: "${question}"
-
-✅ სწრაფი ჩეკლისტი:
-1) მიზანი + აუდიტორია (ვინისთვისაა?)
-2) შედეგი (რა უნდა მიიღოს მომხმარებელმა?)
-3) ფორმატი (TikTok/Reels/YouTube, 9:16?)
-4) ტონი (პროფესიონალური/კრეატიული)
-5) მაგალითი (reference)
-
-ახლა გახსენი Prompt Builder და აირჩიე Template — შემდეგ დააზუსტე 2-3 დეტალი.`;
-
-        helperResponseText.textContent = answer;
-        helperResponse.style.display = "block";
-        helperAskBtn.classList.remove("loading");
-        helperAskBtn.disabled = false;
-      }, 700);
-    }
-
-    function toastMsg(msg, type = "") {
-      toast.textContent = msg;
-      toast.className = "toast show";
-      if (type) toast.classList.add(type);
-
-      setTimeout(() => {
-        toast.classList.remove("show");
-        setTimeout(() => toast.className = "toast", 220);
-      }, 2600);
-    }
-
-    // ===== History =====
-    function openHistory() {
-      historyOverlay.classList.add("show");
-      renderHistory();
-    }
-    function closeHistory() { historyOverlay.classList.remove("show"); }
-
-    function renderHistory() {
-      historyList.innerHTML = "";
-      if (!messages.length) {
-        const div = document.createElement("div");
-        div.className = "hint";
-        div.textContent = "No messages yet.";
-        historyList.appendChild(div);
-        return;
-      }
-
-      messages.slice(-30).reverse().forEach(m => {
-        const item = document.createElement("div");
-        item.className = "templateItem";
-        item.innerHTML = `
-          <div style="flex:1;">
-            <strong>${m.role.toUpperCase()} • ${new Date(m.timestamp).toLocaleString()}</strong>
-            <p>${String(m.content).slice(0, 220)}${String(m.content).length > 220 ? "…" : ""}</p>
-          </div>
-        `;
-        historyList.appendChild(item);
-      });
-    }
-
-    function hardReset() {
-      localStorage.removeItem(STORE_MESSAGES);
-      localStorage.removeItem(STORE_CREDITS);
-      localStorage.removeItem(STORE_SERVICE);
-      initStorage();
-
-      messages = [];
-      setCredits(CREDIT_DEFAULT);
-      setActiveService(null);
-      rerenderChatFromState();
-
-      toastMsg(t().resetDone, "success");
-    }
-
-    // ===== Attach (local only) =====
-    attachBtn.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", () => {
-      const tr = t();
-      const files = Array.from(fileInput.files || []);
-      if (!files.length) return;
-      const names = files.map(f => f.name).slice(0, 5).join(", ");
-      toastMsg(tr.filesSelected + "\n" + names + (files.length > 5 ? "…" : ""), "success");
-      fileInput.value = "";
-    });
-
-    // ===== Listeners =====
-    langSel.addEventListener("change", (e) => applyLang(e.target.value));
-
-    document.querySelectorAll(".serviceCard").forEach(card => {
-      card.addEventListener("click", () => {
-        const service = card.dataset.service;
-        setActiveService(service);
-        toastMsg(`✅ ${service.toUpperCase()} ACTIVE`, "success");
-      });
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          card.click();
-        }
-      });
-    });
-
-    document.querySelectorAll("[data-quick]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const service = btn.dataset.quick;
-        setActiveService(service);
-        mainInput.focus();
-      });
-    });
-
-    removeServiceTag.addEventListener("click", () => setActiveService(null));
-
-    sendBtn.addEventListener("click", handleSend);
-    mainInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+    // Smooth anchor scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if (!href || href === "#") return;
         e.preventDefault();
-        handleSend();
-      }
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     });
-
-    mainInput.addEventListener("input", function() {
-      this.style.height = "auto";
-      this.style.height = Math.min(this.scrollHeight, 120) + "px";
-    });
-
-    promptBtn.addEventListener("click", openPromptBuilder);
-    promptCloseBtn.addEventListener("click", closePromptBuilder);
-    promptCancelBtn.addEventListener("click", closePromptBuilder);
-    promptUseBtn.addEventListener("click", usePrompt);
-    promptService.addEventListener("change", (e) => renderTemplates(e.target.value));
-
-    aiHelperBtn.addEventListener("click", openHelper);
-    helperCloseBtn.addEventListener("click", closeHelper);
-    helperCancelBtn.addEventListener("click", closeHelper);
-    helperAskBtn.addEventListener("click", askHelper);
-
-    historyBtn.addEventListener("click", openHistory);
-    historyCloseBtn.addEventListener("click", closeHistory);
-    historyOkBtn.addEventListener("click", closeHistory);
-    historyClearBtn.addEventListener("click", () => {
-      messages = [];
-      localStorage.setItem(STORE_MESSAGES, JSON.stringify([]));
-      rerenderChatFromState();
-      renderHistory();
-      toastMsg("✅ History cleared", "success");
-    });
-
-    resetBtn.addEventListener("click", hardReset);
-
-    promptOverlay.addEventListener("click", (e) => { if (e.target === promptOverlay) closePromptBuilder(); });
-    helperOverlay.addEventListener("click", (e) => { if (e.target === helperOverlay) closeHelper(); });
-    historyOverlay.addEventListener("click", (e) => { if (e.target === historyOverlay) closeHistory(); });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (promptOverlay.classList.contains("show")) closePromptBuilder();
-        if (helperOverlay.classList.contains("show")) closeHelper();
-        if (historyOverlay.classList.contains("show")) closeHistory();
-      }
-    });
-
-    // ===== Init =====
-    initStorage();
-
-    currentLang = localStorage.getItem(STORE_LANG) || "ka";
-    langSel.value = currentLang;
-    applyLang(currentLang);
-
-    updateCreditsDisplay();
-
-    messages = safeJSONParse(localStorage.getItem(STORE_MESSAGES) || "[]", []);
-    rerenderChatFromState();
-
-    const persistedService = (localStorage.getItem(STORE_SERVICE) || "").trim();
-    if (persistedService) setActiveService(persistedService);
-
-    console.log("%c🚀 Avatar G AI Workspace", "font-size: 20px; font-weight: 900; color: #22d3ee;");
-    console.log("%c✨ Production-ready. Made with ❤️ in Georgia.", "font-size: 14px; color: #93a3b8;");
   </script>
 </body>
   </html>
