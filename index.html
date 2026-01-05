@@ -1,584 +1,729 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>Avatar G — Unified AI Workspace</title>
-  <meta name="description" content="Avatar G is a unified AI workspace: chat + projects + private storage + prompts + voice + video + music. Built for fast production and monetization." />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Avatar G — Unified AI Workspace" />
-  <meta property="og:description" content="One window for AI Chat, Projects, Private Storage, Prompts, Voice, Video, Music — built for real work." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://dummyimage.com/1200x630/0b1220/22d3ee.png&text=Avatar+G" />
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Avatar G — GPT Style UI</title>
   <style>
     :root{
-      --bg0:#070b12;
-      --bg1:#0b1220;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(0,0,0,.24);
-      --line: rgba(255,255,255,.10);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.66);
+      --bg:#0b1020;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.04);
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
       --accent:#22d3ee;
       --accent2:#3b82f6;
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#fb7185;
-      --shadow: 0 20px 80px rgba(0,0,0,.40);
-      --radius: 18px;
-      --radius2: 14px;
-      --max: 1120px;
+      --danger:#ff6b6b;
+      --shadow: 0 18px 60px rgba(0,0,0,.40);
+      --r:18px;
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
       color:var(--text);
       background:
-        radial-gradient(900px 500px at 20% 10%, rgba(34,211,238,.14), transparent 60%),
-        radial-gradient(900px 500px at 80% 20%, rgba(59,130,246,.14), transparent 60%),
-        radial-gradient(900px 700px at 50% 90%, rgba(34,211,238,.08), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+        radial-gradient(1200px 700px at 70% 10%, rgba(34,211,238,.13), transparent 60%),
+        radial-gradient(1000px 600px at 10% 25%, rgba(59,130,246,.10), transparent 55%),
+        var(--bg);
     }
-    a{ color:inherit; text-decoration:none; }
-    .wrap{ max-width:var(--max); margin:0 auto; padding: 18px; }
-    .topbar{
-      position: sticky; top:0; z-index:50;
-      backdrop-filter: blur(10px);
-      background: rgba(7,11,18,.55);
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .topbar-inner{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding: 12px 18px;
-      max-width:var(--max); margin:0 auto;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      font-weight:900; letter-spacing:.2px;
-    }
-    .logo{
-      width:36px; height:36px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(34,211,238,.34), rgba(59,130,246,.22));
-      border:1px solid rgba(34,211,238,.25);
-      box-shadow: 0 10px 30px rgba(34,211,238,.12);
-      display:grid; place-items:center;
-      position:relative; overflow:hidden;
-    }
-    .logo:before{
-      content:"";
-      position:absolute; inset:-20%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), transparent 55%);
-      transform: rotate(15deg);
-    }
-    .logo svg{ position:relative; z-index:1; opacity:.95 }
-    .nav{
-      display:flex; gap:14px; align-items:center;
-      color:var(--muted); font-weight:700; font-size:13px;
-    }
-    .nav a{ padding:8px 10px; border-radius:12px; }
-    .nav a:hover{ background: rgba(255,255,255,.06); color:var(--text); }
-    .actions{ display:flex; gap:10px; align-items:center; }
-    .btn{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius: 14px;
-      font-weight:900;
-      font-size:13px;
-      cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border .15s ease;
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .btn.primary{
-      border:none;
-      background: linear-gradient(135deg, rgba(34,211,238,.60), rgba(59,130,246,.34));
-      box-shadow: 0 14px 40px rgba(34,211,238,.16);
-    }
-    .btn.primary:hover{ filter: brightness(1.02); }
-    .btn.ghost{
-      background: transparent;
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .hero{
-      padding: 26px 0 10px;
-    }
-    .hero-grid{
+
+    /* Layout */
+    .app{
+      height:100%;
       display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:18px;
-      align-items:stretch;
+      grid-template-columns: 320px 1fr;
+      gap:14px;
+      padding:14px;
     }
-    .panel{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.04);
+    .sidebar, .chatShell{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.22);
+      border-radius:22px;
+      backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .hero-left{
-      padding: 18px;
-      position:relative;
+
+    /* Sidebar */
+    .sbTop{
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .badge{
-      display:inline-flex; gap:8px; align-items:center;
-      padding: 7px 10px;
-      border-radius: 999px;
+    .brand{display:flex; gap:10px; align-items:center}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      font-weight:1000; letter-spacing:.3px;
+      background:linear-gradient(135deg, rgba(34,211,238,.35), rgba(59,130,246,.18));
       border:1px solid rgba(34,211,238,.25);
-      background: rgba(34,211,238,.10);
-      color: var(--accent);
+    }
+    .brandTitle{line-height:1.1}
+    .brandTitle b{display:block;font-size:14px;font-weight:1000}
+    .brandTitle span{display:block;font-size:12px;color:rgba(255,255,255,.70);font-weight:700;margin-top:2px}
+
+    .sbBtn{
+      border:none;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      border:1px solid var(--line);
+    }
+    .sbBtn:hover{background:rgba(255,255,255,.14)}
+
+    .sbBody{padding:14px; display:grid; gap:14px}
+    .sectionLabel{
+      font-size:12px; text-transform:uppercase;
+      letter-spacing:.6px;
+      color:var(--muted);
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    /* Project list (GPT-like) */
+    .list{display:grid; gap:8px}
+    .item{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:12px;
+      display:flex; gap:10px; align-items:center;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .item:hover{transform: translateY(-1px); background:rgba(255,255,255,.07)}
+    .item.active{
+      border:1.5px solid rgba(34,211,238,.45);
+      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
+    }
+    .itemIcon{font-size:18px}
+    .itemMeta{min-width:0; flex:1}
+    .itemMeta b{
+      display:block; font-size:13px; font-weight:950;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .itemMeta span{display:block; font-size:11px; color:var(--muted); margin-top:3px}
+    .miniDel{
+      border:1px solid rgba(255,107,107,.25);
+      background:rgba(255,107,107,.10);
+      color:var(--danger);
+      border-radius:10px;
+      padding:6px 8px;
+      cursor:pointer;
+      font-weight:1000;
+    }
+
+    /* Mode chips */
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:999px;
       font-weight:900;
       font-size:12px;
+      cursor:pointer;
     }
-    h1{
-      margin: 14px 0 10px;
-      font-size: 36px;
-      line-height: 1.08;
-      letter-spacing: -0.3px;
-    }
-    .sub{
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
-      margin: 0 0 14px;
-      max-width: 62ch;
-    }
-    .cta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
-    .mini{
-      margin-top: 12px;
-      display:flex; flex-wrap:wrap; gap:10px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight:700;
-    }
-    .mini span{
-      padding: 7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
+    .chip.active{
+      border:1px solid rgba(34,211,238,.35);
+      background:rgba(34,211,238,.10);
+      color:rgba(255,255,255,.95);
     }
 
-    .hero-right{
-      display:grid;
-      grid-template-rows: auto 1fr;
+    /* Chat shell */
+    .chatHeader{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:rgba(255,255,255,.03);
     }
-    .demo-head{
-      padding: 14px 14px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
+    .chatHeader b{font-size:14px; font-weight:1000}
+    .chatHeader span{font-size:12px; color:var(--muted); font-weight:700}
+    .hdrRight{display:flex; gap:8px; align-items:center}
+    .pill{
+      font-size:12px; font-weight:900;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(34,211,238,.22);
+      background:rgba(34,211,238,.08);
+      color:rgba(255,255,255,.86);
     }
-    .demo-title{
-      font-weight:900; letter-spacing:.2px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+    .ghostBtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
     }
-    .demo-title small{
-      font-size:12px; color: var(--muted); font-weight:800;
+    .ghostBtn:hover{background:rgba(255,255,255,.08)}
+
+    .chatBody{
+      height: calc(100% - 62px - 92px);
+      overflow:auto;
+      padding:16px;
+      scroll-behavior:smooth;
     }
-    .terminal{
-      padding: 14px;
-      background: rgba(0,0,0,.22);
-      height: 100%;
-    }
+
+    /* Messages (GPT-like) */
+    .msgRow{display:flex; margin:10px 0}
+    .msgRow.user{justify-content:flex-end}
     .bubble{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      padding: 12px;
-      background: rgba(255,255,255,.06);
-      line-height:1.55;
-      font-size: 13px;
-      margin-bottom: 10px;
-      white-space: pre-wrap;
+      max-width:min(760px, 92%);
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      padding:12px 14px;
+      line-height:1.6;
+      font-size:14px;
+      white-space:pre-wrap;
     }
-    .bubble.user{
-      border-color: rgba(34,211,238,.24);
-      background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
-      margin-left: 26px;
+    .user .bubble{
+      border:1.5px solid rgba(34,211,238,.32);
+      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
+      box-shadow: 0 10px 30px rgba(34,211,238,.10);
     }
-    .bubble.ai{ margin-right: 26px; }
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-      margin-top: 18px;
+    .assistant .bubble{
+      background:rgba(0,0,0,.24);
     }
-    .kpi{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      padding: 12px;
-      background: rgba(255,255,255,.04);
-    }
-    .kpi b{ display:block; font-size: 16px; }
-    .kpi span{ color: var(--muted); font-size: 12px; font-weight: 700; }
 
-    .section{ padding: 18px 0; }
-    .section h2{
-      margin: 0 0 10px;
-      font-size: 22px;
-      letter-spacing: -0.2px;
+    /* Attachments cards in chat */
+    .attGrid{display:grid; gap:8px; margin-top:10px}
+    .attCard{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:10px 12px;
+      display:flex; gap:10px; align-items:center;
+      font-size:12px;
     }
-    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
-    .card{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.04);
-      padding: 14px;
-    }
-    .card h3{ margin:0 0 6px; font-size: 15px; }
-    .card p{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.6; }
-
-    .pricing{
-      display:grid; grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .price{
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.04);
-      padding: 14px;
-      position:relative;
+    .attIcon{
+      width:44px;height:44px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      font-size:18px;
+      flex:0 0 auto;
       overflow:hidden;
     }
-    .price.featured{
-      border-color: rgba(34,211,238,.28);
-      box-shadow: 0 20px 90px rgba(34,211,238,.10);
-      background: linear-gradient(135deg, rgba(34,211,238,.10), rgba(59,130,246,.06));
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color: var(--muted);
-      font-weight: 900;
-      font-size: 12px;
-    }
-    .price h3{ margin: 10px 0 6px; font-size: 16px; }
-    .amount{
-      font-size: 30px; font-weight: 1000; letter-spacing: -0.4px;
-      margin: 6px 0 8px;
-    }
-    .amount small{ font-size: 12px; color: var(--muted); font-weight: 800; }
-    ul{ margin: 10px 0 12px; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.7; }
-    .fine{ color: var(--muted); font-size: 12px; line-height: 1.6; }
-
-    .faq{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    details{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-    }
-    summary{
+    .attIcon img{width:100%;height:100%;object-fit:cover}
+    .attMeta{min-width:0; flex:1}
+    .attMeta b{display:block; font-weight:1000; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .attMeta span{display:block; color:var(--muted); margin-top:2px; font-weight:700; font-size:11px}
+    .attBtns{display:flex; gap:6px}
+    .miniBtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:6px 8px;
+      border-radius:10px;
       cursor:pointer;
-      font-weight: 900;
+      font-weight:900;
+      font-size:11px;
+    }
+    .miniBtn.danger{
+      border:1px solid rgba(255,107,107,.25);
+      background:rgba(255,107,107,.10);
+      color:var(--danger);
+    }
+
+    /* Composer */
+    .composer{
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      padding:12px;
+    }
+    .composerInner{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:10px;
+      align-items:flex-end;
+    }
+    .iconBtn{
+      width:44px;height:44px;border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      display:grid; place-items:center;
+      font-size:18px;
+      font-weight:900;
+    }
+    .iconBtn:hover{background:rgba(255,255,255,.10)}
+    textarea{
+      width:100%;
+      resize:none;
+      border-radius:16px;
+      border:1.5px solid var(--line);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      padding:12px 12px;
       outline:none;
+      font-size:14px;
+      line-height:1.5;
+      min-height:44px;
+      max-height:140px;
     }
-    details p{ color: var(--muted); margin: 10px 0 0; line-height: 1.65; }
+    .sendBtn{
+      height:44px;
+      padding:0 18px;
+      border:none;
+      border-radius:14px;
+      font-weight:1000;
+      cursor:pointer;
+      color:#001018;
+      background: linear-gradient(135deg, rgba(34,211,238,.85), rgba(59,130,246,.45));
+      box-shadow: 0 10px 30px rgba(34,211,238,.14);
+    }
+    .sendBtn:disabled{
+      cursor:not-allowed;
+      opacity:.6;
+      box-shadow:none;
+    }
 
-    footer{
-      padding: 26px 0 40px;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      margin-top: 22px;
+    /* Drag overlay */
+    .dropOverlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      place-items:center;
+      z-index:50;
+      background:rgba(0,0,0,.58);
+      backdrop-filter: blur(5px);
     }
-    .foot{
-      display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap;
-      align-items:center;
+    .dropOverlay.active{display:grid}
+    .dropBox{
+      border-radius:22px;
+      border:2px dashed rgba(34,211,238,.55);
+      background: linear-gradient(135deg, rgba(34,211,238,.16), rgba(59,130,246,.10));
+      padding:26px 28px;
+      text-align:center;
+      max-width:420px;
     }
+    .dropBox .big{font-size:44px;margin-bottom:10px}
+    .dropBox b{display:block;font-size:18px;font-weight:1000;color:rgba(255,255,255,.95)}
+    .dropBox span{display:block;margin-top:6px;color:var(--muted);font-weight:800}
 
-    /* responsive */
+    /* Mobile */
     @media (max-width: 980px){
-      .hero-grid{ grid-template-columns: 1fr; }
-      .pricing{ grid-template-columns: 1fr; }
-      .grid3{ grid-template-columns: 1fr; }
-      .faq{ grid-template-columns: 1fr; }
-      h1{ font-size: 30px; }
-      .nav{ display:none; }
+      .app{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .chatBody{height: calc(100% - 62px - 92px);}
+      body{overflow:hidden}
+      .app{padding:10px}
     }
   </style>
 </head>
-
 <body>
-  <!-- CONFIG -->
-  <script>
-    // ✅ Set your real app URL here (where Next.js app lives)
-    window.AVATARG_APP_URL = "YOUR_APP_URL_HERE"; // e.g. https://cloud.ai/avatarg or https://avatarg.app
-    window.AVATARG_CONTACT_EMAIL = "support@avatarg.app";
-  </script>
-
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4Z" stroke="rgba(255,255,255,.92)" stroke-width="1.6"/>
-            <path d="M9 12c1.2-2 4.8-2 6 0" stroke="rgba(34,211,238,.95)" stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M10 15c1.1 1 2.9 1 4 0" stroke="rgba(59,130,246,.95)" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sbTop">
+        <div class="brand">
+          <div class="logo">AG</div>
+          <div class="brandTitle">
+            <b>Avatar G</b>
+            <span>GPT-Style Workspace</span>
+          </div>
         </div>
+        <button class="sbBtn" id="newProjectBtn">+ Project</button>
+      </div>
+
+      <div class="sbBody">
         <div>
-          <div style="font-size:14px">Avatar G</div>
-          <div style="font-size:11px; color: rgba(255,255,255,.60); font-weight:800;">Unified AI Workspace</div>
-        </div>
-      </div>
-
-      <div class="nav">
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
-      </div>
-
-      <div class="actions">
-        <button class="btn ghost" id="openAppBtn">Open App</button>
-        <button class="btn primary" id="getStartedBtn">Get Started</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="panel hero-left">
-          <span class="badge">⚡ Production-ready • Projects • Private Storage • Billing-ready</span>
-
-          <h1>
-            One Window for <span style="color:var(--accent)">AI Work</span><br/>
-            Chat • Projects • Files • Prompts
-          </h1>
-
-          <p class="sub">
-            Avatar G combines everything into a single workspace:
-            AI chat (7 modes), project isolation, private file storage, and clean organization —
-            built for real execution and monetization.
-          </p>
-
-          <div class="cta-row">
-            <button class="btn primary" id="ctaStart">🚀 Launch Workspace</button>
-            <a class="btn" href="#pricing">💳 View Pricing</a>
-            <a class="btn" href="#features">✨ Explore Features</a>
-          </div>
-
-          <div class="mini">
-            <span>✅ Drag & Drop Uploads</span>
-            <span>✅ R2 Private Storage</span>
-            <span>✅ Projects / Folders</span>
-            <span>✅ Ready for Stripe</span>
-          </div>
-
-          <div class="kpis">
-            <div class="kpi">
-              <b>7 Modes</b>
-              <span>Chat • Avatar • Voice • Music • Video • Photo • Marketing</span>
-            </div>
-            <div class="kpi">
-              <b>Project Isolation</b>
-              <span>Every client/project separated & clean</span>
-            </div>
-            <div class="kpi">
-              <b>Private Storage</b>
-              <span>Signed URLs • Delete • Preview</span>
-            </div>
-          </div>
+          <div class="sectionLabel">Projects</div>
+          <div class="list" id="projectsList"></div>
         </div>
 
-        <div class="panel hero-right">
-          <div class="demo-head">
-            <div class="demo-title">
-              <div>💬 Live Workflow Preview</div>
-              <small>What it feels like</small>
-            </div>
-          </div>
+        <div>
+          <div class="sectionLabel">Mode</div>
+          <div class="chips" id="modeChips"></div>
+        </div>
 
-          <div class="terminal" id="demo">
-            <div class="bubble ai">
-              👋 Hi! I’m Avatar G Workspace.<br/>
-              Choose a service and tell me what you want:
-              <br/>• Prompt packs • Scripts • Video storyboards • Branding • Growth
-              <br/><br/>📎 Drag & Drop files to secure storage.
-            </div>
-            <div class="bubble user">Create a project: “GAS Empire Video Campaign”.</div>
-            <div class="bubble ai">✅ Done. Upload your assets and I’ll generate: scripts, prompts, storyboard + delivery pack.</div>
-            <div class="bubble user">Upload 3 images + a PDF and organize them.</div>
-            <div class="bubble ai">✅ Uploaded to private storage and saved inside your project folder. Ready for generation pipeline.</div>
+        <div>
+          <div class="sectionLabel">Quick Actions</div>
+          <div class="chips">
+            <button class="chip" id="clearChatBtn">🧹 Clear Chat</button>
+            <button class="chip" id="demoBtn">✨ Demo Reply</button>
           </div>
         </div>
       </div>
+    </aside>
+
+    <!-- Chat -->
+    <section class="chatShell" style="position:relative;">
+      <div class="dropOverlay" id="dropOverlay">
+        <div class="dropBox">
+          <div class="big">📂</div>
+          <b>Drop files here</b>
+          <span>They will appear as attachment cards (GPT-style)</span>
+        </div>
+      </div>
+
+      <header class="chatHeader">
+        <div>
+          <b>💬 Avatar G Chat</b>
+          <div><span id="hdrInfo">Project: Default • Mode: General</span></div>
+        </div>
+        <div class="hdrRight">
+          <div class="pill" id="pill">Production UI</div>
+          <button class="ghostBtn" id="openSidebarMobile" style="display:none;">☰</button>
+        </div>
+      </header>
+
+      <main class="chatBody" id="chatBody"></main>
+
+      <footer class="composer">
+        <div class="composerInner">
+          <button class="iconBtn" id="attachBtn" title="Attach">📎</button>
+          <textarea id="input" placeholder="Write a message… (Enter = send, Shift+Enter = new line)"></textarea>
+          <button class="sendBtn" id="sendBtn">Send</button>
+        </div>
+        <input id="fileInput" type="file" style="display:none" multiple />
+      </footer>
     </section>
-
-    <!-- FEATURES -->
-    <section class="section" id="features">
-      <h2>✨ What you get</h2>
-      <div class="grid3">
-        <div class="card">
-          <h3>📁 Projects / Folders</h3>
-          <p>Create unlimited organized workspaces (plan-based). Switch instantly and keep assets isolated.</p>
-        </div>
-        <div class="card">
-          <h3>🔒 Private File Storage</h3>
-          <p>Secure uploads, thumbnails, signed preview links, and delete controls — production patterns.</p>
-        </div>
-        <div class="card">
-          <h3>⚡ Unified AI Chat</h3>
-          <p>One chat window, multiple service modes: Avatar, Voice, Music, Video, Photo, Marketing.</p>
-        </div>
-        <div class="card">
-          <h3>🎬 Prompt + Pipeline Ready</h3>
-          <p>Suno / Pika / Runway prompts, scene breakdowns, scripts, and export-friendly structure.</p>
-        </div>
-        <div class="card">
-          <h3>💳 Monetization Ready</h3>
-          <p>Plans, upgrades, usage limits, and team tiers can be enforced immediately.</p>
-        </div>
-        <div class="card">
-          <h3>🏢 Enterprise Foundation</h3>
-          <p>Designed to add auth, billing, teams, audit logs, and compliance without rewrites.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICING -->
-    <section class="section" id="pricing">
-      <h2>💳 Pricing</h2>
-      <p class="sub" style="margin-top:-4px">
-        Simple plans. Start free, upgrade when you scale. (Prices are placeholders — connect Stripe later.)
-      </p>
-
-      <div class="pricing">
-        <div class="price">
-          <span class="pill">FREE</span>
-          <h3>Starter</h3>
-          <div class="amount">$0 <small>/ month</small></div>
-          <ul>
-            <li>Up to <b>2</b> projects</li>
-            <li>Private uploads (basic)</li>
-            <li>7 service modes</li>
-            <li>Standard generation workflow</li>
-          </ul>
-          <button class="btn primary" style="width:100%" id="freeBtn">Start Free</button>
-          <div class="fine">Best for testing and first clients.</div>
-        </div>
-
-        <div class="price featured">
-          <span class="pill" style="border-color: rgba(34,211,238,.28); color: var(--accent);">PRO • most popular</span>
-          <h3>Pro</h3>
-          <div class="amount">$19 <small>/ month</small></div>
-          <ul>
-            <li>Up to <b>10</b> projects</li>
-            <li>Higher storage + faster workflow</li>
-            <li>Client-ready delivery packs</li>
-            <li>Priority support</li>
-          </ul>
-          <button class="btn primary" style="width:100%" id="proBtn">Upgrade to Pro</button>
-          <div class="fine">Perfect for creators & agencies.</div>
-        </div>
-
-        <div class="price">
-          <span class="pill">STUDIO</span>
-          <h3>Studio / Enterprise</h3>
-          <div class="amount">$49 <small>/ month</small></div>
-          <ul>
-            <li><b>Unlimited</b> projects</li>
-            <li>Team-ready foundation</li>
-            <li>Advanced usage limits</li>
-            <li>Custom integrations</li>
-          </ul>
-          <button class="btn primary" style="width:100%" id="studioBtn">Upgrade to Studio</button>
-          <div class="fine">For scaling teams & B2B.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="section" id="faq">
-      <h2>❓ FAQ</h2>
-      <div class="faq">
-        <details>
-          <summary>Is this page the actual app?</summary>
-          <p>This is a fast, clean landing page for GitHub Pages. Your real Next.js app runs separately. Buttons here redirect to your app URL.</p>
-        </details>
-        <details>
-          <summary>Will it work after copy-paste?</summary>
-          <p>Yes. It’s a single HTML file (no dependencies). Commit it and enable GitHub Pages.</p>
-        </details>
-        <details>
-          <summary>How do I connect Stripe?</summary>
-          <p>Stripe lives inside your Next.js backend (API routes + webhooks). This landing only redirects to “Open App / Upgrade”.</p>
-        </details>
-        <details>
-          <summary>Can I edit colors/logo later?</summary>
-          <p>Yes. Everything is in this file: CSS variables at the top control the entire style.</p>
-        </details>
-      </div>
-    </section>
-
-    <footer>
-      <div class="foot">
-        <div>© <span id="year"></span> Avatar G. All rights reserved.</div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn" href="#" id="contactBtn">Contact</a>
-          <a class="btn" href="#" id="openAppBtn2">Open App</a>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <script>
-    // ✅ Small helpers
-    const appUrl = (window.AVATARG_APP_URL || "").trim();
-    const email = (window.AVATARG_CONTACT_EMAIL || "").trim();
+    // ======= Simple local state (for GitHub Pages demo) =======
+    const KEY = "ag_gpt_ui_state_v1";
 
-    function goApp(path="") {
-      if (!appUrl || appUrl === "YOUR_APP_URL_HERE") {
-        alert("⚠️ Please set AVATARG_APP_URL in the <script> near the top of this file.\n\nExample:\nwindow.AVATARG_APP_URL = \"https://your-app-domain.com\";");
-        return;
-      }
-      const url = appUrl.replace(/\/+$/,"") + path;
-      window.location.href = url;
-    }
+    const MODES = [
+      { id:"general", label:"💬 General" },
+      { id:"avatar", label:"🧑‍🎭 Avatar" },
+      { id:"voice", label:"🎤 Voice" },
+      { id:"music", label:"🎵 Music" },
+      { id:"video", label:"🎬 Video" },
+      { id:"photo", label:"📸 Photo" },
+      { id:"marketing", label:"📈 Marketing" },
+    ];
 
-    // Buttons
-    document.getElementById("year").textContent = new Date().getFullYear();
+    const defaultState = {
+      activeProjectId: "default",
+      mode: "general",
+      projects: [
+        { id:"default", name:"My First Project", createdAt: new Date().toISOString() }
+      ],
+      messages: [
+        { role:"assistant", content:
+`გამარჯობა! 👋 მე ვარ Avatar G Workspace (GPT-style UI).
 
-    document.getElementById("openAppBtn").onclick = () => goApp("/");
-    document.getElementById("openAppBtn2").onclick = () => goApp("/");
-    document.getElementById("getStartedBtn").onclick = () => goApp("/");
+✅ მარცხნივ: Projects + Mode
+✅ შუაში: Chat
+✅ ქვემოთ: Composer (Attach + Send)
+✅ Drag & Drop მხარდაჭერა
 
-    document.getElementById("ctaStart").onclick = () => goApp("/");
-    document.getElementById("freeBtn").onclick = () => goApp("/?plan=free");
-    document.getElementById("proBtn").onclick = () => goApp("/?plan=pro");
-    document.getElementById("studioBtn").onclick = () => goApp("/?plan=studio");
-
-    document.getElementById("contactBtn").onclick = (e) => {
-      e.preventDefault();
-      if (!email) {
-        alert("Set window.AVATARG_CONTACT_EMAIL at the top (optional).");
-        return;
-      }
-      window.location.href = "mailto:" + email + "?subject=Avatar%20G%20Support";
+მითხარი რას აკეთებ დღეს?`
+        ],
+      attachmentsByProject: { "default": [] }
     };
 
-    // Smooth anchor scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener("click", (e) => {
-        const href = a.getAttribute("href");
-        if (!href || href === "#") return;
-        e.preventDefault();
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    function load() {
+      try{
+        const raw = localStorage.getItem(KEY);
+        if(!raw) return structuredClone(defaultState);
+        const parsed = JSON.parse(raw);
+        // minimal safety
+        if(!parsed.projects || !parsed.messages) return structuredClone(defaultState);
+        return parsed;
+      }catch{
+        return structuredClone(defaultState);
+      }
+    }
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    }
+
+    let state = load();
+
+    // ======= DOM refs =======
+    const projectsList = document.getElementById("projectsList");
+    const modeChips = document.getElementById("modeChips");
+    const chatBody = document.getElementById("chatBody");
+    const hdrInfo = document.getElementById("hdrInfo");
+    const newProjectBtn = document.getElementById("newProjectBtn");
+    const clearChatBtn = document.getElementById("clearChatBtn");
+    const demoBtn = document.getElementById("demoBtn");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+    const attachBtn = document.getElementById("attachBtn");
+    const fileInput = document.getElementById("fileInput");
+    const dropOverlay = document.getElementById("dropOverlay");
+
+    function activeProject() {
+      return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
+    }
+    function activeAttachments() {
+      return state.attachmentsByProject[state.activeProjectId] || [];
+    }
+
+    // ======= Render =======
+    function renderProjects(){
+      projectsList.innerHTML = "";
+      state.projects.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "item" + (p.id === state.activeProjectId ? " active":"");
+        div.innerHTML = `
+          <div class="itemIcon">${p.id === state.activeProjectId ? "📂":"📁"}</div>
+          <div class="itemMeta">
+            <b>${escapeHtml(p.name)}</b>
+            <span>${new Date(p.createdAt).toLocaleDateString()}</span>
+          </div>
+          ${p.id !== "default" ? `<button class="miniDel" title="Delete">🗑️</button>` : ``}
+        `;
+        div.addEventListener("click", () => {
+          state.activeProjectId = p.id;
+          save(); renderAll();
+        });
+        const del = div.querySelector(".miniDel");
+        if(del){
+          del.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if(!confirm("Delete this project? (attachments remain stored in demo state)")) return;
+            state.projects = state.projects.filter(x => x.id !== p.id);
+            if(state.activeProjectId === p.id) state.activeProjectId = "default";
+            // keep attachmentsByProject for safety
+            save(); renderAll();
+          });
+        }
+        projectsList.appendChild(div);
       });
+    }
+
+    function renderModes(){
+      modeChips.innerHTML = "";
+      MODES.forEach(m => {
+        const b = document.createElement("button");
+        b.className = "chip" + (m.id === state.mode ? " active":"");
+        b.textContent = m.label;
+        b.addEventListener("click", () => { state.mode = m.id; save(); renderHeader(); renderModes(); });
+        modeChips.appendChild(b);
+      });
+    }
+
+    function renderHeader(){
+      const p = activeProject();
+      const modeLabel = MODES.find(x => x.id === state.mode)?.label || "General";
+      hdrInfo.textContent = `Project: ${p ? p.name : "Default"} • Mode: ${modeLabel.replace(/^[^ ]+ /,"")}`;
+    }
+
+    function renderChat(){
+      chatBody.innerHTML = "";
+      state.messages.forEach((m, idx) => {
+        const row = document.createElement("div");
+        row.className = "msgRow " + (m.role === "user" ? "user":"assistant");
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = m.content;
+        row.appendChild(bubble);
+        chatBody.appendChild(row);
+
+        // Attachments shown after last assistant message (GPT-like)
+        if(idx === state.messages.length - 1){
+          const atts = activeAttachments();
+          if(atts.length){
+            const grid = document.createElement("div");
+            grid.className = "attGrid";
+            atts.forEach((a, i) => {
+              const card = document.createElement("div");
+              card.className = "attCard";
+              const icon = document.createElement("div");
+              icon.className = "attIcon";
+              if(a.preview){
+                const img = document.createElement("img");
+                img.src = a.preview;
+                icon.appendChild(img);
+              } else {
+                icon.textContent = a.kind === "pdf" ? "PDF" : "📎";
+              }
+
+              const meta = document.createElement("div");
+              meta.className = "attMeta";
+              meta.innerHTML = `<b>${escapeHtml(a.name)}</b><span>${escapeHtml(a.type)} • ${Math.round(a.size/1024)} KB</span>`;
+
+              const btns = document.createElement("div");
+              btns.className = "attBtns";
+              const view = document.createElement("button");
+              view.className = "miniBtn";
+              view.textContent = "👁️ View";
+              view.addEventListener("click", () => {
+                if(a.preview) window.open(a.preview, "_blank");
+                else alert("Demo file: no remote URL set yet.");
+              });
+
+              const del = document.createElement("button");
+              del.className = "miniBtn danger";
+              del.textContent = "🗑️";
+              del.addEventListener("click", () => {
+                const list = activeAttachments().filter((_,ix)=> ix !== i);
+                state.attachmentsByProject[state.activeProjectId] = list;
+                save(); renderChat(); scrollBottom();
+              });
+
+              btns.appendChild(view);
+              btns.appendChild(del);
+
+              card.appendChild(icon);
+              card.appendChild(meta);
+              card.appendChild(btns);
+              grid.appendChild(card);
+            });
+            chatBody.appendChild(grid);
+          }
+        }
+      });
+      scrollBottom();
+    }
+
+    function renderAll(){
+      renderProjects();
+      renderModes();
+      renderHeader();
+      renderChat();
+    }
+
+    function scrollBottom(){
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // ======= Actions =======
+    newProjectBtn.addEventListener("click", () => {
+      const name = prompt("Project name:");
+      if(!name || !name.trim()) return;
+      const id = crypto.randomUUID ? crypto.randomUUID() : ("p_" + Math.random().toString(36).slice(2));
+      state.projects.push({ id, name: name.trim(), createdAt: new Date().toISOString() });
+      state.attachmentsByProject[id] = [];
+      state.activeProjectId = id;
+      save(); renderAll();
     });
+
+    clearChatBtn.addEventListener("click", () => {
+      if(!confirm("Clear chat messages?")) return;
+      state.messages = [ { role:"assistant", content:"Chat cleared ✅\n\nWrite your next request." } ];
+      save(); renderChat();
+    });
+
+    demoBtn.addEventListener("click", () => {
+      state.messages.push({ role:"assistant", content:
+`✅ Demo response (GPT-style)
+
+Mode: ${state.mode}
+Project: ${activeProject().name}
+
+მომწერე რა გინდა და შემდეგ ნაბიჯზე ამას დავუკავშირებთ Next.js /api/chat-ს.`});
+      save(); renderChat();
+    });
+
+    function send(){
+      const text = (input.value || "").trim();
+      if(!text) return;
+      state.messages.push({ role:"user", content:text });
+      input.value = "";
+      // demo assistant reply
+      state.messages.push({ role:"assistant", content:
+`Received ✅
+
+• Mode: ${state.mode}
+• Project: ${activeProject().name}
+
+ახლა ეს UI არის GPT-ის სტილში. შემდეგ ეტაპზე ვაერთებთ რეალურ /api/chat-ს და R2 upload-ს.`});
+      save(); renderChat();
+    }
+
+    sendBtn.addEventListener("click", send);
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault(); send();
+      }
+    });
+
+    // Attach files (demo local preview)
+    attachBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files || []);
+      if(!files.length) return;
+      await addFiles(files);
+      fileInput.value = "";
+    });
+
+    // Drag & Drop
+    let dragCount = 0;
+    document.addEventListener("dragenter", (e) => {
+      e.preventDefault(); dragCount++;
+      dropOverlay.classList.add("active");
+    });
+    document.addEventListener("dragleave", (e) => {
+      e.preventDefault(); dragCount--;
+      if(dragCount <= 0){
+        dragCount = 0;
+        dropOverlay.classList.remove("active");
+      }
+    });
+    document.addEventListener("dragover", (e) => { e.preventDefault(); });
+    document.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      dragCount = 0;
+      dropOverlay.classList.remove("active");
+      const files = Array.from(e.dataTransfer.files || []);
+      if(files.length) await addFiles(files);
+    });
+
+    async function addFiles(files){
+      const list = activeAttachments();
+      for(const file of files){
+        const kind = file.type === "application/pdf" ? "pdf" : (file.type.startsWith("image/") ? "img" : "file");
+        const att = { name:file.name, type:file.type||"file", size:file.size, kind, preview:null };
+        if(kind === "img"){
+          att.preview = await makeThumb(file);
+        }
+        list.push(att);
+      }
+      state.attachmentsByProject[state.activeProjectId] = list;
+      save(); renderChat();
+      state.messages.push({ role:"assistant", content:`✅ Attached ${files.length} file(s) to "${activeProject().name}".`});
+      save(); renderChat();
+    }
+
+    function makeThumb(file){
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            const c = document.createElement("canvas");
+            const size = 72;
+            c.width = size; c.height = size;
+            const ctx = c.getContext("2d");
+            const scale = Math.max(size/img.width, size/img.height);
+            const x = (size - img.width*scale)/2;
+            const y = (size - img.height*scale)/2;
+            ctx.drawImage(img, x, y, img.width*scale, img.height*scale);
+            resolve(c.toDataURL("image/jpeg", .82));
+          };
+          img.onerror = () => resolve(null);
+          img.src = ev.target.result;
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    renderAll();
   </script>
 </body>
-  </html>
+</html>
