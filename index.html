@@ -1,729 +1,919 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Avatar G — GPT Style UI</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Avatar G Workspace</title>
+
+  <!-- ✅ React (CDN) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- ✅ Babel (so we can write JSX in one file) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- ✅ Supabase JS v2 (CDN) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
     :root{
-      --bg:#0b1020;
-      --panel:rgba(255,255,255,.06);
-      --panel2:rgba(255,255,255,.04);
-      --line:rgba(255,255,255,.10);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.62);
+      --bg:#070A0F;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.04);
+      --line: rgba(255,255,255,0.10);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.62);
       --accent:#22d3ee;
       --accent2:#3b82f6;
       --danger:#ff6b6b;
-      --shadow: 0 18px 60px rgba(0,0,0,.40);
-      --r:18px;
+      --ok:#2cffb2;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+      background: radial-gradient(1000px 600px at 30% 20%, rgba(34,211,238,0.12), transparent 60%),
+                  radial-gradient(900px 600px at 80% 70%, rgba(59,130,246,0.10), transparent 60%),
+                  var(--bg);
       color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 70% 10%, rgba(34,211,238,.13), transparent 60%),
-        radial-gradient(1000px 600px at 10% 25%, rgba(59,130,246,.10), transparent 55%),
-        var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font-family:inherit}
+    .wrap{min-height:100vh;display:grid;place-items:center;padding:18px}
+    .container{width:min(1280px,100%)}
 
-    /* Layout */
-    .app{
-      height:100%;
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap:14px;
-      padding:14px;
-    }
-    .sidebar, .chatShell{
+    .grid{display:grid;grid-template-columns:320px 1fr;gap:16px}
+    .card{
       border:1px solid var(--line);
-      background:rgba(0,0,0,.22);
-      border-radius:22px;
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-
-    /* Sidebar */
-    .sbTop{
-      padding:16px;
-      border-bottom:1px solid var(--line);
-      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .brand{display:flex; gap:10px; align-items:center}
-    .logo{
-      width:42px;height:42px;border-radius:14px;
-      display:grid;place-items:center;
-      font-weight:1000; letter-spacing:.3px;
-      background:linear-gradient(135deg, rgba(34,211,238,.35), rgba(59,130,246,.18));
-      border:1px solid rgba(34,211,238,.25);
-    }
-    .brandTitle{line-height:1.1}
-    .brandTitle b{display:block;font-size:14px;font-weight:1000}
-    .brandTitle span{display:block;font-size:12px;color:rgba(255,255,255,.70);font-weight:700;margin-top:2px}
-
-    .sbBtn{
-      border:none;
-      background:rgba(255,255,255,.10);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-      border:1px solid var(--line);
-    }
-    .sbBtn:hover{background:rgba(255,255,255,.14)}
-
-    .sbBody{padding:14px; display:grid; gap:14px}
-    .sectionLabel{
-      font-size:12px; text-transform:uppercase;
-      letter-spacing:.6px;
-      color:var(--muted);
-      font-weight:900;
-      margin-bottom:8px;
-    }
-
-    /* Project list (GPT-like) */
-    .list{display:grid; gap:8px}
-    .item{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      border-radius:16px;
-      padding:12px;
-      display:flex; gap:10px; align-items:center;
-      cursor:pointer;
-      transition:.15s ease;
-    }
-    .item:hover{transform: translateY(-1px); background:rgba(255,255,255,.07)}
-    .item.active{
-      border:1.5px solid rgba(34,211,238,.45);
-      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
-    }
-    .itemIcon{font-size:18px}
-    .itemMeta{min-width:0; flex:1}
-    .itemMeta b{
-      display:block; font-size:13px; font-weight:950;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .itemMeta span{display:block; font-size:11px; color:var(--muted); margin-top:3px}
-    .miniDel{
-      border:1px solid rgba(255,107,107,.25);
-      background:rgba(255,107,107,.10);
-      color:var(--danger);
-      border-radius:10px;
-      padding:6px 8px;
-      cursor:pointer;
-      font-weight:1000;
-    }
-
-    /* Mode chips */
-    .chips{display:flex; flex-wrap:wrap; gap:8px}
-    .chip{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      padding:8px 10px;
-      border-radius:999px;
-      font-weight:900;
-      font-size:12px;
-      cursor:pointer;
-    }
-    .chip.active{
-      border:1px solid rgba(34,211,238,.35);
-      background:rgba(34,211,238,.10);
-      color:rgba(255,255,255,.95);
-    }
-
-    /* Chat shell */
-    .chatHeader{
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background:rgba(255,255,255,.03);
-    }
-    .chatHeader b{font-size:14px; font-weight:1000}
-    .chatHeader span{font-size:12px; color:var(--muted); font-weight:700}
-    .hdrRight{display:flex; gap:8px; align-items:center}
-    .pill{
-      font-size:12px; font-weight:900;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(34,211,238,.22);
-      background:rgba(34,211,238,.08);
-      color:rgba(255,255,255,.86);
-    }
-    .ghostBtn{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-    }
-    .ghostBtn:hover{background:rgba(255,255,255,.08)}
-
-    .chatBody{
-      height: calc(100% - 62px - 92px);
-      overflow:auto;
-      padding:16px;
-      scroll-behavior:smooth;
-    }
-
-    /* Messages (GPT-like) */
-    .msgRow{display:flex; margin:10px 0}
-    .msgRow.user{justify-content:flex-end}
-    .bubble{
-      max-width:min(760px, 92%);
+      background:rgba(255,255,255,0.05);
       border-radius:18px;
+    }
+    .pad{padding:16px}
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .btn{
       border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      padding:12px 14px;
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .btn:hover{filter:brightness(1.06)}
+    .btnPrimary{
+      border:none;
+      background:linear-gradient(135deg, rgba(34,211,238,0.55), rgba(59,130,246,0.30));
+      color:#fff;
+      box-shadow:0 8px 30px rgba(34,211,238,0.12);
+    }
+    .btnCyan{
+      border:1px solid rgba(34,211,238,0.35);
+      background:rgba(34,211,238,0.10);
+      color:var(--accent);
+    }
+    .btnDanger{
+      border:1px solid rgba(255,107,107,0.25);
+      background:rgba(255,107,107,0.12);
+      color:var(--danger);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,0.25);
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+    }
+    .projectItem{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.05);
+      cursor:pointer;
+    }
+    .projectItem.active{
+      border:1.5px solid var(--accent);
+      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
+    }
+    .badge{
+      font-size:11px;
+      font-weight:900;
+      padding:6px 8px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,0.18);
+      color:var(--muted);
+    }
+
+    /* Chat */
+    .chat{
+      overflow:hidden;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      min-height:84vh;
+      position:relative;
+    }
+    .chatHeader{
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
+    }
+    .chatBody{padding:16px;overflow:auto}
+    .bubbleWrap{display:flex}
+    .bubble{
+      max-width:78%;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.06);
+      white-space:pre-wrap;
       line-height:1.6;
       font-size:14px;
-      white-space:pre-wrap;
+      box-shadow:0 4px 16px rgba(0,0,0,0.08);
     }
-    .user .bubble{
-      border:1.5px solid rgba(34,211,238,.32);
-      background: linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
-      box-shadow: 0 10px 30px rgba(34,211,238,.10);
+    .bubble.user{
+      border:1.5px solid rgba(34,211,238,0.30);
+      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
+      box-shadow:0 4px 16px rgba(34,211,238,0.10);
     }
-    .assistant .bubble{
-      background:rgba(0,0,0,.24);
-    }
-
-    /* Attachments cards in chat */
-    .attGrid{display:grid; gap:8px; margin-top:10px}
-    .attCard{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      border-radius:16px;
-      padding:10px 12px;
-      display:flex; gap:10px; align-items:center;
-      font-size:12px;
-    }
-    .attIcon{
-      width:44px;height:44px;border-radius:12px;
-      display:grid;place-items:center;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.18);
-      font-size:18px;
-      flex:0 0 auto;
-      overflow:hidden;
-    }
-    .attIcon img{width:100%;height:100%;object-fit:cover}
-    .attMeta{min-width:0; flex:1}
-    .attMeta b{display:block; font-weight:1000; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .attMeta span{display:block; color:var(--muted); margin-top:2px; font-weight:700; font-size:11px}
-    .attBtns{display:flex; gap:6px}
-    .miniBtn{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      color:var(--text);
-      padding:6px 8px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:900;
-      font-size:11px;
-    }
-    .miniBtn.danger{
-      border:1px solid rgba(255,107,107,.25);
-      background:rgba(255,107,107,.10);
-      color:var(--danger);
-    }
-
-    /* Composer */
     .composer{
+      padding:14px;
       border-top:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      padding:12px;
+      background:rgba(255,255,255,0.03);
     }
-    .composerInner{
-      display:grid;
-      grid-template-columns:auto 1fr auto;
-      gap:10px;
-      align-items:flex-end;
-    }
-    .iconBtn{
-      width:44px;height:44px;border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      cursor:pointer;
-      display:grid; place-items:center;
-      font-size:18px;
-      font-weight:900;
-    }
-    .iconBtn:hover{background:rgba(255,255,255,.10)}
     textarea{
       width:100%;
       resize:none;
-      border-radius:16px;
+      border-radius:14px;
       border:1.5px solid var(--line);
-      background:rgba(0,0,0,.25);
+      background:rgba(0,0,0,0.25);
       color:var(--text);
-      padding:12px 12px;
+      padding:12px;
       outline:none;
       font-size:14px;
       line-height:1.5;
-      min-height:44px;
-      max-height:140px;
-    }
-    .sendBtn{
-      height:44px;
-      padding:0 18px;
-      border:none;
-      border-radius:14px;
-      font-weight:1000;
-      cursor:pointer;
-      color:#001018;
-      background: linear-gradient(135deg, rgba(34,211,238,.85), rgba(59,130,246,.45));
-      box-shadow: 0 10px 30px rgba(34,211,238,.14);
-    }
-    .sendBtn:disabled{
-      cursor:not-allowed;
-      opacity:.6;
-      box-shadow:none;
     }
 
-    /* Drag overlay */
-    .dropOverlay{
-      position:absolute;
-      inset:0;
-      display:none;
-      place-items:center;
-      z-index:50;
-      background:rgba(0,0,0,.58);
-      backdrop-filter: blur(5px);
+    /* Modal */
+    .modalBackdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display:grid; place-items:center;
+      z-index:9999;
+      padding:18px;
     }
-    .dropOverlay.active{display:grid}
-    .dropBox{
+    .modal{
+      width:min(520px,100%);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.05);
       border-radius:22px;
-      border:2px dashed rgba(34,211,238,.55);
-      background: linear-gradient(135deg, rgba(34,211,238,.16), rgba(59,130,246,.10));
-      padding:26px 28px;
-      text-align:center;
-      max-width:420px;
+      padding:18px;
     }
-    .dropBox .big{font-size:44px;margin-bottom:10px}
-    .dropBox b{display:block;font-size:18px;font-weight:1000;color:rgba(255,255,255,.95)}
-    .dropBox span{display:block;margin-top:6px;color:var(--muted);font-weight:800}
+    .input{
+      width:100%;
+      border-radius:14px;
+      border:1.5px solid var(--line);
+      background:rgba(0,0,0,0.25);
+      color:var(--text);
+      padding:12px;
+      outline:none;
+    }
+    .warn{
+      border:1px solid rgba(255,200,0,0.25);
+      background:rgba(255,200,0,0.10);
+      color:#ffd36e;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:12px;
+      line-height:1.4;
+    }
 
-    /* Mobile */
-    @media (max-width: 980px){
-      .app{grid-template-columns:1fr}
-      .sidebar{display:none}
-      .chatBody{height: calc(100% - 62px - 92px);}
-      body{overflow:hidden}
-      .app{padding:10px}
+    /* Attachments */
+    .attRow{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,0.20);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
     }
+    .thumb{
+      width:48px;height:48px;border-radius:10px;
+      border:1px solid var(--line);
+      object-fit:cover;
+    }
+    .thumbBox{
+      width:48px;height:48px;border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.06);
+      display:grid;place-items:center;
+      font-weight:950;
+    }
+    .attName{font-weight:950;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .attMeta{font-size:11px;color:var(--muted)}
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sbTop">
-        <div class="brand">
-          <div class="logo">AG</div>
-          <div class="brandTitle">
-            <b>Avatar G</b>
-            <span>GPT-Style Workspace</span>
-          </div>
-        </div>
-        <button class="sbBtn" id="newProjectBtn">+ Project</button>
-      </div>
+  <div id="root"></div>
 
-      <div class="sbBody">
-        <div>
-          <div class="sectionLabel">Projects</div>
-          <div class="list" id="projectsList"></div>
-        </div>
+  <script type="text/babel">
+    /************************************************************
+     ✅ CONFIG — EDIT ONLY THIS SECTION
+     ************************************************************/
+    const CONFIG = {
+      // ✅ Your Supabase project
+      SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
+      SUPABASE_ANON_KEY: "YOUR_ANON_KEY",
 
-        <div>
-          <div class="sectionLabel">Mode</div>
-          <div class="chips" id="modeChips"></div>
-        </div>
+      // ✅ Your API base (your backend domain)
+      // Example: "https://api.avatarg.ge" or "https://xxxx.ngrok-free.app"
+      API_BASE: "https://YOUR_API_DOMAIN.com",
 
-        <div>
-          <div class="sectionLabel">Quick Actions</div>
-          <div class="chips">
-            <button class="chip" id="clearChatBtn">🧹 Clear Chat</button>
-            <button class="chip" id="demoBtn">✨ Demo Reply</button>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Chat -->
-    <section class="chatShell" style="position:relative;">
-      <div class="dropOverlay" id="dropOverlay">
-        <div class="dropBox">
-          <div class="big">📂</div>
-          <b>Drop files here</b>
-          <span>They will appear as attachment cards (GPT-style)</span>
-        </div>
-      </div>
-
-      <header class="chatHeader">
-        <div>
-          <b>💬 Avatar G Chat</b>
-          <div><span id="hdrInfo">Project: Default • Mode: General</span></div>
-        </div>
-        <div class="hdrRight">
-          <div class="pill" id="pill">Production UI</div>
-          <button class="ghostBtn" id="openSidebarMobile" style="display:none;">☰</button>
-        </div>
-      </header>
-
-      <main class="chatBody" id="chatBody"></main>
-
-      <footer class="composer">
-        <div class="composerInner">
-          <button class="iconBtn" id="attachBtn" title="Attach">📎</button>
-          <textarea id="input" placeholder="Write a message… (Enter = send, Shift+Enter = new line)"></textarea>
-          <button class="sendBtn" id="sendBtn">Send</button>
-        </div>
-        <input id="fileInput" type="file" style="display:none" multiple />
-      </footer>
-    </section>
-  </div>
-
-  <script>
-    // ======= Simple local state (for GitHub Pages demo) =======
-    const KEY = "ag_gpt_ui_state_v1";
-
-    const MODES = [
-      { id:"general", label:"💬 General" },
-      { id:"avatar", label:"🧑‍🎭 Avatar" },
-      { id:"voice", label:"🎤 Voice" },
-      { id:"music", label:"🎵 Music" },
-      { id:"video", label:"🎬 Video" },
-      { id:"photo", label:"📸 Photo" },
-      { id:"marketing", label:"📈 Marketing" },
-    ];
-
-    const defaultState = {
-      activeProjectId: "default",
-      mode: "general",
-      projects: [
-        { id:"default", name:"My First Project", createdAt: new Date().toISOString() }
-      ],
-      messages: [
-        { role:"assistant", content:
-`გამარჯობა! 👋 მე ვარ Avatar G Workspace (GPT-style UI).
-
-✅ მარცხნივ: Projects + Mode
-✅ შუაში: Chat
-✅ ქვემოთ: Composer (Attach + Send)
-✅ Drag & Drop მხარდაჭერა
-
-მითხარი რას აკეთებ დღეს?`
-        ],
-      attachmentsByProject: { "default": [] }
+      // Optional: App name
+      APP_NAME: "Avatar G Workspace",
     };
 
-    function load() {
-      try{
-        const raw = localStorage.getItem(KEY);
-        if(!raw) return structuredClone(defaultState);
-        const parsed = JSON.parse(raw);
-        // minimal safety
-        if(!parsed.projects || !parsed.messages) return structuredClone(defaultState);
-        return parsed;
-      }catch{
-        return structuredClone(defaultState);
+    /************************************************************
+     Helper utils
+     ************************************************************/
+    const { useEffect, useMemo, useRef, useState } = React;
+
+    function bytesToGB(n){
+      const gb = n / (1024*1024*1024);
+      return gb.toFixed(2);
+    }
+
+    function safeJson(x){ try{return JSON.parse(x);}catch{return null;} }
+
+    function ensureConfig(){
+      const okSupabase = CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+        !CONFIG.SUPABASE_URL.includes("YOUR_PROJECT") && !CONFIG.SUPABASE_ANON_KEY.includes("YOUR_ANON_KEY");
+      const okApi = CONFIG.API_BASE && !CONFIG.API_BASE.includes("YOUR_API_DOMAIN");
+      return { okSupabase, okApi };
+    }
+
+    /************************************************************
+     API client (adds Authorization: Bearer <supabase access token>)
+     ************************************************************/
+    async function apiFetch({ path, method="GET", token, body, isForm=false }) {
+      const url = CONFIG.API_BASE.replace(/\/$/,"") + path;
+      const headers = {};
+      if (token) headers["Authorization"] = "Bearer " + token;
+      if (!isForm) headers["Content-Type"] = "application/json";
+
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: isForm ? body : (body ? JSON.stringify(body) : undefined),
+      });
+
+      const text = await res.text();
+      const json = safeJson(text);
+      if (!res.ok) {
+        const msg = json?.error || text || "Request failed";
+        throw new Error(msg);
       }
-    }
-    function save() {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      return json ?? {};
     }
 
-    let state = load();
+    /************************************************************
+     Auth Modal (Magic Link + OAuth placeholders)
+     ************************************************************/
+    function AuthModal({ supabase, onClose, onAuthed }) {
+      const [email, setEmail] = useState("");
+      const [busy, setBusy] = useState(false);
+      const [msg, setMsg] = useState(null);
 
-    // ======= DOM refs =======
-    const projectsList = document.getElementById("projectsList");
-    const modeChips = document.getElementById("modeChips");
-    const chatBody = document.getElementById("chatBody");
-    const hdrInfo = document.getElementById("hdrInfo");
-    const newProjectBtn = document.getElementById("newProjectBtn");
-    const clearChatBtn = document.getElementById("clearChatBtn");
-    const demoBtn = document.getElementById("demoBtn");
-    const input = document.getElementById("input");
-    const sendBtn = document.getElementById("sendBtn");
-    const attachBtn = document.getElementById("attachBtn");
-    const fileInput = document.getElementById("fileInput");
-    const dropOverlay = document.getElementById("dropOverlay");
-
-    function activeProject() {
-      return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
-    }
-    function activeAttachments() {
-      return state.attachmentsByProject[state.activeProjectId] || [];
-    }
-
-    // ======= Render =======
-    function renderProjects(){
-      projectsList.innerHTML = "";
-      state.projects.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "item" + (p.id === state.activeProjectId ? " active":"");
-        div.innerHTML = `
-          <div class="itemIcon">${p.id === state.activeProjectId ? "📂":"📁"}</div>
-          <div class="itemMeta">
-            <b>${escapeHtml(p.name)}</b>
-            <span>${new Date(p.createdAt).toLocaleDateString()}</span>
-          </div>
-          ${p.id !== "default" ? `<button class="miniDel" title="Delete">🗑️</button>` : ``}
-        `;
-        div.addEventListener("click", () => {
-          state.activeProjectId = p.id;
-          save(); renderAll();
-        });
-        const del = div.querySelector(".miniDel");
-        if(del){
-          del.addEventListener("click", (e) => {
-            e.stopPropagation();
-            if(!confirm("Delete this project? (attachments remain stored in demo state)")) return;
-            state.projects = state.projects.filter(x => x.id !== p.id);
-            if(state.activeProjectId === p.id) state.activeProjectId = "default";
-            // keep attachmentsByProject for safety
-            save(); renderAll();
+      async function magicLink(){
+        setBusy(true); setMsg(null);
+        try{
+          const redirectTo = window.location.href.split("#")[0];
+          const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: { emailRedirectTo: redirectTo }
           });
+          if (error) throw error;
+          setMsg("✅ Magic link sent. Check your email.");
+        }catch(e){
+          setMsg("❌ " + (e?.message || "Auth failed"));
+        }finally{
+          setBusy(false);
         }
-        projectsList.appendChild(div);
-      });
+      }
+
+      async function oauth(provider){
+        setBusy(true); setMsg(null);
+        try{
+          const redirectTo = window.location.href.split("#")[0];
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider,
+            options: { redirectTo }
+          });
+          if (error) throw error;
+        }catch(e){
+          setMsg("❌ " + (e?.message || "OAuth failed"));
+          setBusy(false);
+        }
+      }
+
+      return (
+        <div className="modalBackdrop">
+          <div className="modal">
+            <div style={{display:"grid", gap:10}}>
+              <div style={{fontSize:22, fontWeight:950}}>{CONFIG.APP_NAME}</div>
+              <div className="muted" style={{lineHeight:1.5}}>
+                Sign in to your workspace. Your API must validate Supabase JWT and enforce RLS on server.
+              </div>
+
+              <div className="hr"></div>
+
+              <div style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}} className="muted">Magic Link</div>
+              <input className="input" placeholder="you@company.com" value={email} onChange={e=>setEmail(e.target.value)} />
+              <button className="btn btnPrimary" disabled={busy || !email.includes("@")} onClick={magicLink}>
+                {busy ? "⏳" : "Send Magic Link →"}
+              </button>
+
+              <div className="hr"></div>
+
+              <div style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}} className="muted">OAuth</div>
+              <div style={{display:"flex", gap:10, flexWrap:"wrap"}}>
+                <button className="btn" disabled={busy} onClick={()=>oauth("google")}>Continue with Google</button>
+                <button className="btn" disabled={busy} onClick={()=>oauth("github")}>Continue with GitHub</button>
+              </div>
+
+              {msg && <div style={{fontSize:13, fontWeight:900, color: msg.startsWith("✅") ? "var(--accent)" : "var(--danger)"}}>{msg}</div>}
+
+              <div style={{display:"flex", justifyContent:"space-between", gap:10, marginTop:6}}>
+                <button className="btn" onClick={onClose}>Close</button>
+                <button className="btn btnCyan" onClick={onAuthed}>I already signed in</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     }
 
-    function renderModes(){
-      modeChips.innerHTML = "";
-      MODES.forEach(m => {
-        const b = document.createElement("button");
-        b.className = "chip" + (m.id === state.mode ? " active":"");
-        b.textContent = m.label;
-        b.addEventListener("click", () => { state.mode = m.id; save(); renderHeader(); renderModes(); });
-        modeChips.appendChild(b);
-      });
-    }
+    /************************************************************
+     Main App
+     ************************************************************/
+    function App(){
+      const cfg = ensureConfig();
 
-    function renderHeader(){
-      const p = activeProject();
-      const modeLabel = MODES.find(x => x.id === state.mode)?.label || "General";
-      hdrInfo.textContent = `Project: ${p ? p.name : "Default"} • Mode: ${modeLabel.replace(/^[^ ]+ /,"")}`;
-    }
+      const supabase = useMemo(()=>{
+        if(!cfg.okSupabase) return null;
+        return window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+      }, [cfg.okSupabase]);
 
-    function renderChat(){
-      chatBody.innerHTML = "";
-      state.messages.forEach((m, idx) => {
-        const row = document.createElement("div");
-        row.className = "msgRow " + (m.role === "user" ? "user":"assistant");
-        const bubble = document.createElement("div");
-        bubble.className = "bubble";
-        bubble.textContent = m.content;
-        row.appendChild(bubble);
-        chatBody.appendChild(row);
+      const [session, setSession] = useState(null);
+      const [token, setToken] = useState("");
+      const [showAuth, setShowAuth] = useState(false);
 
-        // Attachments shown after last assistant message (GPT-like)
-        if(idx === state.messages.length - 1){
-          const atts = activeAttachments();
-          if(atts.length){
-            const grid = document.createElement("div");
-            grid.className = "attGrid";
-            atts.forEach((a, i) => {
-              const card = document.createElement("div");
-              card.className = "attCard";
-              const icon = document.createElement("div");
-              icon.className = "attIcon";
-              if(a.preview){
-                const img = document.createElement("img");
-                img.src = a.preview;
-                icon.appendChild(img);
-              } else {
-                icon.textContent = a.kind === "pdf" ? "PDF" : "📎";
-              }
+      // Workspace state
+      const [projects, setProjects] = useState([]);
+      const [activeProjectId, setActiveProjectId] = useState("");
+      const [mode, setMode] = useState("general");
+      const [usage, setUsage] = useState(null);
+      const [attachments, setAttachments] = useState([]);
+      const [uploading, setUploading] = useState([]);
+      const [messages, setMessages] = useState([
+        { role:"assistant", content:
+          "Welcome to **Avatar G Workspace**.\n\n✅ GPT-style unified window\n✅ Projects + Files\n✅ Usage limits + Billing\n\nUpload files and tell me what you want."
+        }
+      ]);
+      const [input, setInput] = useState("");
+      const [streaming, setStreaming] = useState(false);
+      const bottomRef = useRef(null);
 
-              const meta = document.createElement("div");
-              meta.className = "attMeta";
-              meta.innerHTML = `<b>${escapeHtml(a.name)}</b><span>${escapeHtml(a.type)} • ${Math.round(a.size/1024)} KB</span>`;
+      function scrollBottom(){
+        requestAnimationFrame(()=> bottomRef.current?.scrollIntoView({behavior:"smooth"}));
+      }
 
-              const btns = document.createElement("div");
-              btns.className = "attBtns";
-              const view = document.createElement("button");
-              view.className = "miniBtn";
-              view.textContent = "👁️ View";
-              view.addEventListener("click", () => {
-                if(a.preview) window.open(a.preview, "_blank");
-                else alert("Demo file: no remote URL set yet.");
-              });
+      // Session init
+      useEffect(()=>{
+        if(!supabase) return;
+        supabase.auth.getSession().then(({data})=>{
+          setSession(data.session || null);
+          setToken(data.session?.access_token || "");
+        });
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, sess)=>{
+          setSession(sess || null);
+          setToken(sess?.access_token || "");
+        });
+        return ()=> sub?.subscription?.unsubscribe?.();
+      }, [supabase]);
 
-              const del = document.createElement("button");
-              del.className = "miniBtn danger";
-              del.textContent = "🗑️";
-              del.addEventListener("click", () => {
-                const list = activeAttachments().filter((_,ix)=> ix !== i);
-                state.attachmentsByProject[state.activeProjectId] = list;
-                save(); renderChat(); scrollBottom();
-              });
+      // If config missing
+      const configWarning = (!cfg.okSupabase || !cfg.okApi);
 
-              btns.appendChild(view);
-              btns.appendChild(del);
+      // API calls
+      async function loadProjects(){
+        if(!token) return;
+        const j = await apiFetch({ path:"/projects/list", token });
+        const list = j.projects || [];
+        setProjects(list);
 
-              card.appendChild(icon);
-              card.appendChild(meta);
-              card.appendChild(btns);
-              grid.appendChild(card);
-            });
-            chatBody.appendChild(grid);
+        // ensure active
+        if(!activeProjectId){
+          if(list[0]) setActiveProjectId(list[0].id);
+        } else {
+          if(!list.some(p=>p.id===activeProjectId) && list[0]) setActiveProjectId(list[0].id);
+        }
+      }
+
+      async function loadUsage(){
+        if(!token) return;
+        // Your API should return:
+        // { plan, projectsUsed, projectsLimit, storageBytesUsed, storageBytesLimit, filesCount }
+        const j = await apiFetch({ path:"/usage", token });
+        setUsage(j.usage || j);
+      }
+
+      useEffect(()=>{
+        if(!token || configWarning) return;
+        loadProjects().catch(()=>{});
+        loadUsage().catch(()=>{});
+      }, [token]);
+
+      async function createProject(){
+        const name = prompt("Project name?");
+        if(!name || !name.trim()) return;
+        await apiFetch({ path:"/projects/create", method:"POST", token, body:{ name:name.trim() } });
+        await loadProjects();
+        await loadUsage();
+      }
+
+      async function deleteProject(id){
+        if(!confirm("Delete project?")) return;
+        await apiFetch({ path:"/projects/delete", method:"POST", token, body:{ projectId:id } });
+        // remove attachments UI for that project
+        setAttachments(prev=> prev.filter(a=>a.projectId!==id));
+        await loadProjects();
+        await loadUsage();
+      }
+
+      async function uploadFile(file){
+        if(!activeProjectId) return alert("No active project");
+        const uploadId = crypto.randomUUID();
+        setUploading(prev=> [...prev, { id:uploadId, name:file.name, progress:0 }]);
+
+        try{
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("projectId", activeProjectId);
+
+          // If your API returns { meta: { key, projectId, name, type, size, timestamp } }
+          // we use it directly.
+          const json = await apiFetch({ path:"/upload", method:"POST", token, body:fd, isForm:true });
+          const meta = json.meta || json;
+
+          // client thumbnail only
+          let previewUrl = null;
+          if(file.type.startsWith("image/")){
+            previewUrl = URL.createObjectURL(file);
           }
+
+          setAttachments(prev=> [...prev, { ...meta, previewUrl } ]);
+          setMessages(prev=> [...prev, { role:"assistant", content:`✅ Uploaded: **${meta.name}**` } ]);
+          scrollBottom();
+          await loadUsage();
+        }catch(e){
+          alert(e?.message || "Upload failed");
+        }finally{
+          setUploading(prev=> prev.filter(u=>u.id!==uploadId));
         }
-      });
-      scrollBottom();
-    }
-
-    function renderAll(){
-      renderProjects();
-      renderModes();
-      renderHeader();
-      renderChat();
-    }
-
-    function scrollBottom(){
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    // ======= Actions =======
-    newProjectBtn.addEventListener("click", () => {
-      const name = prompt("Project name:");
-      if(!name || !name.trim()) return;
-      const id = crypto.randomUUID ? crypto.randomUUID() : ("p_" + Math.random().toString(36).slice(2));
-      state.projects.push({ id, name: name.trim(), createdAt: new Date().toISOString() });
-      state.attachmentsByProject[id] = [];
-      state.activeProjectId = id;
-      save(); renderAll();
-    });
-
-    clearChatBtn.addEventListener("click", () => {
-      if(!confirm("Clear chat messages?")) return;
-      state.messages = [ { role:"assistant", content:"Chat cleared ✅\n\nWrite your next request." } ];
-      save(); renderChat();
-    });
-
-    demoBtn.addEventListener("click", () => {
-      state.messages.push({ role:"assistant", content:
-`✅ Demo response (GPT-style)
-
-Mode: ${state.mode}
-Project: ${activeProject().name}
-
-მომწერე რა გინდა და შემდეგ ნაბიჯზე ამას დავუკავშირებთ Next.js /api/chat-ს.`});
-      save(); renderChat();
-    });
-
-    function send(){
-      const text = (input.value || "").trim();
-      if(!text) return;
-      state.messages.push({ role:"user", content:text });
-      input.value = "";
-      // demo assistant reply
-      state.messages.push({ role:"assistant", content:
-`Received ✅
-
-• Mode: ${state.mode}
-• Project: ${activeProject().name}
-
-ახლა ეს UI არის GPT-ის სტილში. შემდეგ ეტაპზე ვაერთებთ რეალურ /api/chat-ს და R2 upload-ს.`});
-      save(); renderChat();
-    }
-
-    sendBtn.addEventListener("click", send);
-    input.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault(); send();
       }
-    });
 
-    // Attach files (demo local preview)
-    attachBtn.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", async (e) => {
-      const files = Array.from(e.target.files || []);
-      if(!files.length) return;
-      await addFiles(files);
-      fileInput.value = "";
-    });
-
-    // Drag & Drop
-    let dragCount = 0;
-    document.addEventListener("dragenter", (e) => {
-      e.preventDefault(); dragCount++;
-      dropOverlay.classList.add("active");
-    });
-    document.addEventListener("dragleave", (e) => {
-      e.preventDefault(); dragCount--;
-      if(dragCount <= 0){
-        dragCount = 0;
-        dropOverlay.classList.remove("active");
+      async function viewAttachment(att){
+        // expects POST /r2/sign { key } => { url }
+        const j = await apiFetch({ path:"/r2/sign", method:"POST", token, body:{ key:att.key } });
+        window.open(j.url, "_blank");
       }
-    });
-    document.addEventListener("dragover", (e) => { e.preventDefault(); });
-    document.addEventListener("drop", async (e) => {
-      e.preventDefault();
-      dragCount = 0;
-      dropOverlay.classList.remove("active");
-      const files = Array.from(e.dataTransfer.files || []);
-      if(files.length) await addFiles(files);
-    });
 
-    async function addFiles(files){
-      const list = activeAttachments();
-      for(const file of files){
-        const kind = file.type === "application/pdf" ? "pdf" : (file.type.startsWith("image/") ? "img" : "file");
-        const att = { name:file.name, type:file.type||"file", size:file.size, kind, preview:null };
-        if(kind === "img"){
-          att.preview = await makeThumb(file);
+      async function deleteAttachment(att){
+        if(!confirm("Delete file?")) return;
+        await apiFetch({ path:"/r2/delete", method:"POST", token, body:{ key:att.key } });
+        if(att.previewUrl) URL.revokeObjectURL(att.previewUrl);
+        setAttachments(prev=> prev.filter(x=>x.key!==att.key));
+        await loadUsage();
+      }
+
+      const visibleAttachments = useMemo(()=> attachments.filter(a=>a.projectId===activeProjectId), [attachments, activeProjectId]);
+
+      async function startCheckout(plan){
+        // expects POST /billing/checkout { plan } => { url }
+        const j = await apiFetch({ path:"/billing/checkout", method:"POST", token, body:{ plan } });
+        window.location.href = j.url;
+      }
+
+      async function openPortal(){
+        // expects POST /billing/portal => { url }
+        const j = await apiFetch({ path:"/billing/portal", method:"POST", token });
+        window.location.href = j.url;
+      }
+
+      async function logout(){
+        if(!supabase) return;
+        await supabase.auth.signOut();
+        setSession(null);
+        setToken("");
+      }
+
+      // Chat streaming via SSE
+      async function send(){
+        const text = input.trim();
+        if(!text || streaming) return;
+        if(!activeProjectId) return alert("No active project");
+
+        const next = [...messages, { role:"user", content:text }];
+        setMessages(next);
+        setInput("");
+        setStreaming(true);
+        scrollBottom();
+
+        // placeholder assistant bubble
+        setMessages(prev=> [...prev, { role:"assistant", content:"" } ]);
+
+        try{
+          const url = CONFIG.API_BASE.replace(/\/$/,"") + "/chat";
+          const res = await fetch(url, {
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json",
+              "Authorization":"Bearer " + token
+            },
+            body: JSON.stringify({
+              mode,
+              projectId: activeProjectId,
+              messages: next,
+              attachments: visibleAttachments
+            })
+          });
+
+          if(!res.ok || !res.body){
+            const t = await res.text();
+            throw new Error(t || "Chat failed");
+          }
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+
+          while(true){
+            const { done, value } = await reader.read();
+            if(done) break;
+
+            buffer += decoder.decode(value, { stream:true });
+            const parts = buffer.split("\n\n");
+            buffer = parts.pop() || "";
+
+            for(const part of parts){
+              const line = part.trim();
+              if(!line.startsWith("data:")) continue;
+              const jsonStr = line.slice(5).trim();
+              if(!jsonStr) continue;
+
+              const evt = safeJson(jsonStr);
+              if(!evt) continue;
+
+              if(evt.type === "delta"){
+                const delta = evt.delta || "";
+                setMessages(prev=>{
+                  const copy = [...prev];
+                  const last = copy[copy.length-1];
+                  if(last?.role === "assistant") last.content += delta;
+                  return copy;
+                });
+                scrollBottom();
+              }
+              if(evt.type === "error"){
+                throw new Error(evt.message || "Stream error");
+              }
+            }
+          }
+        }catch(e){
+          setMessages(prev=>{
+            const copy = [...prev];
+            const last = copy[copy.length-1];
+            const msg = "❌ " + (e?.message || "Unknown error");
+            if(last?.role === "assistant" && !last.content) last.content = msg;
+            else copy.push({ role:"assistant", content: msg });
+            return copy;
+          });
+        }finally{
+          setStreaming(false);
+          scrollBottom();
         }
-        list.push(att);
       }
-      state.attachmentsByProject[state.activeProjectId] = list;
-      save(); renderChat();
-      state.messages.push({ role:"assistant", content:`✅ Attached ${files.length} file(s) to "${activeProject().name}".`});
-      save(); renderChat();
+
+      const modeOptions = [
+        ["general","💬 Chat"],
+        ["avatar","🧑‍🎭 Avatar"],
+        ["voice","🎤 Voice"],
+        ["music","🎵 Music"],
+        ["video","🎬 Video"],
+        ["photo","📸 Photo"],
+        ["marketing","📈 Marketing"],
+      ];
+
+      const usageText = useMemo(()=>{
+        if(!usage) return "";
+        const pLimit = Number.isFinite(usage.projectsLimit) ? usage.projectsLimit : "∞";
+        const sLimit = Number.isFinite(usage.storageBytesLimit) ? bytesToGB(usage.storageBytesLimit) + "GB" : "∞";
+        const sUsed = bytesToGB(usage.storageBytesUsed) + "GB";
+        return `Plan: ${usage.plan} • Projects: ${usage.projectsUsed}/${pLimit} • Storage: ${sUsed}/${sLimit} • Files: ${usage.filesCount}`;
+      }, [usage]);
+
+      // UI
+      return (
+        <div className="wrap">
+          <div className="container">
+
+            {configWarning && (
+              <div className="warn" style={{marginBottom:12}}>
+                ⚠️ CONFIG is not set.<br/>
+                Edit CONFIG at top of this file:<br/>
+                - SUPABASE_URL + SUPABASE_ANON_KEY<br/>
+                - API_BASE (your backend domain)<br/>
+                Then refresh.
+              </div>
+            )}
+
+            {(!session) && cfg.okSupabase && (
+              <div className="warn" style={{marginBottom:12}}>
+                🔐 Not signed in. Click “Sign in” to access workspace.
+              </div>
+            )}
+
+            {showAuth && supabase && (
+              <AuthModal
+                supabase={supabase}
+                onClose={()=>setShowAuth(false)}
+                onAuthed={()=>{
+                  setShowAuth(false);
+                  // session auto updates by supabase listener
+                }}
+              />
+            )}
+
+            <div className="grid">
+
+              {/* LEFT */}
+              <aside className="card pad">
+                <div style={{display:"grid", gap:12}}>
+                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
+                    <div>
+                      <div style={{fontWeight:950, fontSize:18}}>{CONFIG.APP_NAME}</div>
+                      <div className="muted" style={{fontSize:12}}>
+                        {session?.user?.email ? session.user.email : "Guest"}
+                      </div>
+                    </div>
+
+                    <div style={{display:"flex", gap:8}}>
+                      {!session ? (
+                        <button className="btn btnPrimary" onClick={()=>setShowAuth(true)} disabled={!cfg.okSupabase}>
+                          Sign in
+                        </button>
+                      ) : (
+                        <button className="btn" onClick={logout}>Logout</button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="hr"></div>
+
+                  {/* Usage */}
+                  <div style={{display:"grid", gap:8}}>
+                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Usage</div>
+                    <div className="badge">{usage ? usageText : "—"}</div>
+                  </div>
+
+                  <div className="hr"></div>
+
+                  {/* Projects */}
+                  <div style={{display:"grid", gap:8}}>
+                    <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                      <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Projects</div>
+                      <button className="btn btnCyan" onClick={createProject} disabled={!session || configWarning}>＋</button>
+                    </div>
+
+                    <div style={{display:"grid", gap:6}}>
+                      {projects.map(p=>{
+                        const active = p.id === activeProjectId;
+                        return (
+                          <div key={p.id} className={"projectItem " + (active ? "active":"")}
+                               onClick={()=>setActiveProjectId(p.id)}>
+                            <div style={{fontSize:16}}>{active ? "📂":"📁"}</div>
+                            <div style={{flex:1, minWidth:0}}>
+                              <div style={{fontWeight:950, fontSize:13, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"}}>{p.name}</div>
+                              <div className="muted" style={{fontSize:11}}>
+                                {new Date(p.created_at).toLocaleDateString("ka-GE")}
+                              </div>
+                            </div>
+                            <button className="btn btnDanger"
+                              style={{padding:"6px 8px", borderRadius:12}}
+                              onClick={(e)=>{e.stopPropagation(); deleteProject(p.id);}}
+                              disabled={!session || configWarning}
+                              title="Delete project"
+                            >🗑️</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <button className="btn" onClick={loadProjects} disabled={!session || configWarning}>
+                      Refresh Projects
+                    </button>
+                  </div>
+
+                  <div className="hr"></div>
+
+                  {/* Billing */}
+                  <div style={{display:"grid", gap:8}}>
+                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Billing</div>
+                    <button className="btn btnPrimary" onClick={()=>startCheckout("pro")} disabled={!session || configWarning}>
+                      Stripe Checkout: PRO →
+                    </button>
+                    <button className="btn btnCyan" onClick={()=>startCheckout("studio")} disabled={!session || configWarning}>
+                      Stripe Checkout: STUDIO →
+                    </button>
+                    <button className="btn" onClick={openPortal} disabled={!session || configWarning}>
+                      Customer Portal
+                    </button>
+                  </div>
+
+                  <div className="hr"></div>
+
+                  {/* Modes */}
+                  <div style={{display:"grid", gap:8}}>
+                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Modes</div>
+                    <div style={{display:"grid", gap:6}}>
+                      {modeOptions.map(([id,label])=>{
+                        const active = id === mode;
+                        return (
+                          <button key={id}
+                            className="btn"
+                            style={{
+                              textAlign:"left",
+                              border: active ? "1.5px solid var(--accent)" : "1px solid var(--line)",
+                              background: active ? "linear-gradient(135deg, rgba(34,211,238,0.12), rgba(59,130,246,0.08))" : "rgba(255,255,255,0.05)"
+                            }}
+                            onClick={()=>setMode(id)}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                </div>
+              </aside>
+
+              {/* RIGHT CHAT */}
+              <section className="card chat">
+                <div className="chatHeader">
+                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
+                    <div>
+                      <div style={{fontWeight:950, fontSize:16}}>Chat</div>
+                      <div className="muted" style={{fontSize:12, fontWeight:700}}>
+                        Project: <span style={{color:"var(--text)"}}>{activeProjectId ? "Selected" : "None"}</span>
+                        {streaming ? <span style={{color:"var(--accent)"}}> • streaming…</span> : null}
+                      </div>
+                    </div>
+
+                    <label className="btn" style={{cursor:(!session||configWarning)?"not-allowed":"pointer", opacity:(!session||configWarning)?0.6:1}}>
+                      📎 Upload
+                      <input type="file" style={{display:"none"}} disabled={!session || configWarning}
+                        onChange={(e)=>{
+                          const f = e.target.files?.[0];
+                          if(f) uploadFile(f);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="chatBody">
+                  {uploading.length > 0 && (
+                    <div style={{display:"grid", gap:8, marginBottom:12}}>
+                      {uploading.map(u=>(
+                        <div key={u.id} className="pill" style={{borderColor:"rgba(34,211,238,0.25)", color:"var(--accent)"}}>
+                          ⏳ {u.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Attachments for active project */}
+                  {activeProjectId && visibleAttachments.length > 0 && (
+                    <div style={{marginBottom:12}}>
+                      {visibleAttachments.map(att=>{
+                        const isImg = (att.type||"").startsWith("image/");
+                        const isPdf = att.type === "application/pdf";
+                        return (
+                          <div className="attRow" key={att.key}>
+                            {isImg && att.previewUrl ? (
+                              <img className="thumb" src={att.previewUrl} alt={att.name} />
+                            ) : (
+                              <div className="thumbBox">
+                                {isPdf ? "PDF" : "FILE"}
+                              </div>
+                            )}
+
+                            <div style={{flex:1, minWidth:0}}>
+                              <div className="attName">{att.name}</div>
+                              <div className="attMeta">{att.type} • {Math.round((att.size||0)/1024)} KB</div>
+                            </div>
+
+                            <div style={{display:"flex", gap:8}}>
+                              {(isImg || isPdf) && (
+                                <button className="btn btnCyan" style={{padding:"8px 10px"}} onClick={()=>viewAttachment(att)} disabled={!session || configWarning}>
+                                  👁️ View
+                                </button>
+                              )}
+                              <button className="btn btnDanger" style={{padding:"8px 10px"}} onClick={()=>deleteAttachment(att)} disabled={!session || configWarning}>
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Messages */}
+                  <div style={{display:"grid", gap:12}}>
+                    {messages.map((m,i)=>{
+                      const isUser = m.role === "user";
+                      return (
+                        <div key={i} className="bubbleWrap" style={{justifyContent:isUser?"flex-end":"flex-start"}}>
+                          <div className={"bubble " + (isUser ? "user":"")}>
+                            {m.content}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={bottomRef}></div>
+                  </div>
+                </div>
+
+                <div className="composer">
+                  <div style={{display:"grid", gridTemplateColumns:"1fr auto", gap:12}}>
+                    <textarea
+                      rows="2"
+                      value={input}
+                      placeholder={session ? "Write your request… (Enter = send, Shift+Enter = new line)" : "Sign in to chat…"}
+                      disabled={!session || configWarning}
+                      onChange={e=>setInput(e.target.value)}
+                      onKeyDown={(e)=>{
+                        if(e.key==="Enter" && !e.shiftKey){
+                          e.preventDefault();
+                          send();
+                        }
+                      }}
+                    />
+                    <button className={"btn " + (streaming?"":"btnPrimary")}
+                      disabled={!session || configWarning || streaming}
+                      onClick={send}
+                      style={{padding:"0 24px", opacity:(!session||configWarning)?0.6:1}}
+                    >
+                      {streaming ? "⏳" : "Send →"}
+                    </button>
+                  </div>
+
+                  <div className="muted" style={{fontSize:12, marginTop:8}}>
+                    Tip: Attach files per project. Your backend must enforce RLS + quotas.
+                  </div>
+                </div>
+
+              </section>
+            </div>
+
+          </div>
+        </div>
+      );
     }
 
-    function makeThumb(file){
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image();
-          img.onload = () => {
-            const c = document.createElement("canvas");
-            const size = 72;
-            c.width = size; c.height = size;
-            const ctx = c.getContext("2d");
-            const scale = Math.max(size/img.width, size/img.height);
-            const x = (size - img.width*scale)/2;
-            const y = (size - img.height*scale)/2;
-            ctx.drawImage(img, x, y, img.width*scale, img.height*scale);
-            resolve(c.toDataURL("image/jpeg", .82));
-          };
-          img.onerror = () => resolve(null);
-          img.src = ev.target.result;
-        };
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    renderAll();
+    /************************************************************
+     Mount
+     ************************************************************/
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App/>);
   </script>
 </body>
 </html>
