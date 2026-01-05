@@ -5,225 +5,423 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Avatar G Workspace</title>
 
-  <!-- ✅ React (CDN) -->
+  <!-- ✅ React -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-  <!-- ✅ Babel (so we can write JSX in one file) -->
+  <!-- ✅ Babel (JSX in one file) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- ✅ Supabase JS v2 (CDN) -->
+  <!-- ✅ Supabase JS v2 -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <style>
     :root{
       --bg:#070A0F;
-      --panel: rgba(255,255,255,0.06);
-      --panel2: rgba(255,255,255,0.04);
-      --line: rgba(255,255,255,0.10);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.62);
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.04);
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.45);
       --accent:#22d3ee;
       --accent2:#3b82f6;
-      --danger:#ff6b6b;
-      --ok:#2cffb2;
+      --good:#10b981;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+      --shadow: 0 20px 80px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:26px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      background: radial-gradient(1000px 600px at 30% 20%, rgba(34,211,238,0.12), transparent 60%),
-                  radial-gradient(900px 600px at 80% 70%, rgba(59,130,246,0.10), transparent 60%),
-                  var(--bg);
+      font-family:var(--sans);
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(34,211,238,.16), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(59,130,246,.14), transparent 55%),
+        radial-gradient(900px 700px at 70% 90%, rgba(34,211,238,.10), transparent 55%),
+        var(--bg);
+      overflow-x:hidden;
     }
-    a{color:inherit;text-decoration:none}
-    button,input,textarea{font-family:inherit}
-    .wrap{min-height:100vh;display:grid;place-items:center;padding:18px}
-    .container{width:min(1280px,100%)}
 
-    .grid{display:grid;grid-template-columns:320px 1fr;gap:16px}
-    .card{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.05);
-      border-radius:18px;
+    .appShell{
+      max-width:1200px;
+      margin:0 auto;
+      padding:22px 14px 40px;
+      display:grid;
+      gap:14px;
     }
-    .pad{padding:16px}
-    .muted{color:var(--muted)}
-    .hr{height:1px;background:var(--line);margin:12px 0}
-    .btn{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-    }
-    .btn:hover{filter:brightness(1.06)}
-    .btnPrimary{
-      border:none;
-      background:linear-gradient(135deg, rgba(34,211,238,0.55), rgba(59,130,246,0.30));
-      color:#fff;
-      box-shadow:0 8px 30px rgba(34,211,238,0.12);
-    }
-    .btnCyan{
-      border:1px solid rgba(34,211,238,0.35);
-      background:rgba(34,211,238,0.10);
-      color:var(--accent);
-    }
-    .btnDanger{
-      border:1px solid rgba(255,107,107,0.25);
-      background:rgba(255,107,107,0.12);
-      color:var(--danger);
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,0.25);
-      font-size:12px;
-      font-weight:900;
-      color:var(--muted);
-    }
-    .projectItem{
+
+    .topbar{
       display:flex;
       align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      position:sticky;
+      top:10px;
+      z-index:20;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .logo{
+      width:34px;height:34px;border-radius:12px;
+      background:linear-gradient(135deg, rgba(34,211,238,.35), rgba(59,130,246,.28));
+      border:1px solid rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+    .logo::after{
+      content:"⚡";
+      font-size:16px;
+      opacity:.95;
+    }
+    .brandTitle{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .brandTitle b{font-size:14px; letter-spacing:.2px}
+    .brandTitle span{font-size:12px;color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .topActions{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+
+    .pill{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:800;
+      font-size:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .pill:hover{border-color:rgba(255,255,255,.18)}
+    .pillPrimary{
+      background:linear-gradient(135deg, rgba(34,211,238,.22), rgba(59,130,246,.16));
+      border-color:rgba(34,211,238,.35);
+    }
+    .pillDanger{
+      background:rgba(239,68,68,.10);
+      border-color:rgba(239,68,68,.25);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:var(--radius2);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panelHeader{
+      padding:14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.08);
       gap:10px;
-      padding:10px;
+    }
+    .panelHeader h3{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .panelHeader small{color:var(--muted); font-weight:700}
+
+    .panelBody{padding:12px 14px 14px}
+
+    .notice{
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(245,158,11,.25);
+      background:rgba(245,158,11,.10);
+      color:rgba(255,255,255,.92);
+      font-weight:800;
+      font-size:12px;
+      line-height:1.35;
+      margin-bottom:12px;
+    }
+
+    .row{display:flex; gap:10px; align-items:center}
+    .col{display:flex; flex-direction:column; gap:10px}
+
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:10px 0}
+
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+    .tiny{font-size:11px}
+    .tag{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      font-weight:800;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .btn{
+      height:40px;
+      padding:0 14px;
       border-radius:14px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,0.05);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.18)}
+    .btnPrimary{
+      background:linear-gradient(135deg, rgba(34,211,238,.22), rgba(59,130,246,.16));
+      border-color:rgba(34,211,238,.35);
+    }
+    .btnGhost{
+      background:transparent;
+      border-color:rgba(255,255,255,.10);
+    }
+    .btnDanger{
+      background:rgba(239,68,68,.10);
+      border-color:rgba(239,68,68,.25);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .input{
+      height:40px;
+      width:100%;
+      padding:0 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+      font-weight:800;
+    }
+    .input::placeholder{color:rgba(255,255,255,.35); font-weight:800}
+
+    .select{
+      height:40px;
+      width:100%;
+      padding:0 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+      font-weight:900;
+    }
+
+    .projectItem{
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      display:flex; align-items:center; gap:10px;
       cursor:pointer;
     }
+    .projectItem:hover{border-color:rgba(255,255,255,.18)}
     .projectItem.active{
-      border:1.5px solid var(--accent);
-      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
+      border-color:rgba(34,211,238,.35);
+      background:linear-gradient(135deg, rgba(34,211,238,.12), rgba(59,130,246,.08));
     }
-    .badge{
-      font-size:11px;
-      font-weight:900;
-      padding:6px 8px;
+    .projectItem b{font-size:12px}
+    .projectItem span{font-size:11px; color:var(--muted)}
+    .projectItem .trash{
+      margin-left:auto;
+      width:32px; height:32px;
       border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,0.18);
-      color:var(--muted);
+      border:1px solid rgba(239,68,68,.22);
+      background:rgba(239,68,68,.10);
+      display:grid; place-items:center;
+      cursor:pointer;
+    }
+
+    .usageBox{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      display:grid; gap:8px;
+    }
+    .bar{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(34,211,238,.9), rgba(59,130,246,.9));
     }
 
     /* Chat */
-    .chat{
-      overflow:hidden;
+    .chatWrap{
       display:grid;
-      grid-template-rows:auto 1fr auto;
-      min-height:84vh;
-      position:relative;
+      grid-template-rows: auto 1fr auto;
+      min-height: 72vh;
     }
     .chatHeader{
-      padding:16px;
-      border-bottom:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
     }
-    .chatBody{padding:16px;overflow:auto}
-    .bubbleWrap{display:flex}
-    .bubble{
-      max-width:78%;
+    .chatHeader .left{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .chatHeader b{font-size:13px}
+    .chatHeader small{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .chatBody{
       padding:14px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .bubble{
+      max-width: 82%;
+      padding:12px 12px;
       border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      line-height:1.4;
       white-space:pre-wrap;
-      line-height:1.6;
-      font-size:14px;
-      box-shadow:0 4px 16px rgba(0,0,0,0.08);
+      word-break:break-word;
+      font-weight:750;
+      font-size:13px;
     }
     .bubble.user{
-      border:1.5px solid rgba(34,211,238,0.30);
-      background:linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
-      box-shadow:0 4px 16px rgba(34,211,238,0.10);
+      margin-left:auto;
+      background:linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10));
+      border-color:rgba(34,211,238,.22);
     }
-    .composer{
-      padding:14px;
-      border-top:1px solid var(--line);
-      background:rgba(255,255,255,0.03);
-    }
-    textarea{
-      width:100%;
-      resize:none;
-      border-radius:14px;
-      border:1.5px solid var(--line);
-      background:rgba(0,0,0,0.25);
-      color:var(--text);
-      padding:12px;
-      outline:none;
-      font-size:14px;
-      line-height:1.5;
+    .bubble.assistant{
+      margin-right:auto;
+      background:rgba(255,255,255,.035);
     }
 
-    /* Modal */
-    .modalBackdrop{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,0.65);
-      backdrop-filter: blur(6px);
-      display:grid; place-items:center;
-      z-index:9999;
-      padding:18px;
+    .chatComposer{
+      padding:12px 14px 14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:grid;
+      gap:10px;
     }
-    .modal{
-      width:min(520px,100%);
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.05);
-      border-radius:22px;
-      padding:18px;
-    }
-    .input{
-      width:100%;
-      border-radius:14px;
-      border:1.5px solid var(--line);
-      background:rgba(0,0,0,0.25);
-      color:var(--text);
-      padding:12px;
-      outline:none;
-    }
-    .warn{
-      border:1px solid rgba(255,200,0,0.25);
-      background:rgba(255,200,0,0.10);
-      color:#ffd36e;
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:900;
-      font-size:12px;
-      line-height:1.4;
-    }
-
-    /* Attachments */
-    .attRow{
-      border:1px solid var(--line);
-      background:rgba(0,0,0,0.20);
-      border-radius:14px;
-      padding:10px 12px;
+    .composerRow{
       display:flex;
       gap:10px;
       align-items:center;
-      margin-bottom:8px;
     }
-    .thumb{
-      width:48px;height:48px;border-radius:10px;
-      border:1px solid var(--line);
-      object-fit:cover;
+    .textarea{
+      width:100%;
+      min-height:44px;
+      max-height:160px;
+      resize:vertical;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      outline:none;
+      font-weight:800;
+      font-size:13px;
     }
-    .thumbBox{
-      width:48px;height:48px;border-radius:10px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.06);
-      display:grid;place-items:center;
-      font-weight:950;
+
+    .fileRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
     }
-    .attName{font-weight:950;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .attMeta{font-size:11px;color:var(--muted)}
+    .fileChip{
+      display:flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      font-weight:850;
+      color:var(--muted);
+    }
+    .fileChip button{
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.65);
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(560px, 100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:14px 14px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      gap:10px;
+    }
+    .modalHead b{font-size:14px}
+    .modalBody{padding:14px}
+    .xBtn{
+      width:36px;height:36px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .ok{
+      color:rgba(16,185,129,.95); font-weight:900;
+    }
+    .err{
+      color:rgba(239,68,68,.95); font-weight:900;
+    }
   </style>
 </head>
 
@@ -231,135 +429,152 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    /************************************************************
-     ✅ CONFIG — EDIT ONLY THIS SECTION
-     ************************************************************/
+    /******************************************************************
+     ✅ CONFIG — EDIT THESE 3 VALUES ONLY
+    ******************************************************************/
     const CONFIG = {
-      // ✅ Your Supabase project
-      SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
-      SUPABASE_ANON_KEY: "YOUR_ANON_KEY",
-
-      // ✅ Your API base (your backend domain)
-      // Example: "https://api.avatarg.ge" or "https://xxxx.ngrok-free.app"
-      API_BASE: "https://YOUR_API_DOMAIN.com",
-
-      // Optional: App name
-      APP_NAME: "Avatar G Workspace",
+      SUPABASE_URL: "PASTE_SUPABASE_URL_HERE",
+      SUPABASE_ANON_KEY: "PASTE_SUPABASE_ANON_KEY_HERE",
+      API_BASE: "https://YOUR_BACKEND_DOMAIN", // e.g. https://avatarg-backend.onrender.com
     };
 
-    /************************************************************
-     Helper utils
-     ************************************************************/
-    const { useEffect, useMemo, useRef, useState } = React;
+    /******************************************************************
+     ✅ SAFETY: config check (shows banner instead of breaking)
+    ******************************************************************/
+    const isConfigSet =
+      CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL.startsWith("http") &&
+      CONFIG.SUPABASE_ANON_KEY && CONFIG.SUPABASE_ANON_KEY.length > 20 &&
+      CONFIG.API_BASE && CONFIG.API_BASE.startsWith("http");
 
-    function bytesToGB(n){
-      const gb = n / (1024*1024*1024);
-      return gb.toFixed(2);
-    }
+    const supabase = isConfigSet
+      ? window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY)
+      : null;
 
-    function safeJson(x){ try{return JSON.parse(x);}catch{return null;} }
+    /******************************************************************
+     ✅ Helpers
+    ******************************************************************/
+    const fmtBytes = (n) => {
+      const v = Number(n || 0);
+      if (v < 1024) return v + " B";
+      if (v < 1024*1024) return (v/1024).toFixed(1) + " KB";
+      if (v < 1024*1024*1024) return (v/1024/1024).toFixed(1) + " MB";
+      return (v/1024/1024/1024).toFixed(2) + " GB";
+    };
 
-    function ensureConfig(){
-      const okSupabase = CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
-        !CONFIG.SUPABASE_URL.includes("YOUR_PROJECT") && !CONFIG.SUPABASE_ANON_KEY.includes("YOUR_ANON_KEY");
-      const okApi = CONFIG.API_BASE && !CONFIG.API_BASE.includes("YOUR_API_DOMAIN");
-      return { okSupabase, okApi };
-    }
-
-    /************************************************************
-     API client (adds Authorization: Bearer <supabase access token>)
-     ************************************************************/
-    async function apiFetch({ path, method="GET", token, body, isForm=false }) {
-      const url = CONFIG.API_BASE.replace(/\/$/,"") + path;
-      const headers = {};
-      if (token) headers["Authorization"] = "Bearer " + token;
-      if (!isForm) headers["Content-Type"] = "application/json";
-
-      const res = await fetch(url, {
+    async function apiFetch(path, { method="GET", headers={}, body=null, token=null, isForm=false } = {}) {
+      const h = { ...headers };
+      if (token) h["Authorization"] = "Bearer " + token;
+      if (!isForm && body && !h["Content-Type"]) h["Content-Type"] = "application/json";
+      const res = await fetch(CONFIG.API_BASE + path, {
         method,
-        headers,
-        body: isForm ? body : (body ? JSON.stringify(body) : undefined),
+        headers: h,
+        body: isForm ? body : (body ? JSON.stringify(body) : null),
       });
-
+      let json = null;
       const text = await res.text();
-      const json = safeJson(text);
+      try { json = text ? JSON.parse(text) : null; } catch { json = { raw:text }; }
       if (!res.ok) {
-        const msg = json?.error || text || "Request failed";
+        const msg = json?.error || json?.message || ("HTTP " + res.status);
         throw new Error(msg);
       }
-      return json ?? {};
+      return json;
     }
 
-    /************************************************************
-     Auth Modal (Magic Link + OAuth placeholders)
-     ************************************************************/
-    function AuthModal({ supabase, onClose, onAuthed }) {
-      const [email, setEmail] = useState("");
-      const [busy, setBusy] = useState(false);
-      const [msg, setMsg] = useState(null);
+    /******************************************************************
+     ✅ Auth Modal (Polished UI)
+    ******************************************************************/
+    function AuthModal({ open, onClose, onAuthed }) {
+      const [tab, setTab] = React.useState("magic");
+      const [email, setEmail] = React.useState("");
+      const [password, setPassword] = React.useState("");
+      const [loading, setLoading] = React.useState(false);
+      const [msg, setMsg] = React.useState("");
 
-      async function magicLink(){
-        setBusy(true); setMsg(null);
-        try{
-          const redirectTo = window.location.href.split("#")[0];
+      React.useEffect(() => { if(open){ setMsg(""); setPassword(""); } }, [open]);
+
+      if (!open) return null;
+
+      async function doMagic() {
+        setLoading(true); setMsg("");
+        try {
           const { error } = await supabase.auth.signInWithOtp({
             email,
-            options: { emailRedirectTo: redirectTo }
+            options: { emailRedirectTo: window.location.href }
           });
           if (error) throw error;
           setMsg("✅ Magic link sent. Check your email.");
-        }catch(e){
-          setMsg("❌ " + (e?.message || "Auth failed"));
-        }finally{
-          setBusy(false);
+        } catch (e) {
+          setMsg("❌ " + (e?.message || "Failed"));
+        } finally {
+          setLoading(false);
         }
       }
 
-      async function oauth(provider){
-        setBusy(true); setMsg(null);
-        try{
-          const redirectTo = window.location.href.split("#")[0];
-          const { error } = await supabase.auth.signInWithOAuth({
-            provider,
-            options: { redirectTo }
-          });
+      async function doSignup() {
+        setLoading(true); setMsg("");
+        try {
+          const { data, error } = await supabase.auth.signUp({ email, password });
           if (error) throw error;
-        }catch(e){
-          setMsg("❌ " + (e?.message || "OAuth failed"));
-          setBusy(false);
+          setMsg("✅ Account created. Confirm email if needed, then Sign in.");
+        } catch (e) {
+          setMsg("❌ " + (e?.message || "Failed"));
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      async function doSignin() {
+        setLoading(true); setMsg("");
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          onAuthed?.();
+          onClose?.();
+        } catch (e) {
+          setMsg("❌ " + (e?.message || "Failed"));
+        } finally {
+          setLoading(false);
         }
       }
 
       return (
-        <div className="modalBackdrop">
+        <div className="modalOverlay" onMouseDown={(e)=>{ if(e.target===e.currentTarget) onClose?.(); }}>
           <div className="modal">
-            <div style={{display:"grid", gap:10}}>
-              <div style={{fontSize:22, fontWeight:950}}>{CONFIG.APP_NAME}</div>
-              <div className="muted" style={{lineHeight:1.5}}>
-                Sign in to your workspace. Your API must validate Supabase JWT and enforce RLS on server.
+            <div className="modalHead">
+              <b>🔐 Sign in to Avatar G</b>
+              <button className="xBtn" onClick={onClose}>✕</button>
+            </div>
+            <div className="modalBody">
+              <div className="row" style={{gap:8, flexWrap:"wrap", marginBottom:10}}>
+                <button className={"btn " + (tab==="magic"?"btnPrimary":"btnGhost")} onClick={()=>setTab("magic")}>Magic link</button>
+                <button className={"btn " + (tab==="signin"?"btnPrimary":"btnGhost")} onClick={()=>setTab("signin")}>Email + Password</button>
+                <button className={"btn " + (tab==="signup"?"btnPrimary":"btnGhost")} onClick={()=>setTab("signup")}>Create account</button>
               </div>
 
-              <div className="hr"></div>
+              <div className="col">
+                <input className="input" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+                {(tab!=="magic") && (
+                  <input className="input" placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+                )}
 
-              <div style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}} className="muted">Magic Link</div>
-              <input className="input" placeholder="you@company.com" value={email} onChange={e=>setEmail(e.target.value)} />
-              <button className="btn btnPrimary" disabled={busy || !email.includes("@")} onClick={magicLink}>
-                {busy ? "⏳" : "Send Magic Link →"}
-              </button>
+                {tab==="magic" && (
+                  <button className="btn btnPrimary" disabled={loading || !email} onClick={doMagic}>
+                    {loading ? "Sending…" : "Send Magic Link"}
+                  </button>
+                )}
+                {tab==="signin" && (
+                  <button className="btn btnPrimary" disabled={loading || !email || !password} onClick={doSignin}>
+                    {loading ? "Signing in…" : "Sign in"}
+                  </button>
+                )}
+                {tab==="signup" && (
+                  <button className="btn btnPrimary" disabled={loading || !email || !password} onClick={doSignup}>
+                    {loading ? "Creating…" : "Create account"}
+                  </button>
+                )}
 
-              <div className="hr"></div>
-
-              <div style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}} className="muted">OAuth</div>
-              <div style={{display:"flex", gap:10, flexWrap:"wrap"}}>
-                <button className="btn" disabled={busy} onClick={()=>oauth("google")}>Continue with Google</button>
-                <button className="btn" disabled={busy} onClick={()=>oauth("github")}>Continue with GitHub</button>
-              </div>
-
-              {msg && <div style={{fontSize:13, fontWeight:900, color: msg.startsWith("✅") ? "var(--accent)" : "var(--danger)"}}>{msg}</div>}
-
-              <div style={{display:"flex", justifyContent:"space-between", gap:10, marginTop:6}}>
-                <button className="btn" onClick={onClose}>Close</button>
-                <button className="btn btnCyan" onClick={onAuthed}>I already signed in</button>
+                {msg && <div className={msg.startsWith("✅")?"ok":"err"} style={{fontWeight:900}}>{msg}</div>}
+                <div className="muted tiny">Tip: Magic link is best for fast mobile login.</div>
               </div>
             </div>
           </div>
@@ -367,189 +582,249 @@
       );
     }
 
-    /************************************************************
-     Main App
-     ************************************************************/
+    /******************************************************************
+     ✅ Main App
+    ******************************************************************/
     function App(){
-      const cfg = ensureConfig();
+      const [session, setSession] = React.useState(null);
+      const [user, setUser] = React.useState(null);
+      const [token, setToken] = React.useState(null);
 
-      const supabase = useMemo(()=>{
-        if(!cfg.okSupabase) return null;
-        return window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-      }, [cfg.okSupabase]);
+      const [authOpen, setAuthOpen] = React.useState(false);
 
-      const [session, setSession] = useState(null);
-      const [token, setToken] = useState("");
-      const [showAuth, setShowAuth] = useState(false);
+      // Projects
+      const [projects, setProjects] = React.useState([]);
+      const [activeProjectId, setActiveProjectId] = React.useState(null);
+      const [projectName, setProjectName] = React.useState("");
 
-      // Workspace state
-      const [projects, setProjects] = useState([]);
-      const [activeProjectId, setActiveProjectId] = useState("");
-      const [mode, setMode] = useState("general");
-      const [usage, setUsage] = useState(null);
-      const [attachments, setAttachments] = useState([]);
-      const [uploading, setUploading] = useState([]);
-      const [messages, setMessages] = useState([
-        { role:"assistant", content:
-          "Welcome to **Avatar G Workspace**.\n\n✅ GPT-style unified window\n✅ Projects + Files\n✅ Usage limits + Billing\n\nUpload files and tell me what you want."
-        }
+      // Usage
+      const [usage, setUsage] = React.useState(null);
+      const [ent, setEnt] = React.useState(null);
+
+      // Chat
+      const [mode, setMode] = React.useState("chat"); // chat/avatar/voice/music/video/photo/marketing
+      const [messages, setMessages] = React.useState([
+        { role:"assistant", content:"Welcome to **Avatar G Workspace**.\n\n✅ GPT-style unified window\n✅ Projects + Files\n✅ Usage limits + Billing\n\nUpload files and tell me what you want." }
       ]);
-      const [input, setInput] = useState("");
-      const [streaming, setStreaming] = useState(false);
-      const bottomRef = useRef(null);
+      const [input, setInput] = React.useState("");
+      const [streaming, setStreaming] = React.useState(false);
 
-      function scrollBottom(){
-        requestAnimationFrame(()=> bottomRef.current?.scrollIntoView({behavior:"smooth"}));
-      }
+      // Attachments (project-scoped)
+      const [attachments, setAttachments] = React.useState([]);
 
-      // Session init
-      useEffect(()=>{
+      const chatRef = React.useRef(null);
+      const fileRef = React.useRef(null);
+
+      const configWarning = !isConfigSet;
+
+      // Load session
+      React.useEffect(()=>{
         if(!supabase) return;
-        supabase.auth.getSession().then(({data})=>{
+        supabase.auth.getSession().then(({ data })=>{
           setSession(data.session || null);
-          setToken(data.session?.access_token || "");
+          setUser(data.session?.user || null);
+          setToken(data.session?.access_token || null);
         });
-        const { data: sub } = supabase.auth.onAuthStateChange((_event, sess)=>{
-          setSession(sess || null);
-          setToken(sess?.access_token || "");
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, s)=>{
+          setSession(s);
+          setUser(s?.user || null);
+          setToken(s?.access_token || null);
         });
         return ()=> sub?.subscription?.unsubscribe?.();
-      }, [supabase]);
+      },[]);
 
-      // If config missing
-      const configWarning = (!cfg.okSupabase || !cfg.okApi);
+      // When token changes -> refresh projects + usage
+      React.useEffect(()=>{
+        if(!token) {
+          setProjects([]);
+          setActiveProjectId(null);
+          setUsage(null);
+          setEnt(null);
+          return;
+        }
+        refreshProjects();
+        refreshUsage();
+      },[token]);
 
-      // API calls
-      async function loadProjects(){
-        if(!token) return;
-        const j = await apiFetch({ path:"/projects/list", token });
-        const list = j.projects || [];
-        setProjects(list);
+      React.useEffect(()=>{
+        // scroll chat bottom
+        if(chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      },[messages, streaming]);
 
-        // ensure active
-        if(!activeProjectId){
-          if(list[0]) setActiveProjectId(list[0].id);
-        } else {
-          if(!list.some(p=>p.id===activeProjectId) && list[0]) setActiveProjectId(list[0].id);
+      // Visible attachments per project
+      const visibleAttachments = attachments.filter(a => a.projectId === activeProjectId);
+
+      async function refreshUsage(){
+        try{
+          const data = await apiFetch("/api/usage", { token });
+          setUsage(data.usage);
+          setEnt(data.entitlements);
+        }catch(e){
+          console.log("usage err", e.message);
         }
       }
 
-      async function loadUsage(){
-        if(!token) return;
-        // Your API should return:
-        // { plan, projectsUsed, projectsLimit, storageBytesUsed, storageBytesLimit, filesCount }
-        const j = await apiFetch({ path:"/usage", token });
-        setUsage(j.usage || j);
+      async function refreshProjects(){
+        try{
+          // We are using Supabase directly (Option B) for projects
+          const { data, error } = await supabase
+            .from("projects")
+            .select("id,name,created_at,archived")
+            .eq("archived", false)
+            .order("created_at", { ascending: true });
+
+          if(error) throw error;
+          const list = data || [];
+          setProjects(list);
+
+          // pick active
+          const saved = localStorage.getItem("ag_active_project");
+          const exists = saved && list.find(p=>p.id===saved);
+          const next = exists ? saved : (list[0]?.id || null);
+          setActiveProjectId(next);
+          if(next) localStorage.setItem("ag_active_project", next);
+        }catch(e){
+          console.log("projects err", e.message);
+        }
       }
 
-      useEffect(()=>{
-        if(!token || configWarning) return;
-        loadProjects().catch(()=>{});
-        loadUsage().catch(()=>{});
-      }, [token]);
-
       async function createProject(){
-        const name = prompt("Project name?");
-        if(!name || !name.trim()) return;
-        await apiFetch({ path:"/projects/create", method:"POST", token, body:{ name:name.trim() } });
-        await loadProjects();
-        await loadUsage();
+        if(!token) return setAuthOpen(true);
+        const name = (projectName || "").trim();
+        if(!name) return alert("Project name required");
+        try{
+          // Enforce project limit from entitlements (client-side UX; server-side should also enforce)
+          if(ent && projects.length >= ent.projects){
+            return alert(`Project limit reached for ${ent.tier}. Upgrade to create more.`);
+          }
+          const { data, error } = await supabase
+            .from("projects")
+            .insert({ user_id: user.id, name })
+            .select("id,name,created_at")
+            .single();
+          if(error) throw error;
+
+          setProjectName("");
+          await refreshProjects();
+          setActiveProjectId(data.id);
+          localStorage.setItem("ag_active_project", data.id);
+        }catch(e){
+          alert(e.message || "Create project failed");
+        }
       }
 
       async function deleteProject(id){
-        if(!confirm("Delete project?")) return;
-        await apiFetch({ path:"/projects/delete", method:"POST", token, body:{ projectId:id } });
-        // remove attachments UI for that project
-        setAttachments(prev=> prev.filter(a=>a.projectId!==id));
-        await loadProjects();
-        await loadUsage();
-      }
-
-      async function uploadFile(file){
-        if(!activeProjectId) return alert("No active project");
-        const uploadId = crypto.randomUUID();
-        setUploading(prev=> [...prev, { id:uploadId, name:file.name, progress:0 }]);
-
+        if(!confirm("Delete this project? (Files will remain in storage unless deleted)")) return;
         try{
-          const fd = new FormData();
-          fd.append("file", file);
-          fd.append("projectId", activeProjectId);
+          // soft archive
+          const { error } = await supabase.from("projects").update({ archived:true }).eq("id", id);
+          if(error) throw error;
 
-          // If your API returns { meta: { key, projectId, name, type, size, timestamp } }
-          // we use it directly.
-          const json = await apiFetch({ path:"/upload", method:"POST", token, body:fd, isForm:true });
-          const meta = json.meta || json;
+          // local attachments cleanup (optional)
+          setAttachments(prev => prev.filter(a => a.projectId !== id));
 
-          // client thumbnail only
-          let previewUrl = null;
-          if(file.type.startsWith("image/")){
-            previewUrl = URL.createObjectURL(file);
+          await refreshProjects();
+          if(activeProjectId === id){
+            const next = projects.find(p=>p.id!==id)?.id || null;
+            setActiveProjectId(next);
+            if(next) localStorage.setItem("ag_active_project", next);
           }
-
-          setAttachments(prev=> [...prev, { ...meta, previewUrl } ]);
-          setMessages(prev=> [...prev, { role:"assistant", content:`✅ Uploaded: **${meta.name}**` } ]);
-          scrollBottom();
-          await loadUsage();
         }catch(e){
-          alert(e?.message || "Upload failed");
-        }finally{
-          setUploading(prev=> prev.filter(u=>u.id!==uploadId));
+          alert(e.message || "Delete failed");
         }
       }
 
-      async function viewAttachment(att){
-        // expects POST /r2/sign { key } => { url }
-        const j = await apiFetch({ path:"/r2/sign", method:"POST", token, body:{ key:att.key } });
-        window.open(j.url, "_blank");
+      function setActive(id){
+        setActiveProjectId(id);
+        localStorage.setItem("ag_active_project", id);
       }
 
-      async function deleteAttachment(att){
-        if(!confirm("Delete file?")) return;
-        await apiFetch({ path:"/r2/delete", method:"POST", token, body:{ key:att.key } });
-        if(att.previewUrl) URL.revokeObjectURL(att.previewUrl);
-        setAttachments(prev=> prev.filter(x=>x.key!==att.key));
-        await loadUsage();
+      async function handleUpload(file){
+        if(!token) return setAuthOpen(true);
+        if(!activeProjectId) return alert("Create/select a project first.");
+
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("projectId", activeProjectId);
+
+        try{
+          const json = await apiFetch("/api/upload", { method:"POST", body: fd, token, isForm:true });
+          const meta = json.meta;
+
+          // Attach to local state
+          setAttachments(prev => [...prev, { 
+            key: meta.key,
+            projectId: meta.projectId,
+            name: meta.name,
+            type: meta.type,
+            size: meta.size
+          }]);
+
+          setMessages(prev => [...prev, {
+            role:"assistant",
+            content:`✅ Uploaded **${meta.name}** to this project.\n🔒 Private storage (owner-only access).`
+          }]);
+
+          refreshUsage();
+        }catch(e){
+          alert(e.message || "Upload failed");
+        }
       }
 
-      const visibleAttachments = useMemo(()=> attachments.filter(a=>a.projectId===activeProjectId), [attachments, activeProjectId]);
-
-      async function startCheckout(plan){
-        // expects POST /billing/checkout { plan } => { url }
-        const j = await apiFetch({ path:"/billing/checkout", method:"POST", token, body:{ plan } });
-        window.location.href = j.url;
+      async function signAndOpen(key){
+        try{
+          const json = await apiFetch("/api/r2/sign", { method:"POST", body:{ key }, token });
+          window.open(json.url, "_blank");
+        }catch(e){
+          alert(e.message || "Sign failed");
+        }
       }
 
-      async function openPortal(){
-        // expects POST /billing/portal => { url }
-        const j = await apiFetch({ path:"/billing/portal", method:"POST", token });
-        window.location.href = j.url;
+      async function deleteFile(key){
+        if(!confirm("Delete this file from private storage?")) return;
+        try{
+          await apiFetch("/api/r2/delete", { method:"POST", body:{ key }, token });
+          setAttachments(prev => prev.filter(a=>a.key!==key));
+          refreshUsage();
+        }catch(e){
+          alert(e.message || "Delete failed");
+        }
       }
 
-      async function logout(){
-        if(!supabase) return;
-        await supabase.auth.signOut();
-        setSession(null);
-        setToken("");
+      async function stripeCheckout(plan){
+        if(!token) return setAuthOpen(true);
+        try{
+          const json = await apiFetch("/api/billing/checkout", { method:"POST", body:{ plan }, token });
+          window.location.href = json.url;
+        }catch(e){
+          alert(e.message || "Checkout failed");
+        }
       }
 
-      // Chat streaming via SSE
+      async function customerPortal(){
+        if(!token) return setAuthOpen(true);
+        try{
+          const json = await apiFetch("/api/billing/portal", { method:"POST", body:{}, token });
+          window.location.href = json.url;
+        }catch(e){
+          alert(e.message || "Portal failed");
+        }
+      }
+
       async function send(){
-        const text = input.trim();
+        const text = (input||"").trim();
         if(!text || streaming) return;
-        if(!activeProjectId) return alert("No active project");
+        if(!token) return setAuthOpen(true);
+        if(!activeProjectId) return alert("Create/select a project first.");
 
-        const next = [...messages, { role:"user", content:text }];
+        const next = [...messages, { role:"user", content:text }, { role:"assistant", content:"" }];
         setMessages(next);
         setInput("");
         setStreaming(true);
-        scrollBottom();
 
-        // placeholder assistant bubble
-        setMessages(prev=> [...prev, { role:"assistant", content:"" } ]);
-
+        // Stream via SSE
         try{
-          const url = CONFIG.API_BASE.replace(/\/$/,"") + "/chat";
-          const res = await fetch(url, {
+          const res = await fetch(CONFIG.API_BASE + "/api/chat", {
             method:"POST",
             headers:{
               "Content-Type":"application/json",
@@ -558,14 +833,15 @@
             body: JSON.stringify({
               mode,
               projectId: activeProjectId,
-              messages: next,
+              messages: [...messages, { role:"user", content:text }],
               attachments: visibleAttachments
             })
           });
 
-          if(!res.ok || !res.body){
+          if(!res.ok){
             const t = await res.text();
-            throw new Error(t || "Chat failed");
+            let j=null; try{ j=JSON.parse(t) }catch{ j={error:t} }
+            throw new Error(j?.error || "Chat failed");
           }
 
           const reader = res.body.getReader();
@@ -575,345 +851,274 @@
           while(true){
             const { done, value } = await reader.read();
             if(done) break;
-
             buffer += decoder.decode(value, { stream:true });
+
             const parts = buffer.split("\n\n");
             buffer = parts.pop() || "";
 
-            for(const part of parts){
-              const line = part.trim();
-              if(!line.startsWith("data:")) continue;
-              const jsonStr = line.slice(5).trim();
-              if(!jsonStr) continue;
-
-              const evt = safeJson(jsonStr);
-              if(!evt) continue;
-
-              if(evt.type === "delta"){
-                const delta = evt.delta || "";
+            for(const p of parts){
+              const line = p.split("\n").find(l=>l.startsWith("data:"));
+              if(!line) continue;
+              const payload = line.slice(5).trim();
+              if(!payload) continue;
+              let obj=null; try{ obj=JSON.parse(payload) }catch{ continue; }
+              if(obj.type === "delta"){
+                const delta = obj.delta || "";
                 setMessages(prev=>{
                   const copy = [...prev];
                   const last = copy[copy.length-1];
-                  if(last?.role === "assistant") last.content += delta;
+                  copy[copy.length-1] = { ...last, content: (last.content||"") + delta };
                   return copy;
                 });
-                scrollBottom();
-              }
-              if(evt.type === "error"){
-                throw new Error(evt.message || "Stream error");
               }
             }
           }
         }catch(e){
           setMessages(prev=>{
-            const copy = [...prev];
-            const last = copy[copy.length-1];
-            const msg = "❌ " + (e?.message || "Unknown error");
-            if(last?.role === "assistant" && !last.content) last.content = msg;
-            else copy.push({ role:"assistant", content: msg });
+            const copy=[...prev];
+            const last=copy[copy.length-1];
+            copy[copy.length-1] = { ...last, content: "❌ " + (e.message || "Chat failed") };
             return copy;
           });
         }finally{
           setStreaming(false);
-          scrollBottom();
         }
       }
 
-      const modeOptions = [
-        ["general","💬 Chat"],
-        ["avatar","🧑‍🎭 Avatar"],
-        ["voice","🎤 Voice"],
-        ["music","🎵 Music"],
-        ["video","🎬 Video"],
-        ["photo","📸 Photo"],
-        ["marketing","📈 Marketing"],
-      ];
+      async function signOut(){
+        try{
+          await supabase.auth.signOut();
+        }catch{}
+      }
 
-      const usageText = useMemo(()=>{
-        if(!usage) return "";
-        const pLimit = Number.isFinite(usage.projectsLimit) ? usage.projectsLimit : "∞";
-        const sLimit = Number.isFinite(usage.storageBytesLimit) ? bytesToGB(usage.storageBytesLimit) + "GB" : "∞";
-        const sUsed = bytesToGB(usage.storageBytesUsed) + "GB";
-        return `Plan: ${usage.plan} • Projects: ${usage.projectsUsed}/${pLimit} • Storage: ${sUsed}/${sLimit} • Files: ${usage.filesCount}`;
-      }, [usage]);
+      const tier = ent?.tier || (token ? "free" : "guest");
+      const storageUsed = usage?.storage_used_bytes || 0;
+      const storageMax = ent?.storage_bytes || 1;
+      const pct = Math.min(100, Math.round((storageUsed / storageMax) * 100));
 
-      // UI
       return (
-        <div className="wrap">
-          <div className="container">
-
-            {configWarning && (
-              <div className="warn" style={{marginBottom:12}}>
-                ⚠️ CONFIG is not set.<br/>
-                Edit CONFIG at top of this file:<br/>
-                - SUPABASE_URL + SUPABASE_ANON_KEY<br/>
-                - API_BASE (your backend domain)<br/>
-                Then refresh.
+        <div className="appShell">
+          <div className="topbar">
+            <div className="brand">
+              <div className="logo"></div>
+              <div className="brandTitle">
+                <b>Avatar G</b>
+                <span>Unified AI Workspace</span>
               </div>
-            )}
-
-            {(!session) && cfg.okSupabase && (
-              <div className="warn" style={{marginBottom:12}}>
-                🔐 Not signed in. Click “Sign in” to access workspace.
-              </div>
-            )}
-
-            {showAuth && supabase && (
-              <AuthModal
-                supabase={supabase}
-                onClose={()=>setShowAuth(false)}
-                onAuthed={()=>{
-                  setShowAuth(false);
-                  // session auto updates by supabase listener
-                }}
-              />
-            )}
-
-            <div className="grid">
-
-              {/* LEFT */}
-              <aside className="card pad">
-                <div style={{display:"grid", gap:12}}>
-                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
-                    <div>
-                      <div style={{fontWeight:950, fontSize:18}}>{CONFIG.APP_NAME}</div>
-                      <div className="muted" style={{fontSize:12}}>
-                        {session?.user?.email ? session.user.email : "Guest"}
-                      </div>
-                    </div>
-
-                    <div style={{display:"flex", gap:8}}>
-                      {!session ? (
-                        <button className="btn btnPrimary" onClick={()=>setShowAuth(true)} disabled={!cfg.okSupabase}>
-                          Sign in
-                        </button>
-                      ) : (
-                        <button className="btn" onClick={logout}>Logout</button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="hr"></div>
-
-                  {/* Usage */}
-                  <div style={{display:"grid", gap:8}}>
-                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Usage</div>
-                    <div className="badge">{usage ? usageText : "—"}</div>
-                  </div>
-
-                  <div className="hr"></div>
-
-                  {/* Projects */}
-                  <div style={{display:"grid", gap:8}}>
-                    <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                      <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Projects</div>
-                      <button className="btn btnCyan" onClick={createProject} disabled={!session || configWarning}>＋</button>
-                    </div>
-
-                    <div style={{display:"grid", gap:6}}>
-                      {projects.map(p=>{
-                        const active = p.id === activeProjectId;
-                        return (
-                          <div key={p.id} className={"projectItem " + (active ? "active":"")}
-                               onClick={()=>setActiveProjectId(p.id)}>
-                            <div style={{fontSize:16}}>{active ? "📂":"📁"}</div>
-                            <div style={{flex:1, minWidth:0}}>
-                              <div style={{fontWeight:950, fontSize:13, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"}}>{p.name}</div>
-                              <div className="muted" style={{fontSize:11}}>
-                                {new Date(p.created_at).toLocaleDateString("ka-GE")}
-                              </div>
-                            </div>
-                            <button className="btn btnDanger"
-                              style={{padding:"6px 8px", borderRadius:12}}
-                              onClick={(e)=>{e.stopPropagation(); deleteProject(p.id);}}
-                              disabled={!session || configWarning}
-                              title="Delete project"
-                            >🗑️</button>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    <button className="btn" onClick={loadProjects} disabled={!session || configWarning}>
-                      Refresh Projects
-                    </button>
-                  </div>
-
-                  <div className="hr"></div>
-
-                  {/* Billing */}
-                  <div style={{display:"grid", gap:8}}>
-                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Billing</div>
-                    <button className="btn btnPrimary" onClick={()=>startCheckout("pro")} disabled={!session || configWarning}>
-                      Stripe Checkout: PRO →
-                    </button>
-                    <button className="btn btnCyan" onClick={()=>startCheckout("studio")} disabled={!session || configWarning}>
-                      Stripe Checkout: STUDIO →
-                    </button>
-                    <button className="btn" onClick={openPortal} disabled={!session || configWarning}>
-                      Customer Portal
-                    </button>
-                  </div>
-
-                  <div className="hr"></div>
-
-                  {/* Modes */}
-                  <div style={{display:"grid", gap:8}}>
-                    <div className="muted" style={{fontSize:12, fontWeight:900, textTransform:"uppercase"}}>Modes</div>
-                    <div style={{display:"grid", gap:6}}>
-                      {modeOptions.map(([id,label])=>{
-                        const active = id === mode;
-                        return (
-                          <button key={id}
-                            className="btn"
-                            style={{
-                              textAlign:"left",
-                              border: active ? "1.5px solid var(--accent)" : "1px solid var(--line)",
-                              background: active ? "linear-gradient(135deg, rgba(34,211,238,0.12), rgba(59,130,246,0.08))" : "rgba(255,255,255,0.05)"
-                            }}
-                            onClick={()=>setMode(id)}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                </div>
-              </aside>
-
-              {/* RIGHT CHAT */}
-              <section className="card chat">
-                <div className="chatHeader">
-                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
-                    <div>
-                      <div style={{fontWeight:950, fontSize:16}}>Chat</div>
-                      <div className="muted" style={{fontSize:12, fontWeight:700}}>
-                        Project: <span style={{color:"var(--text)"}}>{activeProjectId ? "Selected" : "None"}</span>
-                        {streaming ? <span style={{color:"var(--accent)"}}> • streaming…</span> : null}
-                      </div>
-                    </div>
-
-                    <label className="btn" style={{cursor:(!session||configWarning)?"not-allowed":"pointer", opacity:(!session||configWarning)?0.6:1}}>
-                      📎 Upload
-                      <input type="file" style={{display:"none"}} disabled={!session || configWarning}
-                        onChange={(e)=>{
-                          const f = e.target.files?.[0];
-                          if(f) uploadFile(f);
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
-                  </div>
-                </div>
-
-                <div className="chatBody">
-                  {uploading.length > 0 && (
-                    <div style={{display:"grid", gap:8, marginBottom:12}}>
-                      {uploading.map(u=>(
-                        <div key={u.id} className="pill" style={{borderColor:"rgba(34,211,238,0.25)", color:"var(--accent)"}}>
-                          ⏳ {u.name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Attachments for active project */}
-                  {activeProjectId && visibleAttachments.length > 0 && (
-                    <div style={{marginBottom:12}}>
-                      {visibleAttachments.map(att=>{
-                        const isImg = (att.type||"").startsWith("image/");
-                        const isPdf = att.type === "application/pdf";
-                        return (
-                          <div className="attRow" key={att.key}>
-                            {isImg && att.previewUrl ? (
-                              <img className="thumb" src={att.previewUrl} alt={att.name} />
-                            ) : (
-                              <div className="thumbBox">
-                                {isPdf ? "PDF" : "FILE"}
-                              </div>
-                            )}
-
-                            <div style={{flex:1, minWidth:0}}>
-                              <div className="attName">{att.name}</div>
-                              <div className="attMeta">{att.type} • {Math.round((att.size||0)/1024)} KB</div>
-                            </div>
-
-                            <div style={{display:"flex", gap:8}}>
-                              {(isImg || isPdf) && (
-                                <button className="btn btnCyan" style={{padding:"8px 10px"}} onClick={()=>viewAttachment(att)} disabled={!session || configWarning}>
-                                  👁️ View
-                                </button>
-                              )}
-                              <button className="btn btnDanger" style={{padding:"8px 10px"}} onClick={()=>deleteAttachment(att)} disabled={!session || configWarning}>
-                                🗑️
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Messages */}
-                  <div style={{display:"grid", gap:12}}>
-                    {messages.map((m,i)=>{
-                      const isUser = m.role === "user";
-                      return (
-                        <div key={i} className="bubbleWrap" style={{justifyContent:isUser?"flex-end":"flex-start"}}>
-                          <div className={"bubble " + (isUser ? "user":"")}>
-                            {m.content}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <div ref={bottomRef}></div>
-                  </div>
-                </div>
-
-                <div className="composer">
-                  <div style={{display:"grid", gridTemplateColumns:"1fr auto", gap:12}}>
-                    <textarea
-                      rows="2"
-                      value={input}
-                      placeholder={session ? "Write your request… (Enter = send, Shift+Enter = new line)" : "Sign in to chat…"}
-                      disabled={!session || configWarning}
-                      onChange={e=>setInput(e.target.value)}
-                      onKeyDown={(e)=>{
-                        if(e.key==="Enter" && !e.shiftKey){
-                          e.preventDefault();
-                          send();
-                        }
-                      }}
-                    />
-                    <button className={"btn " + (streaming?"":"btnPrimary")}
-                      disabled={!session || configWarning || streaming}
-                      onClick={send}
-                      style={{padding:"0 24px", opacity:(!session||configWarning)?0.6:1}}
-                    >
-                      {streaming ? "⏳" : "Send →"}
-                    </button>
-                  </div>
-
-                  <div className="muted" style={{fontSize:12, marginTop:8}}>
-                    Tip: Attach files per project. Your backend must enforce RLS + quotas.
-                  </div>
-                </div>
-
-              </section>
             </div>
 
+            <div className="topActions">
+              {token ? (
+                <>
+                  <div className="tag">Tier: {tier.toUpperCase()}</div>
+                  <button className="pill pillDanger" onClick={signOut}>Log out</button>
+                </>
+              ) : (
+                <button className="pill pillPrimary" onClick={()=>setAuthOpen(true)}>Sign in</button>
+              )}
+            </div>
           </div>
+
+          {configWarning && (
+            <div className="notice">
+              ⚠️ <b>CONFIG is not set.</b><br/>
+              Edit <b>CONFIG</b> at top of this file:<br/>
+              - <b>SUPABASE_URL</b> + <b>SUPABASE_ANON_KEY</b><br/>
+              - <b>API_BASE</b> (your backend domain)<br/>
+              Then refresh.
+            </div>
+          )}
+
+          <div className="grid">
+            {/* Left panel */}
+            <div className="panel">
+              <div className="panelHeader">
+                <div>
+                  <h3>Avatar G Workspace</h3>
+                  <small>{token ? (user?.email || "User") : "Guest"}</small>
+                </div>
+                <button className={"btn " + (token?"btnGhost":"btnPrimary")} onClick={()=> token ? refreshUsage() : setAuthOpen(true)}>
+                  {token ? "Refresh" : "Sign in"}
+                </button>
+              </div>
+
+              <div className="panelBody">
+                <div className="usageBox">
+                  <div className="row" style={{justifyContent:"space-between"}}>
+                    <div style={{fontWeight:900}}>USAGE</div>
+                    <div className="tag">{token ? tier.toUpperCase() : "GUEST"}</div>
+                  </div>
+                  <div className="muted tiny">Storage</div>
+                  <div className="bar"><div style={{width: pct + "%"}}></div></div>
+                  <div className="row" style={{justifyContent:"space-between"}}>
+                    <div className="muted tiny">{fmtBytes(storageUsed)} used</div>
+                    <div className="muted tiny">{fmtBytes(storageMax)} max</div>
+                  </div>
+
+                  {ent && (
+                    <div className="muted tiny">
+                      Projects limit: <b>{ent.projects >= 999999 ? "Unlimited" : ent.projects}</b>
+                    </div>
+                  )}
+                </div>
+
+                <div className="divider"></div>
+
+                <div className="row" style={{justifyContent:"space-between"}}>
+                  <div style={{fontWeight:900}}>PROJECTS</div>
+                  <button className="btn btnPrimary" disabled={!token} onClick={createProject}>＋</button>
+                </div>
+
+                <div className="row">
+                  <input className="input" placeholder="New project name…" value={projectName} onChange={(e)=>setProjectName(e.target.value)} disabled={!token}/>
+                </div>
+
+                <div className="col" style={{marginTop:10}}>
+                  {projects.length === 0 && (
+                    <div className="muted tiny">No projects yet. Create one.</div>
+                  )}
+
+                  {projects.map(p=>(
+                    <div key={p.id} className={"projectItem " + (p.id===activeProjectId ? "active":"")} onClick={()=>setActive(p.id)}>
+                      <div style={{fontSize:16}}>{p.id===activeProjectId ? "📂" : "📁"}</div>
+                      <div style={{minWidth:0}}>
+                        <b style={{display:"block", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"}}>{p.name}</b>
+                        <span>{new Date(p.created_at).toLocaleDateString("ka-GE")}</span>
+                      </div>
+                      <div className="trash" title="Archive project" onClick={(e)=>{ e.stopPropagation(); deleteProject(p.id); }}>🗑️</div>
+                    </div>
+                  ))}
+
+                  <button className="btn" onClick={refreshProjects} disabled={!token}>Refresh Projects</button>
+                </div>
+
+                <div className="divider"></div>
+
+                <div style={{fontWeight:900, marginBottom:8}}>BILLING</div>
+                <div className="col">
+                  <button className="btn btnPrimary" onClick={()=>stripeCheckout("pro")} disabled={!token}>Stripe Checkout: PRO →</button>
+                  <button className="btn btnPrimary" onClick={()=>stripeCheckout("studio")} disabled={!token} style={{opacity:.92}}>Stripe Checkout: STUDIO →</button>
+                  <button className="btn" onClick={customerPortal} disabled={!token}>Customer Portal</button>
+                </div>
+
+                <div className="divider"></div>
+
+                <div style={{fontWeight:900, marginBottom:8}}>MODES</div>
+                <div className="col">
+                  {[
+                    ["chat","💬 Chat"],
+                    ["avatar","🧑‍🚀 Avatar"],
+                    ["voice","🎙️ Voice"],
+                    ["music","🎵 Music"],
+                    ["video","🎬 Video"],
+                    ["photo","🖼️ Photo"],
+                    ["marketing","📈 Marketing"]
+                  ].map(([id,label])=>(
+                    <button
+                      key={id}
+                      className={"btn " + (mode===id ? "btnPrimary":"")}
+                      onClick={()=>setMode(id)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+
+            {/* Right panel (Chat) */}
+            <div className="panel chatWrap">
+              <div className="chatHeader">
+                <div className="left">
+                  <b>Chat</b>
+                  <small>Project: {activeProjectId ? (projects.find(p=>p.id===activeProjectId)?.name || "Selected") : "None"}</small>
+                </div>
+
+                <div className="row">
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    style={{display:"none"}}
+                    onChange={(e)=>{
+                      const f = e.target.files?.[0];
+                      if(!f) return;
+                      handleUpload(f);
+                      e.target.value="";
+                    }}
+                  />
+                  <button className="btn btnPrimary" onClick={()=>{
+                    if(!token) return setAuthOpen(true);
+                    if(!activeProjectId) return alert("Create/select a project first.");
+                    fileRef.current.click();
+                  }}>
+                    📎 Upload
+                  </button>
+                </div>
+              </div>
+
+              <div className="chatBody" ref={chatRef}>
+                {messages.map((m, idx)=>(
+                  <div key={idx} className={"bubble " + (m.role==="user"?"user":"assistant")}>
+                    {m.content}
+                  </div>
+                ))}
+
+                {visibleAttachments.length > 0 && (
+                  <div className="fileRow">
+                    {visibleAttachments.map((a)=>(
+                      <div className="fileChip" key={a.key}>
+                        <span>📎 {a.name}</span>
+                        <button title="Open" onClick={()=>signAndOpen(a.key)}>↗</button>
+                        <button title="Delete" onClick={()=>deleteFile(a.key)}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="chatComposer">
+                <textarea
+                  className="textarea"
+                  placeholder={token ? "Type a message… (Enter to send, Shift+Enter for new line)" : "Sign in to chat…"}
+                  value={input}
+                  onChange={(e)=>setInput(e.target.value)}
+                  onKeyDown={(e)=>{
+                    if(e.key==="Enter" && !e.shiftKey){
+                      e.preventDefault();
+                      send();
+                    }
+                  }}
+                  disabled={!token || streaming || configWarning}
+                />
+                <div className="composerRow">
+                  <button
+                    className={"btn " + (streaming ? "" : "btnPrimary")}
+                    onClick={send}
+                    disabled={!token || streaming || configWarning}
+                    style={{padding:"0 24px"}}
+                  >
+                    {streaming ? "⏳" : "Send →"}
+                  </button>
+                  <div className="muted tiny" style={{lineHeight:1.2}}>
+                    Tip: Attach files per project. Backend enforces owner-only access.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <AuthModal
+            open={authOpen}
+            onClose={()=>setAuthOpen(false)}
+            onAuthed={()=>{ /* session is auto-updated */ }}
+          />
         </div>
       );
     }
 
-    /************************************************************
-     Mount
-     ************************************************************/
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<App/>);
   </script>
 </body>
-</html>
+  </html>
