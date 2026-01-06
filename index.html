@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Avatar G Workspace</title>
 
-  <!-- ✅ React 18 (CDN) -->
+  <!-- React 18 (CDN) -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-  <!-- ✅ Babel (JSX in one file) -->
+  <!-- Babel (JSX in one file) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- ✅ Supabase JS v2 (CDN) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- ✅ Supabase JS v2 UMD (IMPORTANT: exposes window.supabase reliably) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 
   <style>
     :root{
@@ -61,9 +61,7 @@
       border-radius: var(--r);
       box-shadow: var(--shadow);
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-    }
+    .brand{display:flex; align-items:center; gap:12px;}
     .logo{
       width:34px;height:34px;border-radius:12px;
       border:1px solid rgba(34,211,238,0.30);
@@ -71,9 +69,7 @@
       display:grid; place-items:center;
       font-weight:900;
     }
-    .brand h1{
-      margin:0; font-size:16px; letter-spacing:0.2px;
-    }
+    .brand h1{margin:0; font-size:16px; letter-spacing:0.2px;}
     .brand p{margin:0; font-size:12px; color:var(--muted)}
     .actions{display:flex; gap:10px; align-items:center}
     .pill{
@@ -105,14 +101,8 @@
       font-weight:900;
       cursor:pointer;
     }
-    .grid{
-      display:grid;
-      grid-template-columns: 360px 1fr;
-      gap:14px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr; }
-    }
+    .grid{display:grid; grid-template-columns: 360px 1fr; gap:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
     .card{
       border:1px solid var(--line);
       background: rgba(255,255,255,0.04);
@@ -120,10 +110,7 @@
       padding:14px;
       box-shadow: var(--shadow);
     }
-    .cardTitle{
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:10px;
-    }
+    .cardTitle{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
     .cardTitle h2{margin:0; font-size:14px; letter-spacing:0.2px}
     .sub{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5}
     .notice{
@@ -166,9 +153,7 @@
       width:0%;
       transition: width .25s ease;
     }
-    .row{
-      display:flex; gap:10px; align-items:center;
-    }
+    .row{display:flex; gap:10px; align-items:center;}
     .input{
       width:100%;
       border-radius: 14px;
@@ -356,10 +341,7 @@
   <script type="text/babel">
     const { useEffect, useMemo, useRef, useState } = React;
 
-    /******************************************************************
-     * ✅ CONFIG STORAGE (No more "CONFIG not set" popups)
-     * - We store config in localStorage so you don't need to edit file
-     ******************************************************************/
+    // CONFIG storage
     const CONFIG_KEY = "avatarg_config_v1";
 
     function loadConfig(){
@@ -388,11 +370,9 @@
       return (i === 0 ? v.toFixed(0) : v.toFixed(1)) + " " + units[i];
     }
 
-    /******************************************************************
-     * ✅ Plans + Limits (enforced in UI + backend expected)
-     ******************************************************************/
+    // Plans
     const PLANS = {
-      guest:   { name:"GUEST",   projects: 1,  storageBytes: 1,                 priceLabel: "Free" }, // 1B = "blocked unless config"
+      guest:   { name:"GUEST",   projects: 1,  storageBytes: 1,                 priceLabel: "Free" },
       free:    { name:"FREE",    projects: 2,  storageBytes: 1 * 1024**3,      priceLabel: "$0" },
       pro:     { name:"PRO",     projects: 10, storageBytes: 50 * 1024**3,     priceLabel: "$19" },
       studio:  { name:"STUDIO",  projects: 999999, storageBytes: 999999999999, priceLabel: "$49" },
@@ -408,34 +388,34 @@
       { id:"marketing",title:"Marketing",icon:"📈" },
     ];
 
-    /******************************************************************
-     * ✅ Supabase Client Helper
-     ******************************************************************/
+    // ✅ Supabase Client Helper (hardened)
     function createSupabaseClient(cfg){
-      // supabase is on window via CDN
-      return window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+      if(!window.supabase || !window.supabase.createClient){
+        throw new Error("Supabase SDK not loaded. Check CDN link.");
+      }
+      return window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
+        auth: {
+          flowType: "pkce",
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
     }
 
-    /******************************************************************
-     * ✅ Backend fetch helper (adds Authorization Bearer token)
-     * Expected backend endpoints:
-     * POST {API_BASE}/chat         {mode, projectId, messages, attachments}
-     * POST {API_BASE}/upload       multipart/form-data: file, projectId
-     * POST {API_BASE}/r2/sign      {key}
-     * POST {API_BASE}/r2/delete    {key}
-     * POST {API_BASE}/billing/checkout {plan}
-     * POST {API_BASE}/billing/portal   {}
-     * GET  {API_BASE}/usage        -> {plan, projectsCount, storageUsedBytes, storageMaxBytes}
-     * GET  {API_BASE}/projects     -> [{id,name,createdAt}]
-     * POST {API_BASE}/projects     -> {name}
-     * DELETE {API_BASE}/projects/:id
-     ******************************************************************/
+    // Backend fetch helper
     async function apiFetch(cfg, path, { method="GET", headers={}, body=null, token=null, isJson=true } = {}){
       const url = cfg.API_BASE.replace(/\/$/, "") + path;
       const h = { ...headers };
-      if(token) h["Authorization"] = "Bearer " + token;
+      if(token) h["Authorization"] = "Bearer " + String(token);
       if(isJson && body && !h["Content-Type"]) h["Content-Type"] = "application/json";
-      const res = await fetch(url, { method, headers: h, body: isJson && body ? JSON.stringify(body) : body });
+
+      const res = await fetch(url, {
+        method,
+        headers: h,
+        body: isJson && body ? JSON.stringify(body) : body
+      });
+
       const text = await res.text();
       let data = null;
       try{ data = text ? JSON.parse(text) : null; }catch(e){ data = { raw: text }; }
@@ -446,9 +426,7 @@
       return data;
     }
 
-    /******************************************************************
-     * ✅ CONFIG MODAL (paste values once)
-     ******************************************************************/
+    // CONFIG MODAL
     function ConfigModal({ open, initial, onClose, onSave }){
       const [cfg, setCfg] = useState(initial || { SUPABASE_URL:"", SUPABASE_ANON_KEY:"", API_BASE:"" });
       const [err, setErr] = useState("");
@@ -468,12 +446,10 @@
           <div className="modal">
             <div className="modalHeader">
               <div>
-                <h3>🔧 Connect Avatar G to Supabase + Backend</h3>
-                <p>
-                  ჩასვი ერთხელ და შეინახება. შემდეგ აღარ დაგჭირდება ფაილის ჩასწორება.
-                </p>
+                <h3>Connect Avatar G to Supabase + Backend</h3>
+                <p>Paste once and it will be saved in this browser (localStorage).</p>
               </div>
-              <button className="closeX" onClick={onClose}>✕</button>
+              <button className="closeX" onClick={onClose}>X</button>
             </div>
 
             <div className="grid2">
@@ -482,7 +458,7 @@
                 <input className="input" value={cfg.SUPABASE_URL} onChange={e=>setCfg({...cfg, SUPABASE_URL:e.target.value.trim()})} placeholder="https://xxxx.supabase.co" />
               </div>
               <div>
-                <div className="tiny" style={{marginBottom:6}}>API_BASE (your backend domain)</div>
+                <div className="tiny" style={{marginBottom:6}}>API_BASE (backend domain)</div>
                 <input className="input" value={cfg.API_BASE} onChange={e=>setCfg({...cfg, API_BASE:e.target.value.trim()})} placeholder="https://your-backend.com" />
               </div>
               <div style={{gridColumn:"1 / -1"}}>
@@ -491,9 +467,11 @@
               </div>
             </div>
 
-            {err && <div className="notice" style={{marginTop:10, borderColor:"rgba(255,107,107,0.35)", background:"rgba(255,107,107,0.12)"}}>
-              <b className="dangerText">⚠ {err}</b>
-            </div>}
+            {err && (
+              <div className="notice" style={{marginTop:10, borderColor:"rgba(255,107,107,0.35)", background:"rgba(255,107,107,0.12)"}}>
+                <b className="dangerText">WARNING: {err}</b>
+              </div>
+            )}
 
             <div style={{display:"flex", gap:10, justifyContent:"flex-end", marginTop:12}}>
               <button className="btn2" onClick={()=>{
@@ -507,22 +485,19 @@
                 if(v){ setErr(v); return; }
                 setErr("");
                 onSave(cfg);
-              }}>Save & Continue →</button>
+              }}>Save & Continue</button>
             </div>
 
             <div className="help">
-              <b>სად ვნახო?</b><br/>
-              Supabase → <b>Project Settings → API</b> → <i>Project URL</i> და <i>anon public key</i>.<br/>
-              <span className="tiny">API_BASE არის შენი backend (Render/Railway/Vercel/Cloud Run) HTTPS დომენი.</span>
+              Supabase -> Project Settings -> API -> Project URL + anon public key.<br/>
+              API_BASE is your backend HTTPS domain.
             </div>
           </div>
         </div>
       );
     }
 
-    /******************************************************************
-     * ✅ AUTH MODAL (Magic Link + Email/Password)
-     ******************************************************************/
+    // ✅ AUTH MODAL (fixed redirect)
     function AuthModal({ open, onClose, supabase }){
       const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
@@ -538,10 +513,10 @@
           <div className="modal">
             <div className="modalHeader">
               <div>
-                <h3>🔐 Sign in to Avatar G</h3>
-                <p>Magic link ან Email/Password. (Supabase Auth)</p>
+                <h3>Sign in to Avatar G</h3>
+                <p>Magic link or Email/Password (Supabase Auth)</p>
               </div>
-              <button className="closeX" onClick={onClose}>✕</button>
+              <button className="closeX" onClick={onClose}>X</button>
             </div>
 
             <div className="grid2">
@@ -551,65 +526,64 @@
               </div>
               <div style={{gridColumn:"1 / -1"}}>
                 <div className="tiny" style={{marginBottom:6}}>Password (optional)</div>
-                <input className="input" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" type="password" />
+                <input className="input" value={password} onChange={e=>setPassword(e.target.value)} placeholder="********" type="password" />
               </div>
             </div>
 
-            {msg && <div className="notice" style={{marginTop:10}}>
-              {msg}
-            </div>}
+            {msg && <div className="notice" style={{marginTop:10}}>{msg}</div>}
 
             <div style={{display:"flex", gap:10, justifyContent:"flex-end", marginTop:12}}>
               <button className="btn2" disabled={busy} onClick={async ()=>{
-                if(!email.trim()) return setMsg("⚠ Email is required");
+                if(!email.trim()) return setMsg("Email is required");
                 setBusy(true);
                 setMsg("");
                 try{
+                  // ✅ safest redirect (origin only) to avoid non-latin / weird chars
+                  const safeRedirect = window.location.origin;
+
                   const { error } = await supabase.auth.signInWithOtp({
                     email: email.trim(),
                     options: {
-                      emailRedirectTo: window.location.href,
+                      emailRedirectTo: safeRedirect
                     }
                   });
+
                   if(error) throw error;
-                  setMsg("✅ Magic link გაგზავნილია Email-ზე. გახსენი წერილი და დაადასტურე.");
+                  setMsg("OK - Magic link sent. Open your email and confirm.");
                 }catch(e){
-                  setMsg("❌ " + (e?.message || "Failed"));
+                  setMsg("ERROR: " + (e?.message || "Failed"));
                 }finally{ setBusy(false); }
               }}>Send Magic Link</button>
 
               <button className="btn" disabled={busy} onClick={async ()=>{
-                if(!email.trim() || !password.trim()) return setMsg("⚠ Email + Password required");
+                if(!email.trim() || !password.trim()) return setMsg("Email + Password required");
                 setBusy(true);
                 setMsg("");
                 try{
-                  // Try sign-in, if fails, try sign-up
                   const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: password.trim() });
                   if(error){
                     const { error: suErr } = await supabase.auth.signUp({ email: email.trim(), password: password.trim() });
                     if(suErr) throw suErr;
-                    setMsg("✅ Account created. Check email if confirmation is enabled.");
+                    setMsg("OK - Account created. Check email if confirmation is enabled.");
                   }else{
-                    setMsg("✅ Signed in.");
+                    setMsg("OK - Signed in.");
                     onClose();
                   }
                 }catch(e){
-                  setMsg("❌ " + (e?.message || "Failed"));
+                  setMsg("ERROR: " + (e?.message || "Failed"));
                 }finally{ setBusy(false); }
-              }}>{busy ? "..." : "Sign in / Sign up →"}</button>
+              }}>{busy ? "..." : "Sign in / Sign up"}</button>
             </div>
 
             <div className="help tiny">
-              Tip: თუ email confirmation ჩართულია, პირველად sign up-ის მერე email confirmation დაგჭირდება.
+              Tip: if Email confirmation is enabled in Supabase, you must confirm email on first sign-up.
             </div>
           </div>
         </div>
       );
     }
 
-    /******************************************************************
-     * ✅ MAIN APP
-     ******************************************************************/
+    // MAIN APP
     function App(){
       const [config, setConfig] = useState(loadConfig());
       const [configOpen, setConfigOpen] = useState(!loadConfig());
@@ -618,25 +592,22 @@
       const [session, setSession] = useState(null);
       const [user, setUser] = useState(null);
 
-      // Plan / usage
       const [plan, setPlan] = useState("guest");
       const [storageUsed, setStorageUsed] = useState(0);
       const [storageMax, setStorageMax] = useState(PLANS.guest.storageBytes);
 
-      // Projects (synced from backend)
       const [projects, setProjects] = useState([]);
       const [activeProjectId, setActiveProjectId] = useState("");
       const [newProjectName, setNewProjectName] = useState("");
 
-      // Chat
       const [mode, setMode] = useState("general");
       const [messages, setMessages] = useState([
         { role:"assistant", content:
-`Welcome to **Avatar G Workspace**.
+`Welcome to Avatar G Workspace.
 
-✅ GPT-style unified window  
-✅ Projects + Files  
-✅ Usage limits + Billing  
+- Unified GPT-style window
+- Projects + Files
+- Usage limits + Billing
 
 Upload files and tell me what you want.` }
       ]);
@@ -646,7 +617,7 @@ Upload files and tell me what you want.` }
       const bottomRef = useRef(null);
 
       const configWarning = useMemo(()=> {
-        if(!config) return "CONFIG is not set. Open settings and paste SUPABASE + API_BASE.";
+        if(!config) return "CONFIG is not set. Open Settings and paste SUPABASE + API_BASE.";
         const ok = config?.SUPABASE_URL && config?.SUPABASE_ANON_KEY && config?.API_BASE;
         return ok ? "" : "CONFIG is incomplete.";
       }, [config]);
@@ -678,13 +649,11 @@ Upload files and tell me what you want.` }
         requestAnimationFrame(()=> bottomRef.current?.scrollIntoView({ behavior:"smooth" }));
       }
 
-      // Fetch usage + projects when logged in
       async function refreshAll(){
         if(!config || !session) return;
         try{
           const token = session.access_token;
           const usage = await apiFetch(config, "/usage", { token });
-          // expected: { plan, storageUsedBytes, storageMaxBytes, projectsCount }
           const planId = usage?.plan || "free";
           setPlan(planId);
           setStorageUsed(usage?.storageUsedBytes || 0);
@@ -706,13 +675,9 @@ Upload files and tell me what you want.` }
         if(session && config) refreshAll();
       }, [session, config]);
 
-      // Enforce limits in UI
       const limits = useMemo(()=>{
         const p = PLANS[plan] || PLANS.free;
-        return {
-          maxProjects: p.projects,
-          maxStorage: storageMax || p.storageBytes,
-        };
+        return { maxProjects: p.projects, maxStorage: storageMax || p.storageBytes };
       }, [plan, storageMax]);
 
       const storagePct = useMemo(()=>{
@@ -754,7 +719,7 @@ Upload files and tell me what you want.` }
 
       async function deleteProject(id){
         if(!session || !config) return;
-        if(!confirm("Delete this project? (Files remain unless backend deletes)")) return;
+        if(!confirm("Delete this project?")) return;
         try{
           const token = session.access_token;
           await apiFetch(config, "/projects/" + encodeURIComponent(id), { method:"DELETE", token });
@@ -764,7 +729,6 @@ Upload files and tell me what you want.` }
         }
       }
 
-      // Upload (secure)
       async function uploadFile(){
         if(!session || !config || !activeProjectId) return;
         const inputEl = document.createElement("input");
@@ -772,22 +736,18 @@ Upload files and tell me what you want.` }
         inputEl.onchange = async (e)=>{
           const file = e.target.files?.[0];
           if(!file) return;
-
-          // basic client-side check vs max storage (optional)
           if(storageUsed + file.size > limits.maxStorage){
             alert("Storage limit reached. Upgrade plan.");
             return;
           }
-
           try{
             const token = session.access_token;
             const fd = new FormData();
             fd.append("file", file);
             fd.append("projectId", activeProjectId);
 
-            // secure upload via backend (expects Bearer token)
             const data = await apiFetch(config, "/upload", { method:"POST", token, body: fd, isJson:false });
-            setMessages(prev => [...prev, { role:"assistant", content:`✅ Uploaded: **${data?.meta?.name || file.name}**` }]);
+            setMessages(prev => [...prev, { role:"assistant", content:`Uploaded: ${data?.meta?.name || file.name}` }]);
             await refreshAll();
             scrollBottom();
           }catch(e){
@@ -797,7 +757,6 @@ Upload files and tell me what you want.` }
         inputEl.click();
       }
 
-      // Billing
       async function stripeCheckout(planKey){
         if(!session || !config) return;
         try{
@@ -822,7 +781,6 @@ Upload files and tell me what you want.` }
         }
       }
 
-      // Chat to backend
       async function send(){
         const text = input.trim();
         if(!text || !canChat) return;
@@ -837,27 +795,17 @@ Upload files and tell me what you want.` }
 
         try{
           const token = session.access_token;
-
-          // streaming endpoint is optional; we do non-stream JSON fallback if no stream.
-          // backend should return either:
-          // 1) JSON { reply: "..." }
-          // OR
-          // 2) SSE style stream: data: {"type":"delta","delta":"..."}\n\n
           const url = config.API_BASE.replace(/\/$/,"") + "/chat";
+
           const res = await fetch(url, {
             method:"POST",
             headers:{
               "Content-Type":"application/json",
-              "Authorization":"Bearer " + token
+              "Authorization":"Bearer " + String(token)
             },
-            body: JSON.stringify({
-              mode,
-              projectId: activeProjectId,
-              messages: next
-            })
+            body: JSON.stringify({ mode, projectId: activeProjectId, messages: next })
           });
 
-          // If not stream, parse JSON reply
           const ct = res.headers.get("content-type") || "";
           if(!res.ok) {
             const t = await res.text();
@@ -876,7 +824,6 @@ Upload files and tell me what you want.` }
             });
             scrollBottom();
           } else if(res.body){
-            // SSE streaming
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
             let buffer = "";
@@ -913,7 +860,7 @@ Upload files and tell me what you want.` }
           setMessages(prev=>{
             const copy=[...prev];
             const last=copy[copy.length-1];
-            const msg = "❌ " + (e?.message || "Unknown error");
+            const msg = "ERROR: " + (e?.message || "Unknown error");
             if(last?.role==="assistant") last.content = msg;
             else copy.push({ role:"assistant", content: msg });
             return copy;
@@ -940,7 +887,7 @@ Upload files and tell me what you want.` }
             open={configOpen}
             initial={config || { SUPABASE_URL:"", SUPABASE_ANON_KEY:"", API_BASE:"" }}
             onClose={()=>{
-              if(!config) return; // force set if none
+              if(!config) return;
               setConfigOpen(false);
             }}
             onSave={(cfg)=>{
@@ -968,11 +915,11 @@ Upload files and tell me what you want.` }
             <div className="actions">
               <span className="pill">Plan: <b style={{color:"var(--text)"}}>{(PLANS[plan]?.name || "GUEST")}</b></span>
               <span className="pill">User: <b style={{color:"var(--text)"}}>{user?.email || "Guest"}</b></span>
-              <button className="btn2" onClick={()=>setConfigOpen(true)}>⚙ Settings</button>
+              <button className="btn2" onClick={()=>setConfigOpen(true)}>Settings</button>
               {session ? (
                 <button className="btn2" onClick={signOut}>Sign out</button>
               ) : (
-                <button className="btn" disabled={!canUseApp} onClick={()=>alert("Open Settings → paste Supabase + API_BASE, then Sign in will appear.")}>
+                <button className="btn" disabled={!canUseApp} onClick={()=>alert("Open Settings and paste Supabase + API_BASE. Then sign-in modal will appear.")}>
                   Sign in
                 </button>
               )}
@@ -981,25 +928,21 @@ Upload files and tell me what you want.` }
 
           {configWarning && (
             <div className="notice">
-              <b>⚠ CONFIG is not set.</b><br/>
+              <b>CONFIG is not set.</b><br/>
               Open <b>Settings</b> and paste:
               <br/>- <b>SUPABASE_URL</b> + <b>SUPABASE_ANON_KEY</b>
-              <br/>- <b>API_BASE</b> (your backend domain)
+              <br/>- <b>API_BASE</b> (backend domain)
             </div>
           )}
 
           <div className="grid">
-            {/* LEFT */}
             <div className="card">
               <div className="cardTitle">
                 <h2>Avatar G Workspace</h2>
                 <span className="badge">{session ? "SIGNED IN" : "GUEST"}</span>
               </div>
-              <div className="sub">
-                GPT-style interface • Projects • Files • Billing-ready
-              </div>
+              <div className="sub">GPT-style interface - Projects - Files - Billing-ready</div>
 
-              {/* Usage */}
               <div style={{marginTop:12}} className="kpiRow">
                 <div className="kpi">
                   <div className="kpiTop">
@@ -1011,12 +954,11 @@ Upload files and tell me what you want.` }
                   </div>
                   <div className="bar"><div style={{width: storagePct + "%"}}/></div>
                   <div className="tiny" style={{marginTop:8}}>
-                    Projects limit: <b style={{color:"var(--text)"}}>{projects.length}</b> / <b style={{color:"var(--text)"}}>{limits.maxProjects >= 999999 ? "∞" : limits.maxProjects}</b>
+                    Projects: <b style={{color:"var(--text)"}}>{projects.length}</b> / <b style={{color:"var(--text)"}}>{limits.maxProjects >= 999999 ? "∞" : limits.maxProjects}</b>
                   </div>
                 </div>
               </div>
 
-              {/* Projects */}
               <div style={{marginTop:12}}>
                 <div className="cardTitle" style={{marginBottom:6}}>
                   <h2>PROJECTS</h2>
@@ -1034,9 +976,8 @@ Upload files and tell me what you want.` }
                 </div>
 
                 <div className="sub tiny" style={{marginTop:6}}>
-                  {session ? (
-                    canCreateProject ? "Create and switch projects instantly." : "⚠ Project limit reached. Upgrade plan."
-                  ) : "Sign in to create projects (Supabase Auth)."}
+                  {session ? (canCreateProject ? "Create and switch projects instantly." : "Project limit reached. Upgrade plan.")
+                  : "Sign in to create projects."}
                 </div>
 
                 <div className="list">
@@ -1069,7 +1010,6 @@ Upload files and tell me what you want.` }
                 </div>
               </div>
 
-              {/* Billing */}
               <div style={{marginTop:14}}>
                 <div className="cardTitle" style={{marginBottom:6}}>
                   <h2>BILLING</h2>
@@ -1077,21 +1017,20 @@ Upload files and tell me what you want.` }
                 </div>
                 <div style={{display:"grid", gap:10}}>
                   <button className="btn" disabled={!session || !config} onClick={()=>stripeCheckout("pro")}>
-                    Stripe Checkout: PRO →
+                    Stripe Checkout: PRO
                   </button>
                   <button className="btn2" disabled={!session || !config} onClick={()=>stripeCheckout("studio")}>
-                    Stripe Checkout: STUDIO →
+                    Stripe Checkout: STUDIO
                   </button>
                   <button className="btn2" disabled={!session || !config} onClick={openPortal}>
                     Customer Portal
                   </button>
                 </div>
                 <div className="tiny" style={{marginTop:8}}>
-                  Backend must return <b>url</b> for checkout/portal. (POST /billing/checkout, POST /billing/portal)
+                  Backend must return url for checkout/portal.
                 </div>
               </div>
 
-              {/* Modes */}
               <div style={{marginTop:14}}>
                 <div className="cardTitle" style={{marginBottom:6}}>
                   <h2>MODES</h2>
@@ -1111,21 +1050,20 @@ Upload files and tell me what you want.` }
               </div>
             </div>
 
-            {/* RIGHT CHAT */}
             <div className="chatCard">
               <div className="chatHeader">
                 <div>
                   <h2>Chat</h2>
                   <div className="meta">
                     Project: <b style={{color:"var(--text)"}}>{activeProjectId ? (projects.find(p=>p.id===activeProjectId)?.name || activeProjectId) : "None"}</b>
-                    {" • "}
+                    {" - "}
                     Mode: <b style={{color:"var(--text)"}}>{mode}</b>
-                    {streaming ? <span style={{color:"var(--accent)"}}> • streaming…</span> : null}
+                    {streaming ? <span style={{color:"var(--accent)"}}> - streaming</span> : null}
                   </div>
                 </div>
                 <div style={{display:"flex", gap:10}}>
                   <button className="btn2" disabled={!session || !config || !activeProjectId} onClick={uploadFile}>
-                    📎 Upload
+                    Upload
                   </button>
                 </div>
               </div>
@@ -1145,7 +1083,7 @@ Upload files and tell me what you want.` }
                 <textarea
                   value={input}
                   onChange={e=>setInput(e.target.value)}
-                  placeholder={session ? "Write a request… (Enter=send, Shift+Enter=new line)" : "Sign in to chat…"}
+                  placeholder={session ? "Write a request (Enter=send, Shift+Enter=new line)" : "Sign in to chat"}
                   onKeyDown={(e)=>{
                     if(e.key==="Enter" && !e.shiftKey){
                       e.preventDefault();
@@ -1158,15 +1096,15 @@ Upload files and tell me what you want.` }
                   onClick={send}
                   style={{padding:"0 24px", opacity: (!canChat ? 0.55 : 1)}}
                 >
-                  {streaming ? "⏳" : "Send →"}
+                  {streaming ? "..." : "Send"}
                 </button>
               </div>
             </div>
           </div>
 
           <div className="tiny">
-            ✅ Security note: this front-end sends <b>Authorization: Bearer &lt;supabase_access_token&gt;</b> to backend.  
-            Backend must verify token and enforce RLS/limits server-side.
+            Security note: frontend sends Authorization: Bearer &lt;supabase_access_token&gt; to backend.
+            Backend must verify token and enforce limits server-side.
           </div>
         </div>
       );
