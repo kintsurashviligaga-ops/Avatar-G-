@@ -1,101 +1,516 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Avatar G</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- React 18 -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Avatar G — Workspace</title>
 
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      background: radial-gradient(1200px 600px at 50% -10%, #0b3a46, #020617);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #e5e7eb;
+    :root{
+      --bg1:#06121a;
+      --bg2:#0a2533;
+      --card:rgba(0,0,0,.35);
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.65);
+      --cyan:#22d3ee;
+      --blue:#3b82f6;
     }
-    #root {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+      background:
+        radial-gradient(1200px 800px at 20% 20%, rgba(34,211,238,.20), transparent 55%),
+        radial-gradient(900px 700px at 70% 30%, rgba(59,130,246,.18), transparent 60%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+      overflow-x:hidden;
     }
-    .card {
-      background: rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 24px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    a{color:inherit}
+    .wrap{
+      min-height:100vh;
+      padding:24px;
+      display:grid;
+      place-items:center;
     }
-    .error {
-      white-space: pre-wrap;
-      color: #ffb4b4;
-      font-size: 14px;
+    .shell{
+      width:min(1040px,96vw);
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:var(--card);
+      box-shadow:0 22px 70px rgba(0,0,0,.55);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
     }
-    button {
-      margin-top: 16px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(135deg,#22d3ee,#3b82f6);
-      color: #020617;
-      font-weight: 700;
-      cursor: pointer;
+    .top{
+      padding:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:240px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background:linear-gradient(135deg,var(--cyan),var(--blue));
+      box-shadow:0 12px 35px rgba(34,211,238,.25);
+    }
+    .title{font-weight:800; letter-spacing:.2px}
+    .subtitle{font-size:12px;color:var(--muted); margin-top:2px}
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      font-size:12px;
+      color:rgba(255,255,255,.85);
+    }
+    .body{
+      padding:18px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    button{
+      border:none;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn-ghost{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.92);
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--cyan),var(--blue));
+      color:#04121a;
+      box-shadow:0 14px 35px rgba(34,211,238,.18);
+    }
+    .btn-danger{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,80,80,.10);
+      color:rgba(255,255,255,.92);
+    }
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    .hint{
+      margin-top:14px;
+      font-size:13px;
+      line-height:1.35;
+      color:rgba(255,255,255,.82);
+    }
+    .box{
+      margin-top:14px;
+      padding:12px;
+      border-radius:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.08);
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-size:13px;
+      color:rgba(255,255,255,.90);
+    }
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:grid;
+      place-items:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(720px,96vw);
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(8,16,22,.92);
+      box-shadow:0 30px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+    }
+    .modalTop{
+      padding:16px 16px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .modalTitle{font-weight:900}
+    .modalSub{font-size:12px;color:rgba(255,255,255,.70); margin-top:4px}
+    .xbtn{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.92);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .modalBody{padding:16px}
+    label{
+      display:block;
+      font-size:12px;
+      color:rgba(255,255,255,.75);
+      margin:10px 0 6px;
+    }
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      color:rgba(255,255,255,.92);
+      outline:none;
+    }
+    .modalActions{
+      padding:14px 16px 16px;
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+      flex-wrap:wrap;
+    }
+    .smallNote{
+      font-size:12px;
+      color:rgba(255,255,255,.65);
+      margin-top:10px;
+      line-height:1.35;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:720px){
+      .grid2{grid-template-columns:1fr;}
     }
   </style>
+
+  <!-- React + Babel (no build needed) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
+  <div id="root"></div>
 
-<div id="root"></div>
+  <script type="text/babel">
+    const { useEffect, useMemo, useState } = React;
 
-<script type="text/babel">
-  function App() {
-    const [error, setError] = React.useState(null);
+    // -----------------------------
+    // Config (localStorage)
+    // -----------------------------
+    function readConfig(){
+      const SUPABASE_URL =
+        localStorage.getItem("SUPABASE_URL") ||
+        localStorage.getItem("supabase_url") ||
+        "";
 
-    React.useEffect(() => {
-      try {
-        console.log("Avatar G booting...");
-      } catch (e) {
-        setError(String(e));
-      }
-    }, []);
+      const SUPABASE_ANON_KEY =
+        localStorage.getItem("SUPABASE_ANON_KEY") ||
+        localStorage.getItem("supabase_anon_key") ||
+        "";
 
-    if (error) {
+      const API_BASE =
+        localStorage.getItem("API_BASE") ||
+        localStorage.getItem("api_base") ||
+        "https://avatarg-backend.vercel.app";
+
+      return { SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE };
+    }
+
+    function writeConfig({SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE}){
+      localStorage.setItem("SUPABASE_URL", (SUPABASE_URL||"").trim());
+      localStorage.setItem("SUPABASE_ANON_KEY", (SUPABASE_ANON_KEY||"").trim());
+      localStorage.setItem("API_BASE", (API_BASE||"").trim());
+    }
+
+    function isConfigured(cfg){
+      return Boolean(cfg?.SUPABASE_URL && cfg?.SUPABASE_ANON_KEY);
+    }
+
+    // -----------------------------
+    // UI helpers
+    // -----------------------------
+    function Pill({children}){
+      return <span className="pill">{children}</span>;
+    }
+
+    function Modal({open, onClose, cfg, onSave}){
+      const [url, setUrl] = useState(cfg.SUPABASE_URL || "");
+      const [anon, setAnon] = useState(cfg.SUPABASE_ANON_KEY || "");
+      const [api, setApi] = useState(cfg.API_BASE || "https://avatarg-backend.vercel.app");
+
+      useEffect(()=>{
+        if(open){
+          setUrl(cfg.SUPABASE_URL || "");
+          setAnon(cfg.SUPABASE_ANON_KEY || "");
+          setApi(cfg.API_BASE || "https://avatarg-backend.vercel.app");
+        }
+      },[open]);
+
+      if(!open) return null;
+
       return (
-        <div className="card">
-          <h3>JavaScript Error</h3>
-          <div className="error">{error}</div>
+        <div className="modalOverlay" onClick={(e)=>{ if(e.target.className==="modalOverlay") onClose(); }}>
+          <div className="modal">
+            <div className="modalTop">
+              <div>
+                <div className="modalTitle">Connect Avatar G to Supabase + Backend</div>
+                <div className="modalSub">Paste once — saved in this browser (localStorage).</div>
+              </div>
+              <button className="xbtn" onClick={onClose}>✕</button>
+            </div>
+
+            <div className="modalBody">
+              <div className="grid2">
+                <div>
+                  <label>SUPABASE_URL</label>
+                  <input
+                    value={url}
+                    onChange={(e)=>setUrl(e.target.value)}
+                    placeholder="https://xxxx.supabase.co"
+                  />
+                </div>
+                <div>
+                  <label>API_BASE (backend domain)</label>
+                  <input
+                    value={api}
+                    onChange={(e)=>setApi(e.target.value)}
+                    placeholder="https://avatarg-backend.vercel.app"
+                  />
+                </div>
+              </div>
+
+              <label style={{marginTop:12}}>SUPABASE_ANON_KEY (public anon key)</label>
+              <input
+                value={anon}
+                onChange={(e)=>setAnon(e.target.value)}
+                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              />
+
+              <div className="smallNote">
+                Supabase → Project Settings → API → <b>Project URL</b> + <b>anon public key</b>.<br/>
+                API_BASE არის შენი backend HTTPS domain (მაგ: <b>https://avatarg-backend.vercel.app</b>).
+              </div>
+            </div>
+
+            <div className="modalActions">
+              <button
+                className="btn-ghost"
+                onClick={()=>{
+                  writeConfig({SUPABASE_URL:"", SUPABASE_ANON_KEY:"", API_BASE:"https://avatarg-backend.vercel.app"});
+                  onSave(readConfig());
+                }}
+              >
+                Reset
+              </button>
+
+              <button
+                className="btn-primary"
+                onClick={()=>{
+                  writeConfig({SUPABASE_URL:url, SUPABASE_ANON_KEY:anon, API_BASE:api});
+                  onSave(readConfig());
+                  onClose();
+                }}
+              >
+                Save & Continue
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
 
-    return (
-      <div className="card">
-        <h2>✅ Avatar G Loaded</h2>
-        <p>React is running correctly.</p>
-        <button onClick={() => alert("Next step: connect Supabase UI")}>
-          Test Button
-        </button>
-      </div>
-    );
-  }
+    // -----------------------------
+    // App (Mode B: Workspace first)
+    // -----------------------------
+    function App(){
+      const [cfg, setCfg] = useState(readConfig());
+      const [showModal, setShowModal] = useState(false);
 
-  try {
+      const [busy, setBusy] = useState(false);
+      const [msg, setMsg] = useState("");
+      const [user, setUser] = useState(null);
+
+      const supabase = useMemo(()=>{
+        if(!isConfigured(cfg)) return null;
+        try{
+          return window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
+            auth: { persistSession:true, autoRefreshToken:true }
+          });
+        }catch(e){
+          return null;
+        }
+      }, [cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY]);
+
+      const mode = !isConfigured(cfg) ? "Guest" : (user ? "Authenticated" : "Ready");
+
+      useEffect(()=>{
+        // Auto-open modal if not configured (nice UX)
+        if(!isConfigured(cfg)) setShowModal(true);
+      }, []);
+
+      useEffect(()=>{
+        // Track auth only if supabase exists
+        if(!supabase) { setUser(null); return; }
+
+        supabase.auth.getUser().then(({data})=>{
+          setUser(data?.user || null);
+        });
+
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, session)=>{
+          setUser(session?.user || null);
+        });
+
+        return ()=> sub?.subscription?.unsubscribe?.();
+      }, [supabase]);
+
+      async function testBackend(){
+        setBusy(true); setMsg("");
+        try{
+          const base = (cfg.API_BASE || "https://avatarg-backend.vercel.app").replace(/\/+$/,"");
+          const res = await fetch(base + "/api/health");
+          const j = await res.json();
+          setMsg("✅ Backend OK:\n" + JSON.stringify(j, null, 2));
+        }catch(e){
+          setMsg("❌ Backend error:\n" + (e?.message || String(e)));
+        }finally{
+          setBusy(false);
+        }
+      }
+
+      async function connect(){
+        if(!supabase){
+          setMsg("❗ ჯერ Supabase keys არ არის ჩასმული. დააჭირე Settings → ჩასვი keys.");
+          setShowModal(true);
+          return;
+        }
+
+        const email = prompt("Enter email for Magic Link login:");
+        if(!email) return;
+
+        setBusy(true); setMsg("");
+
+        const redirectTo = window.location.origin; // same domain
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: redirectTo }
+        });
+
+        setBusy(false);
+
+        if(error) setMsg("❌ Login error: " + error.message);
+        else setMsg("✅ Magic link გაგზავნილია email-ზე. გახსენი link და დაბრუნდი აქ.");
+      }
+
+      async function logout(){
+        if(!supabase) return;
+        setBusy(true);
+        await supabase.auth.signOut();
+        setBusy(false);
+        setMsg("✅ Signed out.");
+      }
+
+      return (
+        <div className="wrap">
+          <Modal
+            open={showModal}
+            onClose={()=>setShowModal(false)}
+            cfg={cfg}
+            onSave={(c)=>{ setCfg(c); setMsg("✅ Config saved. Now you can test backend and connect."); }}
+          />
+
+          <div className="shell">
+            <div className="top">
+              <div className="brand">
+                <div className="logo"></div>
+                <div>
+                  <div className="title">Avatar G Workspace</div>
+                  <div className="subtitle">Mode B — Workspace first, connect on demand</div>
+                </div>
+              </div>
+
+              <div className="meta">
+                <Pill>Mode: {mode}</Pill>
+                <Pill>API_BASE: {cfg.API_BASE ? "set" : "default"}</Pill>
+                <Pill>Supabase: {isConfigured(cfg) ? "set" : "missing"}</Pill>
+                <Pill>User: {user?.email || "not signed in"}</Pill>
+              </div>
+            </div>
+
+            <div className="body">
+              <div className="row">
+                <button className="btn-ghost" onClick={()=>setShowModal(true)} disabled={busy}>
+                  Settings (Supabase / API)
+                </button>
+
+                <button className="btn-ghost" onClick={testBackend} disabled={busy}>
+                  Test Backend
+                </button>
+
+                {!user ? (
+                  <button
+                    className="btn-primary"
+                    onClick={connect}
+                    disabled={busy || !isConfigured(cfg)}
+                    title={!isConfigured(cfg) ? "ჯერ ჩასვი Supabase keys" : ""}
+                  >
+                    Connect / Sign in
+                  </button>
+                ) : (
+                  <button className="btn-danger" onClick={logout} disabled={busy}>
+                    Logout
+                  </button>
+                )}
+              </div>
+
+              <div className="hint">
+                ✅ Workspace ყოველთვის იტვირთება.<br/>
+                🔒 Login ხდება მხოლოდ როცა დააჭერ <b>Connect / Sign in</b>.<br/>
+                🧪 პირველ ტესტად დააჭირე <b>Test Backend</b> — უნდა დაგიბრუნოს <b>status: ok</b>.
+              </div>
+
+              {msg ? <div className="box">{msg}</div> : null}
+
+              <div className="hint" style={{marginTop:18, color:"rgba(255,255,255,.70)"}}>
+                Next step: როცა Connect წარმატებით იმუშავებს, შემდეგ გავაკეთებთ **Projects UI** + **Upload** + **Chat** ღილაკებს (frontend calls backend routes).
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
-  } catch (e) {
-    document.getElementById("root").innerHTML =
-      "<pre style='color:#ffb4b4'>" + e + "</pre>";
-  }
-</script>
-
+    root.render(<App/>);
+  </script>
 </body>
 </html>
