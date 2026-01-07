@@ -12,7 +12,7 @@
   <!-- Babel (JSX in one file) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- ✅ Supabase JS v2 UMD (IMPORTANT: exposes window.supabase reliably) -->
+  <!-- Supabase JS v2 UMD -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 
   <style>
@@ -81,6 +81,8 @@
       font-size:12px; color:var(--muted);
       white-space:nowrap;
     }
+    .pillOk{border-color:rgba(34,197,94,0.40); background:rgba(34,197,94,0.10); color:rgba(34,197,94,0.90)}
+    .pillErr{border-color:rgba(255,107,107,0.40); background:rgba(255,107,107,0.10); color:rgba(255,107,107,0.90)}
     .btn{
       border:none;
       padding:10px 14px;
@@ -121,6 +123,10 @@
       border-radius: 14px;
       font-size:12px;
       line-height:1.4;
+    }
+    .noticeErr{
+      border:1px solid rgba(255,107,107,0.35);
+      background: rgba(255,107,107,0.12);
     }
     .kpiRow{display:grid; gap:10px}
     .kpi{
@@ -219,7 +225,6 @@
       background: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
     }
 
-    /* Chat panel */
     .chatCard{
       border:1px solid var(--line);
       background: rgba(255,255,255,0.04);
@@ -284,7 +289,6 @@
       min-height: 52px;
     }
 
-    /* Modal */
     .overlay{
       position:fixed;
       inset:0;
@@ -341,8 +345,7 @@
   <script type="text/babel">
     const { useEffect, useMemo, useRef, useState } = React;
 
-    // CONFIG storage
-    const CONFIG_KEY = "avatarg_config_v1";
+    const CONFIG_KEY = "avatarg_config_v2";
 
     function loadConfig(){
       try{
@@ -370,12 +373,11 @@
       return (i === 0 ? v.toFixed(0) : v.toFixed(1)) + " " + units[i];
     }
 
-    // Plans
     const PLANS = {
-      guest:   { name:"GUEST",   projects: 1,  storageBytes: 1,                 priceLabel: "Free" },
-      free:    { name:"FREE",    projects: 2,  storageBytes: 1 * 1024**3,      priceLabel: "$0" },
-      pro:     { name:"PRO",     projects: 10, storageBytes: 50 * 1024**3,     priceLabel: "$19" },
-      studio:  { name:"STUDIO",  projects: 999999, storageBytes: 999999999999, priceLabel: "$49" },
+      guest:   { name:"GUEST",   projects: 1,  storageBytes: 50 * 1024**2,      priceLabel: "Free" },
+      free:    { name:"FREE",    projects: 2,  storageBytes: 1 * 1024**3,       priceLabel: "$0" },
+      pro:     { name:"PRO",     projects: 10, storageBytes: 50 * 1024**3,      priceLabel: "$19" },
+      studio:  { name:"STUDIO",  projects: 999999, storageBytes: 5 * 1024**4,   priceLabel: "$49" },
     };
 
     const SERVICE_MODES = [
@@ -388,7 +390,6 @@
       { id:"marketing",title:"Marketing",icon:"📈" },
     ];
 
-    // ✅ Supabase Client Helper (hardened)
     function createSupabaseClient(cfg){
       if(!window.supabase || !window.supabase.createClient){
         throw new Error("Supabase SDK not loaded. Check CDN link.");
@@ -403,30 +404,59 @@
       });
     }
 
-    // Backend fetch helper
+    // ---- API base helpers (robust)
+    function normalizeBase(u){
+      return String(u || "").trim().replace(/\/+$/, "");
+    }
+
+    // If backend is Next.js with /api routes -> default to /api
+    // If user already set API_BASE ending with /api -> keep.
+    function apiBaseWithApi(cfg){
+      const base = normalizeBase(cfg.API_BASE);
+      if(!base) return "";
+      if(base.endsWith("/api")) return base;
+      return base + "/api";
+    }
+
+    // Some people might have routes at root; we keep a fallback base too.
+    function apiBaseRoot(cfg){
+      return normalizeBase(cfg.API_BASE);
+    }
+
     async function apiFetch(cfg, path, { method="GET", headers={}, body=null, token=null, isJson=true } = {}){
-      const url = cfg.API_BASE.replace(/\/$/, "") + path;
+      const apiBase = apiBaseWithApi(cfg);
+      const url = apiBase + path;
+
       const h = { ...headers };
       if(token) h["Authorization"] = "Bearer " + String(token);
-      if(isJson && body && !h["Content-Type"]) h["Content-Type"] = "application/json";
 
-      const res = await fetch(url, {
-        method,
-        headers: h,
-        body: isJson && body ? JSON.stringify(body) : body
-      });
+      const isFormData = (body && typeof FormData !== "undefined" && body instanceof FormData);
+      if(isJson && body && !isFormData && !h["Content-Type"]) h["Content-Type"] = "application/json";
+
+      let res;
+      try{
+        res = await fetch(url, {
+          method,
+          headers: h,
+          body: isJson && body && !isFormData ? JSON.stringify(body) : body
+        });
+      }catch(e){
+        throw new Error(`Network error (${method} ${url}): ${e.message}`);
+      }
 
       const text = await res.text();
+
       let data = null;
-      try{ data = text ? JSON.parse(text) : null; }catch(e){ data = { raw: text }; }
+      try{ data = text ? JSON.parse(text) : null; }
+      catch(e){ data = { raw: text }; }
+
       if(!res.ok){
-        const msg = data?.error || data?.message || ("Request failed: " + res.status);
-        throw new Error(msg);
+        const msg = data?.error || data?.message || data?.raw || `HTTP ${res.status}`;
+        throw new Error(`${method} ${url} failed: ${msg}`);
       }
       return data;
     }
 
-    // CONFIG MODAL
     function ConfigModal({ open, initial, onClose, onSave }){
       const [cfg, setCfg] = useState(initial || { SUPABASE_URL:"", SUPABASE_ANON_KEY:"", API_BASE:"" });
       const [err, setErr] = useState("");
@@ -468,7 +498,7 @@
             </div>
 
             {err && (
-              <div className="notice" style={{marginTop:10, borderColor:"rgba(255,107,107,0.35)", background:"rgba(255,107,107,0.12)"}}>
+              <div className="notice noticeErr" style={{marginTop:10}}>
                 <b className="dangerText">WARNING: {err}</b>
               </div>
             )}
@@ -489,22 +519,21 @@
             </div>
 
             <div className="help">
-              Supabase -> Project Settings -> API -> Project URL + anon public key.<br/>
-              API_BASE is your backend HTTPS domain.
+              Supabase → Project Settings → API → Project URL + anon public key.<br/>
+              API_BASE is your backend HTTPS domain (default routes assumed under <b>/api</b>).
             </div>
           </div>
         </div>
       );
     }
 
-    // ✅ AUTH MODAL (fixed redirect)
     function AuthModal({ open, onClose, supabase }){
       const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
       const [busy, setBusy] = useState(false);
       const [msg, setMsg] = useState("");
 
-      useEffect(()=>{ setMsg(""); }, [open]);
+      useEffect(()=>{ if(open){ setMsg(""); } }, [open]);
 
       if(!open) return null;
 
@@ -525,38 +554,34 @@
                 <input className="input" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@domain.com" />
               </div>
               <div style={{gridColumn:"1 / -1"}}>
-                <div className="tiny" style={{marginBottom:6}}>Password (optional)</div>
+                <div className="tiny" style={{marginBottom:6}}>Password (optional for magic link)</div>
                 <input className="input" value={password} onChange={e=>setPassword(e.target.value)} placeholder="********" type="password" />
               </div>
             </div>
 
-            {msg && <div className="notice" style={{marginTop:10}}>{msg}</div>}
+            {msg && <div className={"notice " + (String(msg).startsWith("ERROR") ? "noticeErr" : "")} style={{marginTop:10}}>{msg}</div>}
 
             <div style={{display:"flex", gap:10, justifyContent:"flex-end", marginTop:12}}>
               <button className="btn2" disabled={busy} onClick={async ()=>{
-                if(!email.trim()) return setMsg("Email is required");
+                if(!email.trim()) return setMsg("ERROR: Email is required");
                 setBusy(true);
                 setMsg("");
                 try{
-                  // ✅ safest redirect (origin only) to avoid non-latin / weird chars
-                  const safeRedirect = window.location.origin;
-
+                  // safest redirect for mobile + avoids weird chars
+                  const redirectTo = window.location.origin + window.location.pathname;
                   const { error } = await supabase.auth.signInWithOtp({
                     email: email.trim(),
-                    options: {
-                      emailRedirectTo: safeRedirect
-                    }
+                    options: { emailRedirectTo: redirectTo }
                   });
-
                   if(error) throw error;
-                  setMsg("OK - Magic link sent. Open your email and confirm.");
+                  setMsg("✓ Magic link sent. Check your email.");
                 }catch(e){
                   setMsg("ERROR: " + (e?.message || "Failed"));
                 }finally{ setBusy(false); }
               }}>Send Magic Link</button>
 
               <button className="btn" disabled={busy} onClick={async ()=>{
-                if(!email.trim() || !password.trim()) return setMsg("Email + Password required");
+                if(!email.trim() || !password.trim()) return setMsg("ERROR: Email + Password required");
                 setBusy(true);
                 setMsg("");
                 try{
@@ -564,10 +589,10 @@
                   if(error){
                     const { error: suErr } = await supabase.auth.signUp({ email: email.trim(), password: password.trim() });
                     if(suErr) throw suErr;
-                    setMsg("OK - Account created. Check email if confirmation is enabled.");
+                    setMsg("✓ Account created. Check email if confirmation is enabled.");
                   }else{
-                    setMsg("OK - Signed in.");
-                    onClose();
+                    setMsg("✓ Signed in.");
+                    setTimeout(onClose, 600);
                   }
                 }catch(e){
                   setMsg("ERROR: " + (e?.message || "Failed"));
@@ -576,14 +601,13 @@
             </div>
 
             <div className="help tiny">
-              Tip: if Email confirmation is enabled in Supabase, you must confirm email on first sign-up.
+              Tip: if email confirmation is enabled in Supabase, you must confirm email on first sign-up.
             </div>
           </div>
         </div>
       );
     }
 
-    // MAIN APP
     function App(){
       const [config, setConfig] = useState(loadConfig());
       const [configOpen, setConfigOpen] = useState(!loadConfig());
@@ -591,6 +615,8 @@
 
       const [session, setSession] = useState(null);
       const [user, setUser] = useState(null);
+
+      const [authOpen, setAuthOpen] = useState(false);
 
       const [plan, setPlan] = useState("guest");
       const [storageUsed, setStorageUsed] = useState(0);
@@ -601,6 +627,7 @@
       const [newProjectName, setNewProjectName] = useState("");
 
       const [mode, setMode] = useState("general");
+
       const [messages, setMessages] = useState([
         { role:"assistant", content:
 `Welcome to Avatar G Workspace.
@@ -609,11 +636,13 @@
 - Projects + Files
 - Usage limits + Billing
 
-Upload files and tell me what you want.` }
+Create a project and ask me what you want.` }
       ]);
+
       const [input, setInput] = useState("");
       const [streaming, setStreaming] = useState(false);
 
+      const [backendStatus, setBackendStatus] = useState("checking...");
       const bottomRef = useRef(null);
 
       const configWarning = useMemo(()=> {
@@ -622,26 +651,36 @@ Upload files and tell me what you want.` }
         return ok ? "" : "CONFIG is incomplete.";
       }, [config]);
 
-      // Init supabase when config exists
+      // init supabase once config changes
       useEffect(()=>{
         if(!config) return;
         try{
           const sb = createSupabaseClient(config);
           setSupabase(sb);
 
+          let mounted = true;
+
           sb.auth.getSession().then(({ data })=>{
-            setSession(data.session || null);
-            setUser(data.session?.user || null);
+            if(!mounted) return;
+            const s = data.session || null;
+            setSession(s);
+            setUser(s?.user || null);
+            if(!s) setAuthOpen(true);
           });
 
           const { data: sub } = sb.auth.onAuthStateChange((_event, newSession)=>{
-            setSession(newSession || null);
-            setUser(newSession?.user || null);
+            const s = newSession || null;
+            setSession(s);
+            setUser(s?.user || null);
+            if(!s) setAuthOpen(true);
           });
 
-          return ()=> sub?.subscription?.unsubscribe?.();
+          return ()=>{
+            mounted = false;
+            sub?.subscription?.unsubscribe?.();
+          };
         }catch(e){
-          console.error(e);
+          console.error("Supabase init error:", e);
         }
       }, [config]);
 
@@ -649,25 +688,61 @@ Upload files and tell me what you want.` }
         requestAnimationFrame(()=> bottomRef.current?.scrollIntoView({ behavior:"smooth" }));
       }
 
+      // backend health check: try /api/health then /health (root) as fallback
+      async function pingBackend(){
+        if(!config) return;
+        const apiHealth = apiBaseWithApi(config) + "/health";
+        const rootHealth = apiBaseRoot(config) + "/health";
+
+        try{
+          let res = await fetch(apiHealth, { method:"GET" }).catch(()=>null);
+          if(!res || !res.ok){
+            res = await fetch(rootHealth, { method:"GET" });
+          }
+          if(res && res.ok){
+            setBackendStatus("✓ Backend online");
+          }else{
+            setBackendStatus(`⚠ Backend HTTP ${res ? res.status : "?"}`);
+          }
+        }catch(e){
+          setBackendStatus("✗ Backend unreachable");
+        }
+      }
+
+      useEffect(()=>{
+        if(config) pingBackend();
+      }, [config]);
+
       async function refreshAll(){
         if(!config || !session) return;
         try{
           const token = session.access_token;
-          const usage = await apiFetch(config, "/usage", { token });
+
+          const usage = await apiFetch(config, "/usage", { token }).catch(e=>{
+            console.warn("usage error:", e);
+            return null;
+          });
+
           const planId = usage?.plan || "free";
           setPlan(planId);
           setStorageUsed(usage?.storageUsedBytes || 0);
-          setStorageMax(usage?.storageMaxBytes || PLANS[planId]?.storageBytes || PLANS.free.storageBytes);
+          setStorageMax(usage?.storageMaxBytes || (PLANS[planId]?.storageBytes || PLANS.free.storageBytes));
 
-          const list = await apiFetch(config, "/projects", { token });
-          setProjects(Array.isArray(list) ? list : []);
-          if(Array.isArray(list) && list.length){
-            setActiveProjectId(prev => prev && list.find(p=>p.id===prev) ? prev : list[0].id);
+          const list = await apiFetch(config, "/projects", { token }).catch(e=>{
+            console.warn("projects error:", e);
+            return [];
+          });
+
+          const arr = Array.isArray(list) ? list : [];
+          setProjects(arr);
+
+          if(arr.length){
+            setActiveProjectId(prev => (prev && arr.find(p=>p.id===prev)) ? prev : arr[0].id);
           }else{
             setActiveProjectId("");
           }
         }catch(e){
-          console.warn(e);
+          console.warn("refreshAll error:", e);
         }
       }
 
@@ -702,6 +777,7 @@ Upload files and tell me what you want.` }
         if(!session || !config) return;
         const name = newProjectName.trim();
         if(!name) return;
+
         if(!canCreateProject){
           alert("Project limit reached. Upgrade plan.");
           return;
@@ -736,6 +812,7 @@ Upload files and tell me what you want.` }
         inputEl.onchange = async (e)=>{
           const file = e.target.files?.[0];
           if(!file) return;
+
           if(storageUsed + file.size > limits.maxStorage){
             alert("Storage limit reached. Upgrade plan.");
             return;
@@ -747,7 +824,12 @@ Upload files and tell me what you want.` }
             fd.append("projectId", activeProjectId);
 
             const data = await apiFetch(config, "/upload", { method:"POST", token, body: fd, isJson:false });
-            setMessages(prev => [...prev, { role:"assistant", content:`Uploaded: ${data?.meta?.name || file.name}` }]);
+
+            setMessages(prev => [
+              ...prev,
+              { role:"assistant", content:`✓ Uploaded: ${data?.meta?.name || file.name}` }
+            ]);
+
             await refreshAll();
             scrollBottom();
           }catch(e){
@@ -781,36 +863,45 @@ Upload files and tell me what you want.` }
         }
       }
 
+      // ✅ FIXED: message state race bug (no double setMessages that can drop the user message)
       async function send(){
         const text = input.trim();
         if(!text || !canChat) return;
 
-        const next = [...messages, { role:"user", content:text }];
-        setMessages(next);
+        const userMsg = { role:"user", content:text };
+        const requestMessages = [...messages, userMsg];
+
+        // Update UI in ONE deterministic state update
+        setMessages(prev => [...prev, userMsg, { role:"assistant", content:"" }]);
         setInput("");
         setStreaming(true);
         scrollBottom();
 
-        setMessages(prev => [...prev, { role:"assistant", content:"" }]);
-
         try{
           const token = session.access_token;
-          const url = config.API_BASE.replace(/\/$/,"") + "/chat";
 
-          const res = await fetch(url, {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json",
-              "Authorization":"Bearer " + String(token)
-            },
-            body: JSON.stringify({ mode, projectId: activeProjectId, messages: next })
-          });
+          const apiBase = apiBaseWithApi(config);
+          const url = apiBase + "/chat";
+
+          let res;
+          try{
+            res = await fetch(url, {
+              method:"POST",
+              headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer " + String(token)
+              },
+              body: JSON.stringify({ mode, projectId: activeProjectId, messages: requestMessages })
+            });
+          }catch(e){
+            throw new Error(`Network error (POST ${url}): ${e.message}`);
+          }
 
           const ct = res.headers.get("content-type") || "";
           if(!res.ok) {
             const t = await res.text();
             let j = null; try{ j = JSON.parse(t); }catch(e){}
-            throw new Error(j?.error || t || "Chat failed");
+            throw new Error(j?.error || j?.message || t || `HTTP ${res.status}`);
           }
 
           if(ct.includes("application/json")){
@@ -823,7 +914,10 @@ Upload files and tell me what you want.` }
               return copy;
             });
             scrollBottom();
-          } else if(res.body){
+            return;
+          }
+
+          if(res.body){
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
             let buffer = "";
@@ -831,27 +925,34 @@ Upload files and tell me what you want.` }
               const { done, value } = await reader.read();
               if(done) break;
               buffer += decoder.decode(value, { stream:true });
+
               const parts = buffer.split("\n\n");
               buffer = parts.pop() || "";
+
               for(const part of parts){
                 const line = part.trim();
                 if(!line.startsWith("data:")) continue;
                 const jsonStr = line.slice(5).trim();
-                if(!jsonStr) continue;
-                const evt = JSON.parse(jsonStr);
-                if(evt.type === "delta"){
-                  const delta = evt.delta || "";
-                  if(!delta) continue;
-                  setMessages(prev=>{
-                    const copy=[...prev];
-                    const last=copy[copy.length-1];
-                    if(last?.role==="assistant") last.content += delta;
-                    return copy;
-                  });
-                  scrollBottom();
-                }
-                if(evt.type === "error"){
-                  throw new Error(evt.message || "Stream error");
+                if(!jsonStr || jsonStr === "[DONE]") continue;
+
+                try{
+                  const evt = JSON.parse(jsonStr);
+                  if(evt.type === "delta"){
+                    const delta = evt.delta || "";
+                    if(!delta) continue;
+                    setMessages(prev=>{
+                      const copy=[...prev];
+                      const last=copy[copy.length-1];
+                      if(last?.role==="assistant") last.content += delta;
+                      return copy;
+                    });
+                    scrollBottom();
+                  }
+                  if(evt.type === "error"){
+                    throw new Error(evt.message || "Stream error");
+                  }
+                }catch(e){
+                  console.warn("SSE parse error:", e, jsonStr);
                 }
               }
             }
@@ -879,7 +980,13 @@ Upload files and tell me what you want.` }
         setPlan("guest");
         setStorageUsed(0);
         setStorageMax(PLANS.guest.storageBytes);
+        setMessages([{ role:"assistant", content:"Signed out. Sign in to continue." }]);
+        setAuthOpen(true);
       }
+
+      const backendPillClass =
+        backendStatus.startsWith("✓") ? "pill pillOk" :
+        (backendStatus.startsWith("✗") ? "pill pillErr" : "pill");
 
       return (
         <div className="wrap">
@@ -894,12 +1001,13 @@ Upload files and tell me what you want.` }
               saveConfig(cfg);
               setConfig(cfg);
               setConfigOpen(false);
+              setTimeout(()=> pingBackend(), 150);
             }}
           />
 
           <AuthModal
-            open={!!supabase && !session && !configOpen && !!config}
-            onClose={()=>{}}
+            open={!!supabase && !session && !configOpen && !!config && authOpen}
+            onClose={()=> setAuthOpen(false)}
             supabase={supabase}
           />
 
@@ -913,25 +1021,31 @@ Upload files and tell me what you want.` }
             </div>
 
             <div className="actions">
+              <span className={backendPillClass}>{backendStatus}</span>
               <span className="pill">Plan: <b style={{color:"var(--text)"}}>{(PLANS[plan]?.name || "GUEST")}</b></span>
               <span className="pill">User: <b style={{color:"var(--text)"}}>{user?.email || "Guest"}</b></span>
               <button className="btn2" onClick={()=>setConfigOpen(true)}>Settings</button>
               {session ? (
                 <button className="btn2" onClick={signOut}>Sign out</button>
               ) : (
-                <button className="btn" disabled={!canUseApp} onClick={()=>alert("Open Settings and paste Supabase + API_BASE. Then sign-in modal will appear.")}>
+                <button className="btn" disabled={!canUseApp} onClick={()=>setAuthOpen(true)}>
                   Sign in
                 </button>
               )}
             </div>
           </div>
 
-          {configWarning && (
-            <div className="notice">
-              <b>CONFIG is not set.</b><br/>
+          {(configWarning) && (
+            <div className="notice noticeErr">
+              <b>CONFIG issue:</b> {configWarning}<br/>
               Open <b>Settings</b> and paste:
               <br/>- <b>SUPABASE_URL</b> + <b>SUPABASE_ANON_KEY</b>
               <br/>- <b>API_BASE</b> (backend domain)
+              {config && (
+                <div className="tiny" style={{marginTop:8}}>
+                  Using API: <b style={{color:"var(--text)"}}>{apiBaseWithApi(config)}</b>
+                </div>
+              )}
             </div>
           )}
 
@@ -1027,7 +1141,7 @@ Upload files and tell me what you want.` }
                   </button>
                 </div>
                 <div className="tiny" style={{marginTop:8}}>
-                  Backend must return url for checkout/portal.
+                  Backend must return <b>url</b> for checkout/portal.
                 </div>
               </div>
 
@@ -1114,3 +1228,4 @@ Upload files and tell me what you want.` }
   </script>
 </body>
 </html>
+```0
