@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="ka">
 <head>
@@ -11,15 +10,14 @@ html
   <meta property="og:description" content="Georgian AI-powered Media Factory. Professional content generation in Georgian." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  
+
   <title>Avatar G — Georgian AI Workspace</title>
-  
+
   <style>
     :root {
       --bg0: #060815;
       --bg1: #0b1020;
       --glass: rgba(255, 255, 255, .08);
-      --glass2: rgba(255, 255, 255, .12);
       --stroke: rgba(255, 255, 255, .14);
       --strokeHover: rgba(34, 211, 238, .35);
       --text: #e5e7eb;
@@ -41,20 +39,9 @@ html
       --transitionFast: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    html, body {
-      height: 100%;
-      overflow-x: hidden;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    html, body { height: 100%; overflow-x: hidden; }
 
     body {
       font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans Georgian", "Noto Sans", sans-serif;
@@ -70,39 +57,14 @@ html
       -moz-osx-font-smoothing: grayscale;
     }
 
-    ::selection {
-      background: rgba(34, 211, 238, .25);
-      color: var(--textBright);
-    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+    input, textarea, select { font-family: inherit; }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    .wrap { width: min(var(--maxW), calc(100% - 28px)); margin: 0 auto; padding: 20px 0 48px; }
 
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      outline: none;
-    }
-
-    input, textarea, select {
-      font-family: inherit;
-    }
-
-    .wrap {
-      width: min(var(--maxW), calc(100% - 28px));
-      margin: 0 auto;
-      padding: 20px 0 48px;
-    }
-
-    /* ===== TOP HEADER ===== */
     .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
       padding: 16px 18px;
       border: 1px solid var(--stroke);
       background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .07));
@@ -112,168 +74,57 @@ html
       -webkit-backdrop-filter: blur(16px) saturate(180%);
       margin-bottom: 24px;
       transition: var(--transition);
-      position: sticky;
-      top: 12px;
-      z-index: 100;
+      position: sticky; top: 12px; z-index: 100;
     }
+    .topbar:hover { border-color: var(--strokeHover); box-shadow: var(--shadowHover); }
 
-    .topbar:hover {
-      border-color: var(--strokeHover);
-      box-shadow: var(--shadowHover);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      cursor: pointer;
-      transition: var(--transitionFast);
-    }
-
-    .brand:hover {
-      transform: translateX(2px);
-    }
-
-    .brand:active {
-      transform: scale(0.98);
-    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; cursor: pointer; transition: var(--transitionFast); }
+    .brand:hover { transform: translateX(2px); }
+    .brand:active { transform: scale(0.98); }
 
     .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      display: grid;
-      place-items: center;
+      width: 48px; height: 48px; border-radius: 15px;
+      display: grid; place-items: center;
       background: var(--brandGrad);
       color: #071018;
       font-weight: 900;
       font-size: 20px;
-      box-shadow: 
-        0 14px 48px rgba(34, 211, 238, .22),
-        inset 0 1px 0 rgba(255, 255, 255, .3);
+      box-shadow: 0 14px 48px rgba(34, 211, 238, .22), inset 0 1px 0 rgba(255, 255, 255, .3);
       flex: 0 0 auto;
       transition: var(--transitionFast);
     }
+    .brand:hover .logo { transform: rotate(-5deg) scale(1.05); }
 
-    .brand:hover .logo {
-      transform: rotate(-5deg) scale(1.05);
-    }
+    .brandtext { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+    .title { font-weight: 800; letter-spacing: .3px; font-size: 16.5px; color: var(--textBright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .subtitle { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 
-    .brandtext {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      line-height: 1.2;
-    }
-
-    .title {
-      font-weight: 800;
-      letter-spacing: .3px;
-      font-size: 16.5px;
-      color: var(--textBright);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .subtitle {
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 1px;
-    }
-
-    .right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 0 0 auto;
-    }
+    .right { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
 
     .status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--muted);
       padding: 9px 12px;
       border: 1px solid var(--stroke);
       background: rgba(255, 255, 255, .06);
       border-radius: 999px;
       transition: var(--transitionFast);
     }
+    .status:hover { background: rgba(255, 255, 255, .09); }
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--warn); box-shadow: 0 0 0 4px rgba(245, 158, 11, .18); }
+    .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px rgba(34, 197, 94, .20), 0 0 12px rgba(34, 197, 94, .5); }
+    .dot.bad { background: var(--danger); box-shadow: 0 0 0 4px rgba(239, 68, 68, .20), 0 0 12px rgba(239, 68, 68, .45); }
 
-    .status:hover {
-      background: rgba(255, 255, 255, .09);
+    .select { appearance: none; -webkit-appearance: none; border: 1px solid var(--stroke); background: rgba(255, 255, 255, .06);
+      color: var(--text); border-radius: 12px; padding: 10px 38px 10px 14px; font-weight: 700; font-size: 13px;
+      cursor: pointer; outline: none; min-width: 70px; transition: var(--transitionFast);
     }
+    .select:hover { background: rgba(255, 255, 255, .09); border-color: var(--strokeHover); }
+    .select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(34, 211, 238, .15); }
+    .selectWrap { position: relative; }
+    .selectWrap:after { content: "▾"; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 13px; }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--ok);
-      box-shadow: 
-        0 0 0 4px rgba(34, 197, 94, .20),
-        0 0 12px rgba(34, 197, 94, .5);
-      animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .6; }
-    }
-
-    .select {
-      appearance: none;
-      -webkit-appearance: none;
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 38px 10px 14px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      outline: none;
-      min-width: 70px;
-      transition: var(--transitionFast);
-    }
-
-    .select:hover {
-      background: rgba(255, 255, 255, .09);
-      border-color: var(--strokeHover);
-    }
-
-    .select:focus {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
-    }
-
-    .selectWrap {
-      position: relative;
-    }
-
-    .selectWrap:after {
-      content: "▾";
-      position: absolute;
-      right: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      pointer-events: none;
-      font-size: 13px;
-    }
-
-    /* ===== GRID ===== */
-    .grid {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
+    .grid { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 
     .card {
       border: 1px solid var(--stroke);
@@ -290,331 +141,94 @@ html
       overflow: hidden;
       min-height: 115px;
     }
+    .card:hover { transform: translateY(-3px); border-color: var(--strokeHover); box-shadow: 0 24px 90px rgba(0, 0, 0, .45); }
+    .card:active { transform: translateY(-1px); }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-        rgba(34, 211, 238, .08), 
-        transparent 40%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: var(--strokeHover);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .08));
-      box-shadow: 0 24px 90px rgba(0, 0, 0, .45);
-    }
-
-    .card:active {
-      transform: translateY(-1px);
-    }
-
-    .cardTop {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .icon {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radiusSm);
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid var(--stroke);
-      flex: 0 0 auto;
-      font-size: 20px;
-      transition: var(--transitionFast);
-    }
-
-    .card:hover .icon {
-      transform: scale(1.08) rotate(-3deg);
-      background: rgba(255, 255, 255, .11);
-    }
-
-    .card h3 {
-      margin: 0;
-      font-size: 16.5px;
-      font-weight: 850;
-      letter-spacing: .3px;
-      color: var(--textBright);
-    }
-
-    .card p {
-      margin: 7px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-    }
+    .cardTop { display: flex; align-items: flex-start; gap: 12px; }
+    .icon { width: 42px; height: 42px; border-radius: var(--radiusSm); display: grid; place-items: center; background: rgba(255, 255, 255, .08); border: 1px solid var(--stroke); flex: 0 0 auto; font-size: 20px; transition: var(--transitionFast); }
+    .card:hover .icon { transform: scale(1.08) rotate(-3deg); background: rgba(255, 255, 255, .11); }
+    .card h3 { font-size: 16.5px; font-weight: 850; letter-spacing: .3px; color: var(--textBright); }
+    .card p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
     .badge {
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      font-size: 10.5px;
-      font-weight: 800;
+      position: absolute; right: 16px; top: 16px;
+      font-size: 10.5px; font-weight: 800;
       color: rgba(229, 231, 235, .95);
-      padding: 6px 11px;
-      border-radius: 999px;
+      padding: 6px 11px; border-radius: 999px;
       border: 1px solid var(--stroke);
       background: rgba(255, 255, 255, .08);
       backdrop-filter: blur(8px);
       letter-spacing: .5px;
     }
+    .badge.new { background: linear-gradient(135deg, rgba(34, 211, 238, .25), rgba(59, 130, 246, .25)); border-color: rgba(34, 211, 238, .3); color: var(--brand); }
+    .badge.pro { background: linear-gradient(135deg, rgba(168, 85, 247, .25), rgba(217, 70, 239, .25)); border-color: rgba(168, 85, 247, .3); color: #c084fc; }
+    .badge.safe { background: linear-gradient(135deg, rgba(34, 197, 94, .25), rgba(74, 222, 128, .25)); border-color: rgba(34, 197, 94, .3); color: #4ade80; }
 
-    .badge.new {
-      background: linear-gradient(135deg, rgba(34, 211, 238, .25), rgba(59, 130, 246, .25));
-      border-color: rgba(34, 211, 238, .3);
-      color: var(--brand);
-    }
+    .wide { grid-column: 1 / -1; min-height: 105px; }
 
-    .badge.pro {
-      background: linear-gradient(135deg, rgba(168, 85, 247, .25), rgba(217, 70, 239, .25));
-      border-color: rgba(168, 85, 247, .3);
-      color: #c084fc;
-    }
-
-    .badge.safe {
-      background: linear-gradient(135deg, rgba(34, 197, 94, .25), rgba(74, 222, 128, .25));
-      border-color: rgba(34, 197, 94, .3);
-      color: #4ade80;
-    }
-
-    .wide {
-      grid-column: 1 / -1;
-      min-height: 105px;
-    }
-
-    /* ===== CTA & FOOTER ===== */
-    .cta {
-      margin: 22px auto 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .cta { margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .btn {
-      border: 0;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: .3px;
-      padding: 16px 28px;
-      border-radius: var(--radiusSm);
-      color: #051018;
-      background: var(--brandGrad);
-      box-shadow: 
-        0 22px 75px rgba(34, 211, 238, .20),
-        inset 0 1px 0 rgba(255, 255, 255, .3);
+      font-weight: 900; font-size: 15px; letter-spacing: .3px;
+      padding: 16px 28px; border-radius: var(--radiusSm);
+      color: #051018; background: var(--brandGrad);
+      box-shadow: 0 22px 75px rgba(34, 211, 238, .20), inset 0 1px 0 rgba(255, 255, 255, .3);
       transition: var(--transition);
-      min-width: 200px;
-      position: relative;
-      overflow: hidden;
+      min-width: 200px; position: relative; overflow: hidden;
     }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .3), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .btn:hover::before {
-      left: 100%;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 28px 90px rgba(34, 211, 238, .28);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 28px 90px rgba(34, 211, 238, .28); }
+    .btn:active { transform: translateY(0); }
 
     .creditPreview {
-      font-size: 13px;
-      color: var(--muted);
-      text-align: center;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      max-width: 400px;
+      font-size: 13px; color: var(--muted); text-align: center;
+      padding: 10px 16px; background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--stroke); border-radius: 12px; max-width: 480px;
     }
+    .creditPreview strong { color: var(--brand); font-weight: 700; }
 
-    .creditPreview strong {
-      color: var(--brand);
-      font-weight: 700;
-    }
+    .footer { margin-top: 24px; text-align: center; color: rgba(147, 163, 184, .85); font-size: 12.5px; padding: 16px; }
 
-    .footer {
-      margin-top: 24px;
-      text-align: center;
-      color: rgba(147, 163, 184, .85);
-      font-size: 12.5px;
-      padding: 16px;
-    }
-
-    .footer a {
-      color: var(--brand);
-      text-decoration: none;
-      transition: var(--transitionFast);
-    }
-
-    .footer a:hover {
-      color: var(--textBright);
-      text-decoration: underline;
-    }
-
-    /* ===== MODAL ===== */
     .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .60);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, .60);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
       z-index: 1000;
-      animation: fadeIn 0.25s ease-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .overlay.show {
-      display: flex;
-    }
+    .overlay.show { display: flex; }
 
     .modal {
-      width: min(760px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
+      width: min(760px, 100%); max-height: 90vh; overflow-y: auto;
       border-radius: var(--radius);
       border: 1px solid var(--stroke);
       background: linear-gradient(135deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .07));
       box-shadow: 0 32px 140px rgba(0, 0, 0, .60);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
-      animation: modalSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-30px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
     }
 
     .modalHead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--stroke);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 18px 20px; border-bottom: 1px solid var(--stroke);
       background: rgba(255, 255, 255, .04);
     }
-
-    .modalTitle {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .modalTitle strong {
-      font-size: 15px;
-      letter-spacing: .3px;
-      color: var(--textBright);
-      font-weight: 800;
-    }
-
+    .modalTitle { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .modalTitle strong { font-size: 15px; letter-spacing: .3px; color: var(--textBright); font-weight: 800; }
     .close {
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 0;
-      cursor: pointer;
-      font-weight: 800;
-      font-size: 18px;
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      transition: var(--transitionFast);
-      flex-shrink: 0;
+      border: 1px solid var(--stroke); background: rgba(255, 255, 255, .06); color: var(--text);
+      border-radius: 12px; width: 38px; height: 38px; display: grid; place-items: center;
+      font-weight: 800; font-size: 18px; transition: var(--transitionFast);
     }
+    .close:hover { background: rgba(239, 68, 68, .15); border-color: rgba(239, 68, 68, .3); color: var(--danger); transform: rotate(90deg); }
 
-    .close:hover {
-      background: rgba(239, 68, 68, .15);
-      border-color: rgba(239, 68, 68, .3);
-      color: var(--danger);
-      transform: rotate(90deg);
-    }
-
-    .modalBody {
-      padding: 20px;
-    }
-
+    .modalBody { padding: 20px; }
     .hint {
-      color: var(--muted);
-      font-size: 13px;
-      margin: 0 0 16px;
-      line-height: 1.5;
-      padding: 12px 14px;
-      background: rgba(34, 211, 238, .08);
-      border-left: 3px solid var(--brand);
-      border-radius: 8px;
+      color: var(--muted); font-size: 13px; margin: 0 0 16px; line-height: 1.5;
+      padding: 12px 14px; background: rgba(34, 211, 238, .08); border-left: 3px solid var(--brand); border-radius: 8px;
     }
 
-    .formGrid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    label {
-      font-size: 12.5px;
-      color: var(--textBright);
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
-
-    input,
-    textarea,
-    select {
+    .formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    label { font-size: 12.5px; color: var(--textBright); font-weight: 800; letter-spacing: .2px; }
+    input, textarea, select {
       width: 100%;
       border: 1px solid var(--stroke);
       background: rgba(255, 255, 255, .06);
@@ -625,55 +239,15 @@ html
       font-size: 13.5px;
       transition: var(--transition);
     }
+    input:focus, textarea:focus, select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(34, 211, 238, .15); }
+    input.error, textarea.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239, 68, 68, .15); }
+    textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+    .full { grid-column: 1 / -1; }
 
-    input:hover,
-    textarea:hover,
-    select:hover {
-      background: rgba(255, 255, 255, .09);
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--brand);
-      background: rgba(255, 255, 255, .08);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
-    }
-
-    input.error,
-    textarea.error {
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, .15);
-    }
-
-    textarea {
-      min-height: 105px;
-      resize: vertical;
-      font-family: inherit;
-      line-height: 1.5;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .fileInput {
-      position: relative;
-      cursor: pointer;
-    }
-
-    .fileInput input[type="file"] {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-
+    .fileInput { position: relative; cursor: pointer; }
+    .fileInput input[type="file"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
     .fileLabel {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
       padding: 13px 14px;
       border: 1px dashed var(--stroke);
       background: rgba(255, 255, 255, .04);
@@ -682,132 +256,73 @@ html
       font-size: 13px;
       color: var(--muted);
     }
-
-    .fileInput:hover .fileLabel {
-      border-color: var(--brand);
-      background: rgba(34, 211, 238, .08);
-      color: var(--text);
-    }
+    .fileInput:hover .fileLabel { border-color: var(--brand); background: rgba(34, 211, 238, .08); color: var(--text); }
 
     .filePreview {
-      margin-top: 10px;
-      padding: 10px 12px;
+      margin-top: 10px; padding: 10px 12px;
       background: rgba(34, 211, 238, .08);
       border: 1px solid rgba(34, 211, 238, .2);
       border-radius: 10px;
       font-size: 12px;
       color: var(--brand);
-      display: flex;
-      align-items: center;
+      display: none;
       gap: 8px;
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
       align-items: center;
-      justify-content: flex-end;
-      margin-top: 18px;
-      flex-wrap: wrap;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
+    .row { display: flex; gap: 12px; align-items: center; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
     .btn2 {
       border: 1px solid var(--stroke);
       background: rgba(255, 255, 255, .06);
       color: var(--text);
       border-radius: var(--radiusSm);
       padding: 13px 18px;
-      cursor: pointer;
       font-weight: 900;
       font-size: 14px;
       transition: var(--transition);
       letter-spacing: .2px;
     }
-
-    .btn2:hover {
-      background: rgba(255, 255, 255, .10);
-      border-color: var(--strokeHover);
-      transform: translateY(-1px);
-    }
-
-    .btn2:active {
-      transform: translateY(0);
-    }
+    .btn2:hover { background: rgba(255, 255, 255, .10); border-color: var(--strokeHover); transform: translateY(-1px); }
+    .btn2:active { transform: translateY(0); }
 
     .btnPrimary {
-      border: 0;
-      color: #051018;
-      background: var(--brandGrad);
+      border: 0; color: #051018; background: var(--brandGrad);
       box-shadow: 0 20px 65px rgba(34, 211, 238, .20);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-
-    .btnPrimary::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .3), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .btnPrimary:hover::before {
-      left: 100%;
-    }
-
-    .btnPrimary:hover {
-      background: linear-gradient(135deg, rgba(34, 211, 238, 1), rgba(59, 130, 246, 1));
-      box-shadow: 0 24px 80px rgba(34, 211, 238, .30);
-    }
-
-    .btnPrimary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
+    .btnPrimary:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
 
     .consentBox {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 14px;
-      background: rgba(245, 158, 11, .08);
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px; background: rgba(245, 158, 11, .08);
       border: 1px solid rgba(245, 158, 11, .25);
+      border-radius: 12px; cursor: pointer;
+    }
+    .consentBox input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: var(--brand); }
+    .consentBox label { font-size: 13px; line-height: 1.5; color: var(--text); font-weight: 600; cursor: pointer; flex: 1; }
+
+    .resultBox {
+      margin-top: 16px;
+      border: 1px solid rgba(34, 211, 238, .25);
+      background: rgba(34, 211, 238, .08);
       border-radius: 12px;
-      cursor: pointer;
-      transition: var(--transitionFast);
+      padding: 12px 14px;
+      display: none;
     }
-
-    .consentBox:hover {
-      background: rgba(245, 158, 11, .12);
-    }
-
-    .consentBox input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      cursor: pointer;
-      accent-color: var(--brand);
-    }
-
-    .consentBox label {
-      font-size: 13px;
+    .resultBox .rTitle { font-weight: 900; color: var(--textBright); font-size: 13px; margin-bottom: 6px; }
+    .resultBox pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12.8px;
+      color: rgba(229, 231, 235, .95);
       line-height: 1.5;
-      color: var(--text);
-      font-weight: 600;
-      cursor: pointer;
-      flex: 1;
     }
 
-    /* ===== TOAST ===== */
     .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%);
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
       background: rgba(11, 16, 32, .95);
       border: 1px solid var(--stroke);
       color: var(--text);
@@ -822,162 +337,36 @@ html
       z-index: 1001;
       max-width: min(560px, calc(100% - 32px));
       text-align: center;
-      animation: toastSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .toast.show { display: block; }
+    .toast.success { border-color: rgba(34, 197, 94, .4); background: rgba(34, 197, 94, .15); color: var(--ok); }
+    .toast.error { border-color: rgba(239, 68, 68, .4); background: rgba(239, 68, 68, .15); color: var(--danger); }
+    .toast.warning { border-color: rgba(245, 158, 11, .4); background: rgba(245, 158, 11, .15); color: var(--warn); }
 
-    @keyframes toastSlideUp {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-
-    .toast.show {
-      display: block;
-    }
-
-    .toast.success {
-      border-color: rgba(34, 197, 94, .4);
-      background: rgba(34, 197, 94, .15);
-      color: var(--ok);
-    }
-
-    .toast.error {
-      border-color: rgba(239, 68, 68, .4);
-      background: rgba(239, 68, 68, .15);
-      color: var(--danger);
-    }
-
-    .toast.warning {
-      border-color: rgba(245, 158, 11, .4);
-      background: rgba(245, 158, 11, .15);
-      color: var(--warn);
-    }
-
-    /* ===== LOADING STATE ===== */
-    .loading {
-      position: relative;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-
+    .loading { position: relative; pointer-events: none; opacity: .75; }
     .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      margin: -10px 0 0 -10px;
-      border: 2px solid transparent;
-      border-top-color: var(--brand);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 20px; height: 20px; margin: -10px 0 0 -10px;
+      border: 2px solid transparent; border-top-color: var(--brand);
+      border-radius: 50%; animation: spin .8s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, .03);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, .15);
-      border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, .25);
-    }
-
-    /* ===== MOBILE ===== */
     @media (max-width: 640px) {
-      .wrap {
-        padding: 16px 0 36px;
-      }
-
-      .topbar {
-        padding: 14px 16px;
-        flex-wrap: wrap;
-        top: 8px;
-      }
-
-      .logo {
-        width: 44px;
-        height: 44px;
-      }
-
-      .title {
-        font-size: 15px;
-      }
-
-      .subtitle {
-        font-size: 11px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .wide {
-        grid-column: auto;
-      }
-
-      .formGrid {
-        grid-template-columns: 1fr;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .row {
-        justify-content: stretch;
-      }
-
-      .btn2 {
-        flex: 1;
-      }
-
-      .modal {
-        max-height: 85vh;
-      }
-    }
-
-    /* ===== ACCESSIBILITY ===== */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
+      .wrap { padding: 16px 0 36px; }
+      .topbar { padding: 14px 16px; flex-wrap: wrap; top: 8px; }
+      .logo { width: 44px; height: 44px; }
+      .title { font-size: 15px; }
+      .subtitle { font-size: 11px; }
+      .grid { grid-template-columns: 1fr; gap: 14px; }
+      .wide { grid-column: auto; }
+      .formGrid { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .row { justify-content: stretch; }
+      .btn2 { flex: 1; }
+      .modal { max-height: 85vh; }
     }
   </style>
 </head>
@@ -995,8 +384,8 @@ html
 
       <div class="right">
         <div class="status" title="Service status" role="status" aria-live="polite">
-          <span class="dot" aria-hidden="true"></span>
-          <span id="t_status">Online</span>
+          <span class="dot" id="dot" aria-hidden="true"></span>
+          <span id="t_status">Checking...</span>
         </div>
 
         <div class="selectWrap" title="Language">
@@ -1011,7 +400,7 @@ html
 
     <main role="main">
       <section class="grid" aria-label="AI Services" id="servicesGrid">
-        <div class="card" data-service="avatar" tabindex="0" role="button" aria-label="Avatar service: Create avatars with photo/video, style, and script">
+        <div class="card" data-service="avatar" tabindex="0" role="button">
           <div class="badge new" id="b_avatar">NEW</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">🧑‍🎭</div>
@@ -1022,8 +411,8 @@ html
           </div>
         </div>
 
-        <div class="card" data-service="image" tabindex="0" role="button" aria-label="Image service: Generate and edit photos and designs">
-          <div class="badge" aria-label="AI powered">AI</div>
+        <div class="card" data-service="image" tabindex="0" role="button">
+          <div class="badge">AI</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">🖼️</div>
             <div>
@@ -1033,8 +422,8 @@ html
           </div>
         </div>
 
-        <div class="card" data-service="video" tabindex="0" role="button" aria-label="Video service: AI video scenarios, shorts, reels">
-          <div class="badge pro" aria-label="Pro feature">PRO</div>
+        <div class="card" data-service="video" tabindex="0" role="button">
+          <div class="badge pro">PRO</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">🎬</div>
             <div>
@@ -1044,8 +433,8 @@ html
           </div>
         </div>
 
-        <div class="card" data-service="voice" tabindex="0" role="button" aria-label="Voice service: Voiceover and voice cloning with consent">
-          <div class="badge safe" aria-label="Safe and ethical">SAFE</div>
+        <div class="card" data-service="voice" tabindex="0" role="button">
+          <div class="badge safe">SAFE</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">🎤</div>
             <div>
@@ -1055,8 +444,8 @@ html
           </div>
         </div>
 
-        <div class="card" data-service="music" tabindex="0" role="button" aria-label="Music service: AI music ideas, lyrics, mood and style">
-          <div class="badge new" aria-label="New feature">NEW</div>
+        <div class="card" data-service="music" tabindex="0" role="button">
+          <div class="badge new">NEW</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">🎵</div>
             <div>
@@ -1066,8 +455,8 @@ html
           </div>
         </div>
 
-        <div class="card wide" data-service="text" tabindex="0" role="button" aria-label="Text service: Copywriting, posts, scripts, CTA, promo">
-          <div class="badge" aria-label="Fast generation">FAST</div>
+        <div class="card wide" data-service="text" tabindex="0" role="button">
+          <div class="badge">FAST</div>
           <div class="cardTop">
             <div class="icon" aria-hidden="true">✍️</div>
             <div>
@@ -1079,19 +468,13 @@ html
       </section>
 
       <div class="cta">
-        <button class="btn" id="demoBtn" aria-label="Start Demo">დაიწყე Demo</button>
-        <div class="creditPreview" id="t_creditPreview">
-          <strong>100 უფასო კრედიტი</strong> დემო რეჟიმში
-        </div>
+        <button class="btn" id="demoBtn">დაიწყე Demo</button>
+        <div class="creditPreview" id="t_creditPreview"><strong>100 უფასო კრედიტი</strong> დემო რეჟიმში</div>
       </div>
 
       <footer class="footer" role="contentinfo">
-        <div id="t_footer">
-          © 2026 <strong>Avatar G</strong> • Georgian AI Workspace
-        </div>
-        <div style="margin-top: 8px; font-size: 11.5px;">
-          Made with ❤️ in Georgia
-        </div>
+        <div id="t_footer">© 2026 <strong>Avatar G</strong> • Georgian AI Workspace</div>
+        <div style="margin-top: 8px; font-size: 11.5px;">Made with ❤️ in Georgia</div>
       </footer>
     </main>
   </div>
@@ -1108,27 +491,18 @@ html
       </div>
 
       <div class="modalBody">
-        <div class="hint" id="modalHint" role="status">
-          შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.
-        </div>
+        <div class="hint" id="modalHint">შეავსე მოკლე დეტალები — მოთხოვნა წავა backend-ზე და მიიღებ პასუხს.</div>
 
         <form id="serviceForm" novalidate>
           <div class="formGrid">
             <div class="field">
               <label id="l_goal" for="goal">მიზანი *</label>
-              <input 
-                id="goal" 
-                type="text" 
-                placeholder="მაგ: Instagram Reel, პროდუქტის პრომო..." 
-                required 
-                aria-required="true"
-                aria-describedby="goalHelp"
-              />
+              <input id="goal" type="text" placeholder="მაგ: Instagram Reel, პროდუქტის პრომო..." required />
             </div>
 
             <div class="field">
               <label id="l_lang" for="outLang">ენა *</label>
-              <select id="outLang" required aria-required="true">
+              <select id="outLang" required>
                 <option value="ka" selected>ქართული</option>
                 <option value="en">English</option>
                 <option value="ru">Русский</option>
@@ -1137,42 +511,37 @@ html
 
             <div class="field full">
               <label id="l_details" for="details">დეტალები / მოთხოვნა *</label>
-              <textarea 
-                id="details" 
-                placeholder="მოკლედ აღწერე: სტილი, ტონი, აუდიტორია, მაგალითები…" 
-                required 
-                aria-required="true"
-              ></textarea>
+              <textarea id="details" placeholder="მოკლედ აღწერე: სტილი, ტონი, აუდიტორია, მაგალითები…" required></textarea>
             </div>
 
             <div class="field">
               <label id="l_files" for="files">ფაილები (სურვილისამებრ)</label>
               <div class="fileInput">
-                <input id="files" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.docx" aria-label="Upload files" />
+                <input id="files" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.docx" />
                 <div class="fileLabel">
                   <span>📎</span>
                   <span id="fileText">აირჩიეთ ფაილები</span>
                 </div>
               </div>
-              <div id="filePreview" class="filePreview" style="display: none;"></div>
+              <div id="filePreview" class="filePreview"></div>
             </div>
 
             <div class="field">
               <label id="l_notes" for="notes">შენიშვნები</label>
-              <input 
-                id="notes" 
-                type="text" 
-                placeholder="მაგ: brand colors, ლოგო, დრო (6s/10s)…" 
-                aria-label="Additional notes"
-              />
+              <input id="notes" type="text" placeholder="მაგ: brand colors, ლოგო, დრო (6s/10s)…" />
             </div>
 
             <div class="field full" id="consentWrap" style="display:none;">
               <div class="consentBox">
-                <input type="checkbox" id="consent" aria-required="true" />
-                <label for="consent" id="t_consent">
-                  ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).
-                </label>
+                <input type="checkbox" id="consent" />
+                <label for="consent" id="t_consent">ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს ნებართვა (consent).</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <div class="resultBox" id="resultBox">
+                <div class="rTitle" id="rTitle">AI პასუხი</div>
+                <pre id="resultText"></pre>
               </div>
             </div>
           </div>
@@ -1189,16 +558,26 @@ html
   <div class="toast" id="toast" role="alert" aria-live="assertive">Done</div>
 
   <script>
+    /******************************************************************
+     * ✅ IMPORTANT:
+     * ეს URL უნდა იყოს შენი რეალური backend დომენი.
+     * შენს სქრინებზე backend არის: https://avatarg-backend.vercel.app
+     ******************************************************************/
+    const API_BASE = "https://avatarg-backend.vercel.app";
+
     // ===== i18n =====
     const I18N = {
       ka: {
         title: "Avatar G — AI Workspace",
         subtitle: "Avatar • Image • Video • Voice • Music • Text",
-        status: "Online",
+        statusChecking: "Checking...",
+        statusOnline: "Online",
+        statusOffline: "Offline",
         footer: "© 2026 Avatar G • Georgian AI Workspace",
         demo: "დაიწყე Demo",
         creditPreview: "<strong>100 უფასო კრედიტი</strong> დემო რეჟიმში",
         new: "NEW",
+
         avatarH: "Avatar",
         avatarP: "ავატარის შექმნა (ფოტო/ვიდეო) + სტილი + სცენარი",
         imageH: "Image",
@@ -1212,7 +591,7 @@ html
         textH: "Text",
         textP: "კოპირაითინგი, პოსტი, სცენარი, CTA, პრომო",
 
-        modalHint: "შეავსე მოკლე დეტალები — მივიღებთ მოთხოვნას და მოვამზადებთ შედეგს.",
+        modalHint: "შეავსე დეტალები — მოთხოვნა წავა backend-ზე და მიიღებ პასუხს.",
         l_goal: "მიზანი *",
         l_lang: "ენა *",
         l_details: "დეტალები / მოთხოვნა *",
@@ -1222,7 +601,7 @@ html
         clear: "გასუფთავება",
         consent: "ვადასტურებ, რომ ხმის კლონირებისთვის მაქვს პირის/ავტორის ნებართვა (consent).",
         fileText: "აირჩიეთ ფაილები",
-        filesSelected: "{count} ფაილი არჩეული",
+        filesSelected: (n) => `${n} ფაილი არჩეული`,
 
         svcTitles: {
           avatar: "Avatar — ავატარის შექმნა",
@@ -1232,10 +611,12 @@ html
           music: "Music — მუსიკის იდეა",
           text: "Text — კოპირაითინგი"
         },
-        toastSent: "✅ მოთხოვნა შენახულია! რეალურ ინტეგრაციაზე შემდეგ ეტაპზე დავაერთებთ.",
-        toastCleared: "✅ ფორმა წარმატებით გასუფთავდა.",
-        toastConsent: "⚠️ ხმის კლონირებისთვის საჭიროა Consent.",
+
         toastValidation: "⚠️ გთხოვთ შეავსოთ ყველა სავალდებულო ველი.",
+        toastConsent: "⚠️ ხმის კლონირებისთვის საჭიროა Consent.",
+        toastSending: "⏳ იგზავნება...",
+        toastSent: "✅ მზადაა! მიიღე პასუხი Modal-ში.",
+        toastFail: "❌ Failed to fetch — შეამოწმე backend URL და CORS.",
         placeholders: {
           avatar: "მაგ: სასაუბრო ავატარი, ბიზნეს ვიდეო, პროდუქტის pitch",
           image: "მაგ: პოსტერი, ლოგოს შეცვლა, პროდუქტის ფოტო",
@@ -1243,17 +624,21 @@ html
           voice: "მაგ: ქართული VO, მშვიდი ტონი, 10წ CTA",
           music: "მაგ: ენერგიული, New Year vibe, ბრენდ ჯინგლი",
           text: "მაგ: ლენდინგ ტექსტი, სათაური, CTA"
-        }
+        },
+        resultTitle: "AI პასუხი"
       },
 
       en: {
         title: "Avatar G — AI Workspace",
         subtitle: "Avatar • Image • Video • Voice • Music • Text",
-        status: "Online",
+        statusChecking: "Checking...",
+        statusOnline: "Online",
+        statusOffline: "Offline",
         footer: "© 2026 Avatar G • AI Workspace",
         demo: "Start Demo",
         creditPreview: "<strong>100 Free Credits</strong> in demo mode",
         new: "NEW",
+
         avatarH: "Avatar",
         avatarP: "Create an avatar (photo/video) + style + script",
         imageH: "Image",
@@ -1267,7 +652,7 @@ html
         textH: "Text",
         textP: "Copywriting, posts, scripts, CTA, promo",
 
-        modalHint: "Fill in brief details — we'll capture your request and prepare the result.",
+        modalHint: "Fill details — request goes to backend and returns a reply.",
         l_goal: "Goal *",
         l_lang: "Language *",
         l_details: "Details / Request *",
@@ -1277,20 +662,22 @@ html
         clear: "Clear",
         consent: "I confirm I have permission/consent for voice cloning.",
         fileText: "Choose files",
-        filesSelected: "{count} files selected",
+        filesSelected: (n) => `${n} files selected`,
 
         svcTitles: {
           avatar: "Avatar — Create an avatar",
           image: "Image — Generate/Edit",
           video: "Video — Script/Structure",
           voice: "Voice — VO/Cloning (Consent)",
-          music: "Music — Create music idea",
+          music: "Music — Music idea",
           text: "Text — Copywriting"
         },
-        toastSent: "✅ Request saved! We can connect real integrations next.",
-        toastCleared: "✅ Form successfully cleared.",
-        toastConsent: "⚠️ Consent required for voice cloning.",
+
         toastValidation: "⚠️ Please fill all required fields.",
+        toastConsent: "⚠️ Consent required for voice cloning.",
+        toastSending: "⏳ Sending...",
+        toastSent: "✅ Done! See reply in the modal.",
+        toastFail: "❌ Failed to fetch — check backend URL and CORS.",
         placeholders: {
           avatar: "e.g., Talking avatar, business intro, product pitch",
           image: "e.g., poster, logo tweak, product image",
@@ -1298,7 +685,8 @@ html
           voice: "e.g., Georgian VO, calm tone, 10s CTA",
           music: "e.g., upbeat, NY vibe, brand jingle",
           text: "e.g., landing copy, ad headline, CTA"
-        }
+        },
+        resultTitle: "AI Reply"
       }
     };
 
@@ -1308,12 +696,12 @@ html
     const closeBtn = document.getElementById("closeBtn");
     const demoBtn = document.getElementById("demoBtn");
     const toast = document.getElementById("toast");
-    const serviceForm = document.getElementById("serviceForm");
 
     const modalTitle = document.getElementById("modalTitleText");
     const modalIcon = document.getElementById("modalIcon");
     const modalHint = document.getElementById("modalHint");
 
+    const serviceForm = document.getElementById("serviceForm");
     const goal = document.getElementById("goal");
     const outLang = document.getElementById("outLang");
     const details = document.getElementById("details");
@@ -1323,9 +711,17 @@ html
     const notes = document.getElementById("notes");
     const consentWrap = document.getElementById("consentWrap");
     const consent = document.getElementById("consent");
-
     const clearBtn = document.getElementById("clearBtn");
     const submitBtn = document.getElementById("submitBtn");
+
+    const resultBox = document.getElementById("resultBox");
+    const resultText = document.getElementById("resultText");
+    const rTitle = document.getElementById("rTitle");
+
+    const dot = document.getElementById("dot");
+    const t_status = document.getElementById("t_status");
+
+    const cards = document.querySelectorAll(".card");
 
     let currentService = "avatar";
 
@@ -1338,19 +734,61 @@ html
       text: { icon: "✍️" }
     };
 
+    function toastMsg(msg, type = "") {
+      toast.textContent = msg;
+      toast.className = "toast show";
+      if (type) toast.classList.add(type);
+      setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    function setStatus(state) {
+      // state: "checking" | "online" | "offline"
+      const t = I18N[langSel.value] || I18N.ka;
+
+      dot.classList.remove("ok", "bad");
+      if (state === "checking") {
+        t_status.textContent = t.statusChecking;
+      } else if (state === "online") {
+        dot.classList.add("ok");
+        t_status.textContent = t.statusOnline;
+      } else {
+        dot.classList.add("bad");
+        t_status.textContent = t.statusOffline;
+      }
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: ctrl.signal });
+        return res;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    async function healthCheck() {
+      try {
+        setStatus("checking");
+        const res = await fetchWithTimeout(`${API_BASE}/api/health`, { method: "GET" }, 8000);
+        if (!res.ok) throw new Error("Health not ok");
+        setStatus("online");
+      } catch (e) {
+        setStatus("offline");
+      }
+    }
+
     // ===== Apply language =====
     function applyLang(code) {
       const t = I18N[code] || I18N.ka;
-
       document.documentElement.lang = code;
 
       document.getElementById("t_title").textContent = t.title;
       document.getElementById("t_subtitle").textContent = t.subtitle;
-      document.getElementById("t_status").textContent = t.status;
       document.getElementById("t_footer").innerHTML = t.footer;
       document.getElementById("t_creditPreview").innerHTML = t.creditPreview;
       demoBtn.textContent = t.demo;
-      fileText.textContent = t.fileText;
 
       document.getElementById("b_avatar").textContent = t.new;
 
@@ -1377,258 +815,201 @@ html
       clearBtn.textContent = t.clear;
       document.getElementById("t_consent").textContent = t.consent;
 
-      // Update modal title for currently open service
-      if (serviceMeta[currentService]) {
-        modalTitle.textContent = t.svcTitles[currentService] || "Service";
-      }
+      rTitle.textContent = t.resultTitle;
+
+      // update placeholders for current service
+      goal.placeholder = t.placeholders[currentService] || goal.placeholder;
+      // keep status text consistent
+      // (we don't override setStatus state here)
     }
 
     langSel.addEventListener("change", (e) => applyLang(e.target.value));
 
-    // ===== Card mouse tracking =====
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
-    });
-
-    // ===== Modal helpers =====
+    // ===== Modal =====
     function openModal(service) {
       currentService = service;
-
-      const code = langSel.value;
-      const t = I18N[code] || I18N.ka;
+      const t = I18N[langSel.value] || I18N.ka;
 
       modalIcon.textContent = (serviceMeta[service]?.icon || "✨");
       modalTitle.textContent = t.svcTitles[service] || "Service";
 
-      // Show consent checkbox only for voice
-      if (service === "voice") {
-        consentWrap.style.display = "block";
-      } else {
+      // Consent only for voice
+      if (service === "voice") consentWrap.style.display = "block";
+      else {
         consentWrap.style.display = "none";
         consent.checked = false;
       }
 
-      overlay.classList.add("show");
-      overlay.setAttribute("aria-hidden", "false");
+      // reset
+      resultBox.style.display = "none";
+      resultText.textContent = "";
 
-      // UX: preload goal placeholder
-      goal.placeholder = t.placeholders[service] || goal.placeholder;
-
-      // Clear previous inputs (except language) and errors
       goal.value = "";
       details.value = "";
       notes.value = "";
       files.value = "";
       filePreview.style.display = "none";
-      
-      // Clear error states
-      goal.classList.remove('error');
-      details.classList.remove('error');
+      fileText.textContent = t.fileText;
 
-      // Focus
+      goal.classList.remove("error");
+      details.classList.remove("error");
+
+      goal.placeholder = t.placeholders[service] || goal.placeholder;
+
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
       setTimeout(() => goal.focus(), 60);
     }
 
     function closeModal() {
       overlay.classList.remove("show");
       overlay.setAttribute("aria-hidden", "true");
-      // Clear any error states
-      goal.classList.remove('error');
-      details.classList.remove('error');
     }
 
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeModal();
-    });
-    
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
     closeBtn.addEventListener("click", closeModal);
-    
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && overlay.classList.contains("show")) closeModal();
     });
 
-    // Cards click + keyboard support
+    // Cards click + keyboard
     cards.forEach(card => {
-      card.addEventListener("click", () => {
-        openModal(card.dataset.service);
-      });
-      
+      card.addEventListener("click", () => openModal(card.dataset.service));
       card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          openModal(card.dataset.service);
-        }
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(card.dataset.service); }
       });
     });
 
-    // Demo button opens avatar by default
     demoBtn.addEventListener("click", () => openModal("avatar"));
 
-    // File upload handling with preview
+    // File handling
     files.addEventListener("change", function() {
-      const code = langSel.value;
-      const t = I18N[code] || I18N.ka;
-      
-      if (this.files.length > 0) {
-        fileText.innerHTML = t.filesSelected.replace('{count}', this.files.length);
-        
-        // Show file preview
+      const t = I18N[langSel.value] || I18N.ka;
+      const count = this.files?.length || 0;
+
+      if (count > 0) {
+        fileText.textContent = t.filesSelected(count);
         filePreview.style.display = "flex";
-        const fileNames = Array.from(this.files).map(f => f.name).join(", ");
-        filePreview.innerHTML = `<span>📎</span><span>${fileNames}</span>`;
+
+        const names = Array.from(this.files).slice(0, 3).map(f => f.name);
+        const extra = count > 3 ? ` +${count - 3}` : "";
+        filePreview.textContent = `📎 ${names.join(", ")}${extra}`;
       } else {
         fileText.textContent = t.fileText;
         filePreview.style.display = "none";
       }
     });
 
-    // Clear button
     clearBtn.addEventListener("click", () => {
       serviceForm.reset();
       consent.checked = false;
-      filePreview.style.display = "none";
-      
-      const code = langSel.value;
-      const t = I18N[code] || I18N.ka;
+      resultBox.style.display = "none";
+      resultText.textContent = "";
+      goal.classList.remove("error");
+      details.classList.remove("error");
+
+      const t = I18N[langSel.value] || I18N.ka;
       fileText.textContent = t.fileText;
-      
-      // Clear error states
-      goal.classList.remove('error');
-      details.classList.remove('error');
-      
-      toastMsg(t.toastCleared, 'success');
+      filePreview.style.display = "none";
     });
 
-    // Form validation
     function validateForm() {
-      let isValid = true;
-      
-      // Clear previous errors
-      goal.classList.remove('error');
-      details.classList.remove('error');
-      
-      // Validate required fields
-      if (!goal.value.trim()) {
-        goal.classList.add('error');
-        isValid = false;
-      }
-      
-      if (!details.value.trim()) {
-        details.classList.add('error');
-        isValid = false;
-      }
-      
-      // Voice consent check
-      if (currentService === "voice" && !consent.checked) {
-        const code = langSel.value;
-        const t = I18N[code] || I18N.ka;
-        toastMsg(t.toastConsent, 'warning');
-        return false;
-      }
-      
-      return isValid;
+      const t = I18N[langSel.value] || I18N.ka;
+
+      goal.classList.remove("error");
+      details.classList.remove("error");
+
+      let ok = true;
+      if (!goal.value.trim()) { goal.classList.add("error"); ok = false; }
+      if (!details.value.trim()) { details.classList.add("error"); ok = false; }
+
+      if (!ok) { toastMsg(t.toastValidation, "warning"); return false; }
+      if (currentService === "voice" && !consent.checked) { toastMsg(t.toastConsent, "warning"); return false; }
+
+      return true;
     }
 
-    // Form submission
-    serviceForm.addEventListener("submit", (e) => {
+    // ✅ REAL BACKEND CALL
+    async function sendToBackend(payload) {
+      const res = await fetchWithTimeout(`${API_BASE}/api/ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }, 20000);
+
+      // Try parse JSON even on error
+      const text = await res.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch (_) { data = { raw: text }; }
+
+      if (!res.ok) {
+        const errMsg = data?.error || data?.message || data?.raw || `HTTP ${res.status}`;
+        throw new Error(errMsg);
+      }
+
+      return data;
+    }
+
+    serviceForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      const code = langSel.value;
-      const t = I18N[code] || I18N.ka;
-      
-      // Validate
-      if (!validateForm()) {
-        toastMsg(t.toastValidation, 'warning');
-        return;
-      }
+      const t = I18N[langSel.value] || I18N.ka;
+      if (!validateForm()) return;
 
-      // Show loading state
-      submitBtn.classList.add('loading');
+      submitBtn.classList.add("loading");
       submitBtn.disabled = true;
+      resultBox.style.display = "none";
+      resultText.textContent = "";
 
-      const payload = {
-        ts: new Date().toISOString(),
-        service: currentService,
-        goal: goal.value.trim(),
-        outLang: outLang.value,
-        details: details.value.trim(),
-        notes: notes.value.trim(),
-        filesCount: (files.files || []).length,
-        consent: currentService === "voice" ? consent.checked : null
-      };
+      toastMsg(t.toastSending, "warning");
 
-      // Simulate API delay
-      setTimeout(() => {
-        try {
-          const key = "avatar_g_requests";
-          const existing = JSON.parse(localStorage.getItem(key) || "[]");
-          existing.push(payload);
-          localStorage.setItem(key, JSON.stringify(existing));
-          
-          // Success!
-          submitBtn.classList.remove('loading');
-          submitBtn.disabled = false;
-          toastMsg(t.toastSent, 'success');
-          
-          setTimeout(() => closeModal(), 1000);
-        } catch (err) {
-          console.error("Storage error (demo mode):", err);
-          submitBtn.classList.remove('loading');
-          submitBtn.disabled = false;
-          toastMsg("❌ Error saving request", 'error');
-        }
-      }, 800);
+      try {
+        const payload = {
+          service: currentService,
+          goal: goal.value.trim(),
+          outLang: outLang.value,
+          details: details.value.trim(),
+          notes: notes.value.trim(),
+          // NOTE: ფაილებს აქ არ ვაგზავნით (multipart საჭირო იქნება). Count მაინც გავატანე:
+          filesCount: (files.files || []).length,
+          consent: currentService === "voice" ? !!consent.checked : undefined,
+          // ✅ Backend-ისთვის "message" ყოველთვის დავურთოთ, რომ შენს route.js-მა მიიღოს
+          message: `[${currentService.toUpperCase()}]\nGoal: ${goal.value.trim()}\nLang: ${outLang.value}\nDetails: ${details.value.trim()}\nNotes: ${notes.value.trim() || "-"}`
+        };
+
+        const data = await sendToBackend(payload);
+
+        // backend შეიძლება აბრუნებდეს reply ან message ან raw
+        const reply =
+          data?.reply ??
+          data?.message ??
+          data?.output ??
+          (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+
+        resultBox.style.display = "block";
+        resultText.textContent = reply;
+
+        toastMsg(t.toastSent, "success");
+      } catch (err) {
+        console.error(err);
+        resultBox.style.display = "block";
+        resultText.textContent = `Error: ${err?.message || "Failed to fetch"}`;
+
+        toastMsg(t.toastFail, "error");
+      } finally {
+        submitBtn.classList.remove("loading");
+        submitBtn.disabled = false;
+      }
     });
-
-    function toastMsg(msg, type = 'info') {
-      toast.textContent = msg;
-      toast.className = 'toast show';
-      if (type) toast.classList.add(type);
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.className = 'toast', 300);
-      }, 3000);
-    }
 
     // Home button
-    document.getElementById("homeBtn").addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-    
+    document.getElementById("homeBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
     document.getElementById("homeBtn").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
     });
 
-    // Initialize with Georgian language
+    // Init
     applyLang("ka");
-
-    // Initialize localStorage for demo
-    if (!localStorage.getItem('avatar_g_requests')) {
-      localStorage.setItem('avatar_g_requests', JSON.stringify([]));
-    }
-
-    // Service worker registration for PWA (optional)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        // Uncomment when you add service-worker.js
-        // navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
-
-    console.log('%c👋 Avatar G — Georgian AI Workspace', 'font-size: 20px; font-weight: bold; color: #22d3ee;');
-    console.log('%c🚀 Built with ❤️ in Georgia', 'font-size: 14px; color: #93a3b8;');
+    healthCheck();
   </script>
 </body>
 </html>
-
