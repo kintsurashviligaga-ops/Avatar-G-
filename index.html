@@ -44,6 +44,7 @@
       min-height:100vh;
     }
     a{color:var(--accent); text-decoration:none}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
     .wrap{
       max-width:1200px;
       margin:0 auto;
@@ -60,6 +61,8 @@
       background: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
       border-radius: var(--r);
       box-shadow: var(--shadow);
+      gap:12px;
+      flex-wrap:wrap;
     }
     .brand{display:flex; align-items:center; gap:12px;}
     .logo{
@@ -71,7 +74,7 @@
     }
     .brand h1{margin:0; font-size:16px; letter-spacing:0.2px;}
     .brand p{margin:0; font-size:12px; color:var(--muted)}
-    .actions{display:flex; gap:10px; align-items:center}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 12px;
@@ -103,6 +106,7 @@
       font-weight:900;
       cursor:pointer;
     }
+    .btn2:disabled{opacity:.55; cursor:not-allowed}
     .grid{display:grid; grid-template-columns: 360px 1fr; gap:14px;}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
     .card{
@@ -180,6 +184,7 @@
       font-weight:900;
       min-width:48px;
     }
+    .miniBtn:disabled{opacity:.55; cursor:not-allowed}
     .miniBtnDanger{
       border:1px solid rgba(255,107,107,0.30);
       background: rgba(255,107,107,0.10);
@@ -241,6 +246,7 @@
       background: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(59,130,246,0.10));
       display:flex; justify-content:space-between; align-items:center;
       gap:10px;
+      flex-wrap:wrap;
     }
     .chatHeader h2{margin:0; font-size:14px}
     .chatHeader .meta{font-size:12px; color:var(--muted); margin-top:4px}
@@ -334,7 +340,6 @@
       line-height:1.45;
     }
     .dangerText{color:#ffd0d0}
-    .okText{color:#bfffd2}
     .tiny{font-size:11px; color:var(--muted)}
   </style>
 </head>
@@ -352,8 +357,7 @@
         const raw = localStorage.getItem(CONFIG_KEY);
         if(!raw) return null;
         const obj = JSON.parse(raw);
-        if(!obj) return null;
-        return obj;
+        return obj || null;
       }catch(e){ return null; }
     }
 
@@ -363,6 +367,10 @@
 
     function isValidUrl(u){
       try{ new URL(u); return true; }catch(e){ return false; }
+    }
+
+    function normalizeBase(u){
+      return String(u || "").trim().replace(/\/+$/, "");
     }
 
     function fmtBytes(bytes){
@@ -404,28 +412,21 @@
       });
     }
 
-    // ---- API base helpers (robust)
-    function normalizeBase(u){
-      return String(u || "").trim().replace(/\/+$/, "");
-    }
-
-    // If backend is Next.js with /api routes -> default to /api
-    // If user already set API_BASE ending with /api -> keep.
     function apiBaseWithApi(cfg){
-      const base = normalizeBase(cfg.API_BASE);
+      const base = normalizeBase(cfg.API_BASE || "");
       if(!base) return "";
       if(base.endsWith("/api")) return base;
       return base + "/api";
     }
 
-    // Some people might have routes at root; we keep a fallback base too.
-    function apiBaseRoot(cfg){
-      return normalizeBase(cfg.API_BASE);
+    function buildApiUrl(cfg, path){
+      return normalizeBase(apiBaseWithApi(cfg)) + path;
     }
 
+    // ✅ Robust API fetch with dual-base fallback (tries /api, then root)
     async function apiFetch(cfg, path, { method="GET", headers={}, body=null, token=null, isJson=true } = {}){
       const apiBase = apiBaseWithApi(cfg);
-      const url = apiBase + path;
+      const rootBase = normalizeBase(cfg.API_BASE || "");
 
       const h = { ...headers };
       if(token) h["Authorization"] = "Bearer " + String(token);
@@ -433,15 +434,25 @@
       const isFormData = (body && typeof FormData !== "undefined" && body instanceof FormData);
       if(isJson && body && !isFormData && !h["Content-Type"]) h["Content-Type"] = "application/json";
 
+      const payloadBody = isJson && body && !isFormData ? JSON.stringify(body) : body;
+
+      // Try /api base first
       let res;
+      let url = normalizeBase(apiBase) + path;
       try{
-        res = await fetch(url, {
-          method,
-          headers: h,
-          body: isJson && body && !isFormData ? JSON.stringify(body) : body
-        });
+        res = await fetch(url, { method, headers: h, body: payloadBody });
       }catch(e){
-        throw new Error(`Network error (${method} ${url}): ${e.message}`);
+        throw new Error(\`Network error (\${method} \${url}): \${e.message}\`);
+      }
+
+      // If 404/405, try root base as fallback
+      if((res.status === 404 || res.status === 405) && rootBase && normalizeBase(apiBase) !== rootBase){
+        url = rootBase + path;
+        try{
+          res = await fetch(url, { method, headers: h, body: payloadBody });
+        }catch(e){
+          throw new Error(\`Network error (\${method} \${url}): \${e.message}\`);
+        }
       }
 
       const text = await res.text();
@@ -451,8 +462,8 @@
       catch(e){ data = { raw: text }; }
 
       if(!res.ok){
-        const msg = data?.error || data?.message || data?.raw || `HTTP ${res.status}`;
-        throw new Error(`${method} ${url} failed: ${msg}`);
+        const msg = data?.error || data?.message || data?.raw || \`HTTP \${res.status}\`;
+        throw new Error(\`\${method} \${url} failed: \${msg}\`);
       }
       return data;
     }
@@ -514,27 +525,30 @@
                 const v = validate();
                 if(v){ setErr(v); return; }
                 setErr("");
-                onSave(cfg);
+                onSave({ ...cfg, API_BASE: normalizeBase(cfg.API_BASE) });
               }}>Save & Continue</button>
             </div>
 
             <div className="help">
-              Supabase → Project Settings → API → Project URL + anon public key.<br/>
-              API_BASE is your backend HTTPS domain (default routes assumed under <b>/api</b>).
+              <b>Setup:</b><br/>
+              1. Supabase → Project Settings → API → Copy Project URL + anon public key<br/>
+              2. API_BASE = your backend domain (we auto-append <b>/api</b> for Next.js routes)<br/>
+              3. <b>Security:</b> Add redirect URLs to Supabase Auth allowlist:<br/>
+              &nbsp;&nbsp;&nbsp;• <code>https://yourdomain.com/*</code><br/>
+              &nbsp;&nbsp;&nbsp;• <code>http://localhost:*/*</code>
             </div>
           </div>
         </div>
       );
     }
 
-    function AuthModal({ open, onClose, supabase }){
+    function AuthModal({ open, supabase }){
       const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
       const [busy, setBusy] = useState(false);
       const [msg, setMsg] = useState("");
 
       useEffect(()=>{ if(open){ setMsg(""); } }, [open]);
-
       if(!open) return null;
 
       return (
@@ -545,7 +559,7 @@
                 <h3>Sign in to Avatar G</h3>
                 <p>Magic link or Email/Password (Supabase Auth)</p>
               </div>
-              <button className="closeX" onClick={onClose}>X</button>
+              <div className="tiny">Close: sign-in completes automatically</div>
             </div>
 
             <div className="grid2">
@@ -561,13 +575,12 @@
 
             {msg && <div className={"notice " + (String(msg).startsWith("ERROR") ? "noticeErr" : "")} style={{marginTop:10}}>{msg}</div>}
 
-            <div style={{display:"flex", gap:10, justifyContent:"flex-end", marginTop:12}}>
+            <div style={{display:"flex", gap:10, justifyContent:"flex-end", marginTop:12, flexWrap:"wrap"}}>
               <button className="btn2" disabled={busy} onClick={async ()=>{
                 if(!email.trim()) return setMsg("ERROR: Email is required");
                 setBusy(true);
                 setMsg("");
                 try{
-                  // safest redirect for mobile + avoids weird chars
                   const redirectTo = window.location.origin + window.location.pathname;
                   const { error } = await supabase.auth.signInWithOtp({
                     email: email.trim(),
@@ -592,7 +605,6 @@
                     setMsg("✓ Account created. Check email if confirmation is enabled.");
                   }else{
                     setMsg("✓ Signed in.");
-                    setTimeout(onClose, 600);
                   }
                 }catch(e){
                   setMsg("ERROR: " + (e?.message || "Failed"));
@@ -601,7 +613,8 @@
             </div>
 
             <div className="help tiny">
-              Tip: if email confirmation is enabled in Supabase, you must confirm email on first sign-up.
+              <b>Tip:</b> If email confirmation is enabled in Supabase, confirm email on first sign-up.<br/>
+              <b>Redirect URL allowlist:</b> Supabase Auth → URL Configuration.
             </div>
           </div>
         </div>
@@ -616,8 +629,6 @@
       const [session, setSession] = useState(null);
       const [user, setUser] = useState(null);
 
-      const [authOpen, setAuthOpen] = useState(false);
-
       const [plan, setPlan] = useState("guest");
       const [storageUsed, setStorageUsed] = useState(0);
       const [storageMax, setStorageMax] = useState(PLANS.guest.storageBytes);
@@ -627,7 +638,6 @@
       const [newProjectName, setNewProjectName] = useState("");
 
       const [mode, setMode] = useState("general");
-
       const [messages, setMessages] = useState([
         { role:"assistant", content:
 `Welcome to Avatar G Workspace.
@@ -638,7 +648,6 @@
 
 Create a project and ask me what you want.` }
       ]);
-
       const [input, setInput] = useState("");
       const [streaming, setStreaming] = useState(false);
 
@@ -651,34 +660,25 @@ Create a project and ask me what you want.` }
         return ok ? "" : "CONFIG is incomplete.";
       }, [config]);
 
-      // init supabase once config changes
       useEffect(()=>{
         if(!config) return;
         try{
           const sb = createSupabaseClient(config);
           setSupabase(sb);
 
-          let mounted = true;
-
           sb.auth.getSession().then(({ data })=>{
-            if(!mounted) return;
             const s = data.session || null;
             setSession(s);
             setUser(s?.user || null);
-            if(!s) setAuthOpen(true);
           });
 
           const { data: sub } = sb.auth.onAuthStateChange((_event, newSession)=>{
             const s = newSession || null;
             setSession(s);
             setUser(s?.user || null);
-            if(!s) setAuthOpen(true);
           });
 
-          return ()=>{
-            mounted = false;
-            sub?.subscription?.unsubscribe?.();
-          };
+          return ()=> sub?.subscription?.unsubscribe?.();
         }catch(e){
           console.error("Supabase init error:", e);
         }
@@ -688,22 +688,12 @@ Create a project and ask me what you want.` }
         requestAnimationFrame(()=> bottomRef.current?.scrollIntoView({ behavior:"smooth" }));
       }
 
-      // backend health check: try /api/health then /health (root) as fallback
       async function pingBackend(){
         if(!config) return;
-        const apiHealth = apiBaseWithApi(config) + "/health";
-        const rootHealth = apiBaseRoot(config) + "/health";
-
         try{
-          let res = await fetch(apiHealth, { method:"GET" }).catch(()=>null);
-          if(!res || !res.ok){
-            res = await fetch(rootHealth, { method:"GET" });
-          }
-          if(res && res.ok){
-            setBackendStatus("✓ Backend online");
-          }else{
-            setBackendStatus(`⚠ Backend HTTP ${res ? res.status : "?"}`);
-          }
+          const res = await fetch(buildApiUrl(config, "/health"), { method:"GET" });
+          if(res.ok) setBackendStatus("✓ Backend online");
+          else setBackendStatus(`⚠ Backend HTTP ${res.status}`);
         }catch(e){
           setBackendStatus("✗ Backend unreachable");
         }
@@ -718,21 +708,13 @@ Create a project and ask me what you want.` }
         try{
           const token = session.access_token;
 
-          const usage = await apiFetch(config, "/usage", { token }).catch(e=>{
-            console.warn("usage error:", e);
-            return null;
-          });
-
+          const usage = await apiFetch(config, "/usage", { token }).catch(()=> null);
           const planId = usage?.plan || "free";
           setPlan(planId);
           setStorageUsed(usage?.storageUsedBytes || 0);
           setStorageMax(usage?.storageMaxBytes || (PLANS[planId]?.storageBytes || PLANS.free.storageBytes));
 
-          const list = await apiFetch(config, "/projects", { token }).catch(e=>{
-            console.warn("projects error:", e);
-            return [];
-          });
-
+          const list = await apiFetch(config, "/projects", { token }).catch(()=> []);
           const arr = Array.isArray(list) ? list : [];
           setProjects(arr);
 
@@ -824,12 +806,7 @@ Create a project and ask me what you want.` }
             fd.append("projectId", activeProjectId);
 
             const data = await apiFetch(config, "/upload", { method:"POST", token, body: fd, isJson:false });
-
-            setMessages(prev => [
-              ...prev,
-              { role:"assistant", content:`✓ Uploaded: ${data?.meta?.name || file.name}` }
-            ]);
-
+            setMessages(prev => [...prev, { role:"assistant", content:`✓ Uploaded: ${data?.meta?.name || file.name}` }]);
             await refreshAll();
             scrollBottom();
           }catch(e){
@@ -863,25 +840,21 @@ Create a project and ask me what you want.` }
         }
       }
 
-      // ✅ FIXED: message state race bug (no double setMessages that can drop the user message)
       async function send(){
         const text = input.trim();
         if(!text || !canChat) return;
 
-        const userMsg = { role:"user", content:text };
-        const requestMessages = [...messages, userMsg];
-
-        // Update UI in ONE deterministic state update
-        setMessages(prev => [...prev, userMsg, { role:"assistant", content:"" }]);
+        const next = [...messages, { role:"user", content:text }];
+        setMessages(next);
         setInput("");
         setStreaming(true);
         scrollBottom();
 
+        setMessages(prev => [...prev, { role:"assistant", content:"" }]);
+
         try{
           const token = session.access_token;
-
-          const apiBase = apiBaseWithApi(config);
-          const url = apiBase + "/chat";
+          const url = buildApiUrl(config, "/chat");
 
           let res;
           try{
@@ -891,10 +864,10 @@ Create a project and ask me what you want.` }
                 "Content-Type":"application/json",
                 "Authorization":"Bearer " + String(token)
               },
-              body: JSON.stringify({ mode, projectId: activeProjectId, messages: requestMessages })
+              body: JSON.stringify({ mode, projectId: activeProjectId, messages: next })
             });
           }catch(e){
-            throw new Error(`Network error (POST ${url}): ${e.message}`);
+            throw new Error(`Network error: ${e.message}`);
           }
 
           const ct = res.headers.get("content-type") || "";
@@ -981,7 +954,6 @@ Create a project and ask me what you want.` }
         setStorageUsed(0);
         setStorageMax(PLANS.guest.storageBytes);
         setMessages([{ role:"assistant", content:"Signed out. Sign in to continue." }]);
-        setAuthOpen(true);
       }
 
       const backendPillClass =
@@ -1005,11 +977,7 @@ Create a project and ask me what you want.` }
             }}
           />
 
-          <AuthModal
-            open={!!supabase && !session && !configOpen && !!config && authOpen}
-            onClose={()=> setAuthOpen(false)}
-            supabase={supabase}
-          />
+          <AuthModal open={!!supabase && !session && !configOpen && !!config} supabase={supabase} />
 
           <div className="topbar">
             <div className="brand">
@@ -1022,15 +990,16 @@ Create a project and ask me what you want.` }
 
             <div className="actions">
               <span className={backendPillClass}>{backendStatus}</span>
+              {config?.API_BASE ? (
+                <span className="pill">API: <b style={{color:"var(--text)"}}>{config.API_BASE}</b></span>
+              ) : null}
               <span className="pill">Plan: <b style={{color:"var(--text)"}}>{(PLANS[plan]?.name || "GUEST")}</b></span>
               <span className="pill">User: <b style={{color:"var(--text)"}}>{user?.email || "Guest"}</b></span>
               <button className="btn2" onClick={()=>setConfigOpen(true)}>Settings</button>
               {session ? (
                 <button className="btn2" onClick={signOut}>Sign out</button>
               ) : (
-                <button className="btn" disabled={!canUseApp} onClick={()=>setAuthOpen(true)}>
-                  Sign in
-                </button>
+                <button className="btn" disabled={!canUseApp}>Sign in</button>
               )}
             </div>
           </div>
@@ -1216,9 +1185,9 @@ Create a project and ask me what you want.` }
             </div>
           </div>
 
-          <div className="tiny">
-            Security note: frontend sends Authorization: Bearer &lt;supabase_access_token&gt; to backend.
-            Backend must verify token and enforce limits server-side.
+          <div className="tiny" style={{marginTop:14}}>
+            <b>Security:</b> Frontend sends <code>Authorization: Bearer &lt;supabase_access_token&gt;</code> to backend. Backend must verify token server-side.<br/>
+            <b>Deployment:</b> Add your domain to Supabase Auth → URL Configuration → Redirect URLs allowlist.
           </div>
         </div>
       );
@@ -1228,4 +1197,3 @@ Create a project and ask me what you want.` }
   </script>
 </body>
 </html>
-```0
