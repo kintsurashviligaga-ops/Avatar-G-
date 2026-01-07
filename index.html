@@ -1,630 +1,848 @@
 <!doctype html>
-<html lang="en">
+<html lang="ka">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Avatar G — Workspace</title>
-
+  <meta name="theme-color" content="#06121a" />
   <style>
     :root{
       --bg1:#06121a;
       --bg2:#0a2533;
       --card:rgba(0,0,0,.35);
+      --card2:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.10);
       --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.65);
+      --muted:rgba(255,255,255,.68);
+      --danger:#ff4d4d;
+      --ok:#46e6a1;
       --cyan:#22d3ee;
       --blue:#3b82f6;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      min-height:100vh;
       color:var(--text);
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
       background:
-        radial-gradient(1200px 800px at 20% 20%, rgba(34,211,238,.20), transparent 55%),
-        radial-gradient(900px 700px at 70% 30%, rgba(59,130,246,.18), transparent 60%),
-        linear-gradient(180deg,var(--bg1),var(--bg2));
+        radial-gradient(1200px 800px at 20% 20%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(900px 700px at 70% 30%, rgba(59,130,246,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
       overflow-x:hidden;
     }
-    a{color:inherit}
     .wrap{
       min-height:100vh;
-      padding:24px;
-      display:grid;
-      place-items:center;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding: 18px 14px 24px;
     }
-    .shell{
-      width:min(1040px,96vw);
-      border-radius:18px;
+    .panel{
+      width:min(980px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid var(--line);
-      background:var(--card);
-      box-shadow:0 22px 70px rgba(0,0,0,.55);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
       overflow:hidden;
       backdrop-filter: blur(10px);
+      position:relative;
     }
     .top{
-      padding:18px;
       display:flex;
-      justify-content:space-between;
-      align-items:center;
       gap:14px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex;
       align-items:center;
-      gap:10px;
-      min-width:240px;
+      padding:18px 18px 10px;
     }
     .logo{
-      width:38px;height:38px;border-radius:12px;
-      background:linear-gradient(135deg,var(--cyan),var(--blue));
-      box-shadow:0 12px 35px rgba(34,211,238,.25);
+      width:44px;height:44px;border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, rgba(34,211,238,.9), rgba(59,130,246,.7));
+      box-shadow: 0 12px 30px rgba(34,211,238,.12);
+      border:1px solid rgba(255,255,255,.16);
+      flex:0 0 auto;
     }
-    .title{font-weight:800; letter-spacing:.2px}
-    .subtitle{font-size:12px;color:var(--muted); margin-top:2px}
-    .meta{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
+    .title{
+      display:flex;flex-direction:column;line-height:1.1;
     }
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.25);
+    .title h1{
+      font-size:18px;margin:0 0 4px;font-weight:760;letter-spacing:.2px;
+    }
+    .title p{
+      margin:0;color:var(--muted);font-size:13px;
+    }
+    .chips{
+      margin-left:auto;
+      display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;
+    }
+    .chip{
       font-size:12px;
-      color:rgba(255,255,255,.85);
+      color:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      padding:7px 10px;border-radius:999px;
+      white-space:nowrap;
     }
-    .body{
-      padding:18px;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
+    .chip.ok{border-color:rgba(70,230,161,.25); background:rgba(70,230,161,.08)}
+    .chip.bad{border-color:rgba(255,77,77,.25); background:rgba(255,77,77,.08)}
     .row{
       display:flex;
-      gap:12px;
+      gap:14px;
+      padding: 10px 18px 18px;
       flex-wrap:wrap;
-      align-items:center;
     }
-    button{
+    .btn{
       border:none;
-      border-radius:12px;
-      padding:12px 14px;
-      font-weight:800;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight:700;
+      color:rgba(255,255,255,.92);
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
       cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      display:inline-flex;gap:10px;align-items:center;
     }
-    .btn-ghost{
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(59,130,246,.85));
+      border: 1px solid rgba(255,255,255,.18);
+      color:#041018;
+      box-shadow: 0 12px 30px rgba(34,211,238,.18);
     }
-    .btn-primary{
-      background:linear-gradient(135deg,var(--cyan),var(--blue));
-      color:#04121a;
-      box-shadow:0 14px 35px rgba(34,211,238,.18);
+    .btn.danger{
+      background: rgba(255,77,77,.10);
+      border:1px solid rgba(255,77,77,.28);
     }
-    .btn-danger{
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,80,80,.10);
-      color:rgba(255,255,255,.92);
+    .btn:active{transform:translateY(1px)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      padding: 0 18px 18px;
     }
-    button:disabled{
-      opacity:.55;
-      cursor:not-allowed;
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+      .chips{display:none}
     }
-    .hint{
-      margin-top:14px;
-      font-size:13px;
-      line-height:1.35;
-      color:rgba(255,255,255,.82);
+    .card{
+      background: rgba(0,0,0,.22);
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      padding:14px;
+      min-height: 220px;
     }
-    .box{
-      margin-top:14px;
-      padding:12px;
-      border-radius:12px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.08);
-      white-space:pre-wrap;
-      word-break:break-word;
-      font-size:13px;
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
       color:rgba(255,255,255,.90);
+      letter-spacing:.2px;
+    }
+    .muted{color:var(--muted);font-size:13px}
+    .klist{margin:10px 0 0; padding:0 0 0 18px; color:var(--muted); font-size:13px}
+    .klist li{margin:6px 0}
+    .log{
+      margin-top:10px;
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      color:rgba(255,255,255,.82);
+      max-height: 160px;
+      overflow:auto;
+      white-space:pre-wrap;
     }
 
     /* Modal */
-    .modalOverlay{
+    .modalBack{
       position:fixed; inset:0;
-      background:rgba(0,0,0,.55);
-      display:grid;
-      place-items:center;
-      padding:18px;
-      z-index:50;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:9999;
     }
     .modal{
-      width:min(720px,96vw);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(8,16,22,.92);
-      box-shadow:0 30px 90px rgba(0,0,0,.65);
+      width:min(720px, 100%);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(10,25,35,.98), rgba(6,18,26,.98));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 22px 80px rgba(0,0,0,.6);
       overflow:hidden;
     }
-    .modalTop{
-      padding:16px 16px 12px;
+    .modalHead{
       display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      border-bottom:1px solid rgba(255,255,255,.08);
+      align-items:center;
+      gap:10px;
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .modalTitle{font-weight:900}
-    .modalSub{font-size:12px;color:rgba(255,255,255,.70); margin-top:4px}
-    .xbtn{
-      width:34px;height:34px;border-radius:12px;
+    .modalHead h3{
+      margin:0;
+      font-size:14px;
+      font-weight:760;
+    }
+    .modalHead .x{
+      margin-left:auto;
+      width:40px;height:40px;
+      border-radius: 12px;
       border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
-      font-weight:900;
+      background: rgba(255,255,255,.06);
       cursor:pointer;
+      color:rgba(255,255,255,.88);
+      font-size:18px;
     }
-    .modalBody{padding:16px}
-    label{
-      display:block;
+    .modalBody{padding:14px}
+    .field{
+      margin-bottom:12px;
+    }
+    .label{
       font-size:12px;
       color:rgba(255,255,255,.75);
-      margin:10px 0 6px;
+      margin:0 0 6px;
     }
-    input{
+    input, textarea{
       width:100%;
       padding:12px 12px;
-      border-radius:12px;
+      border-radius: 14px;
       border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.25);
+      background: rgba(0,0,0,.22);
       color:rgba(255,255,255,.92);
       outline:none;
+      font-size:14px;
+    }
+    input:focus, textarea:focus{
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.15);
     }
     .modalActions{
-      padding:14px 16px 16px;
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
-      border-top:1px solid rgba(255,255,255,.08);
+      display:flex; gap:10px; justify-content:flex-end;
+      padding: 12px 14px 14px;
+      border-top:1px solid rgba(255,255,255,.10);
       flex-wrap:wrap;
     }
-    .smallNote{
-      font-size:12px;
-      color:rgba(255,255,255,.65);
-      margin-top:10px;
+
+    /* Chat */
+    .chatBox{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 360px;
+    }
+    .msgs{
+      flex:1;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      max-height: 420px;
+    }
+    .bubble{
+      max-width: 90%;
+      padding:10px 12px;
+      border-radius: 14px;
+      margin: 8px 0;
+      border:1px solid rgba(255,255,255,.10);
       line-height:1.35;
+      font-size:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
-    .grid2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
+    .me{
+      margin-left:auto;
+      background: rgba(34,211,238,.10);
+      border-color: rgba(34,211,238,.22);
     }
-    @media (max-width:720px){
-      .grid2{grid-template-columns:1fr;}
+    .ai{
+      background: rgba(255,255,255,.06);
     }
+    .composer{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+    }
+    .composer textarea{
+      min-height: 48px;
+      max-height: 140px;
+      resize: vertical;
+    }
+    .small{
+      font-size:12px;
+      color:rgba(255,255,255,.70);
+    }
+    .hint{
+      margin-top:8px;
+      padding:10px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:rgba(255,255,255,.74);
+      font-size:12px;
+    }
+    .dangerText{color:rgba(255,120,120,.95)}
+    .okText{color:rgba(120,255,190,.95)}
   </style>
 
-  <!-- React + Babel (no build needed) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Supabase JS -->
+  <!-- Supabase JS (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div class="wrap">
+    <div class="panel">
+      <div class="top">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>Avatar G Workspace</h1>
+          <p>Mode B — Workspace first, connect on demand</p>
+        </div>
+        <div class="chips" id="chips">
+          <div class="chip" id="chipMode">Mode: Ready</div>
+          <div class="chip" id="chipApi">API_BASE: not set</div>
+          <div class="chip" id="chipSb">Supabase: not set</div>
+          <div class="chip" id="chipUser">User: not signed in</div>
+        </div>
+      </div>
 
-  <script type="text/babel">
-    const { useEffect, useMemo, useState } = React;
+      <div class="row">
+        <button class="btn" id="btnSettings">Settings (Supabase / API)</button>
+        <button class="btn" id="btnTest">Test Backend</button>
+        <button class="btn primary" id="btnConnect">Connect / Sign in</button>
+        <button class="btn danger" id="btnLogout" style="display:none">Logout</button>
+      </div>
 
-    // -----------------------------
-    // Config (localStorage)
-    // -----------------------------
-    function readConfig(){
-      const SUPABASE_URL =
-        localStorage.getItem("SUPABASE_URL") ||
-        localStorage.getItem("supabase_url") ||
-        "";
+      <div class="grid">
+        <div class="card">
+          <h2>✅ Workspace სტატუსი</h2>
+          <div class="muted">
+            აქ შეგიძლია:
+            <ul class="klist">
+              <li>დააყენო Supabase URL + anon key + API_BASE</li>
+              <li>შეამოწმო backend (/api/health)</li>
+              <li>გაიარო Magic Link Login (email)</li>
+              <li>გამოიყენო Chat — რომელიც backend-ს ეძახის (/api/ai)</li>
+            </ul>
+          </div>
 
-      const SUPABASE_ANON_KEY =
-        localStorage.getItem("SUPABASE_ANON_KEY") ||
-        localStorage.getItem("supabase_anon_key") ||
-        "";
+          <div class="hint">
+            <div>✅ Tip:</div>
+            <div>თუ <b>Failed to fetch</b> ჩანს — 99% არის CORS ან API_BASE არასწორია.</div>
+            <div class="small">API_BASE უნდა იყოს: <b>https://avatarg-backend.vercel.app</b></div>
+          </div>
 
-      const API_BASE =
-        localStorage.getItem("API_BASE") ||
-        localStorage.getItem("api_base") ||
-        "https://avatarg-backend.vercel.app";
+          <div class="log" id="syslog">[boot] Page loaded…</div>
+        </div>
 
-      return { SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE };
-    }
+        <div class="card">
+          <h2>💬 Chat (frontend → backend /api/ai)</h2>
 
-    function writeConfig({SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE}){
-      localStorage.setItem("SUPABASE_URL", (SUPABASE_URL||"").trim());
-      localStorage.setItem("SUPABASE_ANON_KEY", (SUPABASE_ANON_KEY||"").trim());
-      localStorage.setItem("API_BASE", (API_BASE||"").trim());
-    }
+          <div class="chatBox">
+            <div class="msgs" id="msgs"></div>
 
-    function isConfigured(cfg){
-      return Boolean(cfg?.SUPABASE_URL && cfg?.SUPABASE_ANON_KEY);
-    }
-
-    // -----------------------------
-    // UI helpers
-    // -----------------------------
-    function Pill({children}){
-      return <span className="pill">{children}</span>;
-    }
-
-    function Modal({open, onClose, cfg, onSave}){
-      const [url, setUrl] = useState(cfg.SUPABASE_URL || "");
-      const [anon, setAnon] = useState(cfg.SUPABASE_ANON_KEY || "");
-      const [api, setApi] = useState(cfg.API_BASE || "https://avatarg-backend.vercel.app");
-
-      useEffect(()=>{
-        if(open){
-          setUrl(cfg.SUPABASE_URL || "");
-          setAnon(cfg.SUPABASE_ANON_KEY || "");
-          setApi(cfg.API_BASE || "https://avatarg-backend.vercel.app");
-        }
-      },[open]);
-
-      if(!open) return null;
-
-      return (
-        <div className="modalOverlay" onClick={(e)=>{ if(e.target.className==="modalOverlay") onClose(); }}>
-          <div className="modal">
-            <div className="modalTop">
-              <div>
-                <div className="modalTitle">Connect Avatar G to Supabase + Backend</div>
-                <div className="modalSub">Paste once — saved in this browser (localStorage).</div>
-              </div>
-              <button className="xbtn" onClick={onClose}>✕</button>
+            <div class="composer">
+              <textarea id="prompt" placeholder="დაწერე მესიჯი… (Enter = გაგზავნა, Shift+Enter = ახალი ხაზი)"></textarea>
+              <button class="btn primary" id="btnSend">Send</button>
             </div>
 
-            <div className="modalBody">
-              <div className="grid2">
-                <div>
-                  <label>SUPABASE_URL</label>
-                  <input
-                    value={url}
-                    onChange={(e)=>setUrl(e.target.value)}
-                    placeholder="https://xxxx.supabase.co"
-                  />
-                </div>
-                <div>
-                  <label>API_BASE (backend domain)</label>
-                  <input
-                    value={api}
-                    onChange={(e)=>setApi(e.target.value)}
-                    placeholder="https://avatarg-backend.vercel.app"
-                  />
-                </div>
-              </div>
-
-              <label style={{marginTop:12}}>SUPABASE_ANON_KEY (public anon key)</label>
-              <input
-                value={anon}
-                onChange={(e)=>setAnon(e.target.value)}
-                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              />
-
-              <div className="smallNote">
-                Supabase → Project Settings → API → <b>Project URL</b> + <b>anon public key</b>.<br/>
-                API_BASE არის შენი backend HTTPS domain (მაგ: <b>https://avatarg-backend.vercel.app</b>).
-              </div>
-            </div>
-
-            <div className="modalActions">
-              <button
-                className="btn-ghost"
-                onClick={()=>{
-                  writeConfig({SUPABASE_URL:"", SUPABASE_ANON_KEY:"", API_BASE:"https://avatarg-backend.vercel.app"});
-                  onSave(readConfig());
-                }}
-              >
-                Reset
-              </button>
-
-              <button
-                className="btn-primary"
-                onClick={()=>{
-                  writeConfig({SUPABASE_URL:url, SUPABASE_ANON_KEY:anon, API_BASE:api});
-                  onSave(readConfig());
-                  onClose();
-                }}
-              >
-                Save & Continue
-              </button>
-            </div>
+            <div class="small" id="chatStatus">Status: idle</div>
           </div>
         </div>
-      );
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>Connect Avatar G to Supabase + Backend</h3>
+        <button class="x" id="btnClose" aria-label="Close">×</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="small" style="margin-bottom:10px">
+          Paste once — saved in this browser (localStorage).
+        </div>
+
+        <div class="field">
+          <div class="label">SUPABASE_URL</div>
+          <input id="sbUrl" inputmode="url" placeholder="https://xxxx.supabase.co" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <div class="label">API_BASE (backend domain)</div>
+          <input id="apiBase" inputmode="url" placeholder="https://avatarg-backend.vercel.app" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <div class="label">SUPABASE_ANON_KEY (public anon key)</div>
+          <textarea id="sbAnon" rows="3" placeholder="eyJhbGciOi..." autocomplete="off"></textarea>
+        </div>
+
+        <div class="small">
+          Supabase → Project Settings → API → <b>Project URL</b> + <b>anon public key</b>.
+          <br/>API_BASE არის შენი backend HTTPS domain.
+        </div>
+
+        <div class="log" id="cfglog">[cfg] Waiting…</div>
+      </div>
+
+      <div class="modalActions">
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn primary" id="btnSave">Save & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Storage keys ----------
+    const KEY = {
+      SUPABASE_URL: "AVATARG_SUPABASE_URL",
+      SUPABASE_ANON: "AVATARG_SUPABASE_ANON",
+      API_BASE: "AVATARG_API_BASE",
+      CHAT: "AVATARG_CHAT_LOG"
+    };
+
+    // ---------- DOM ----------
+    const syslog = document.getElementById("syslog");
+    const cfglog = document.getElementById("cfglog");
+    const modalBack = document.getElementById("modalBack");
+
+    const chipMode = document.getElementById("chipMode");
+    const chipApi  = document.getElementById("chipApi");
+    const chipSb   = document.getElementById("chipSb");
+    const chipUser = document.getElementById("chipUser");
+
+    const btnSettings = document.getElementById("btnSettings");
+    const btnTest = document.getElementById("btnTest");
+    const btnConnect = document.getElementById("btnConnect");
+    const btnLogout = document.getElementById("btnLogout");
+    const btnClose = document.getElementById("btnClose");
+    const btnSave = document.getElementById("btnSave");
+    const btnReset = document.getElementById("btnReset");
+
+    const sbUrl = document.getElementById("sbUrl");
+    const sbAnon = document.getElementById("sbAnon");
+    const apiBase = document.getElementById("apiBase");
+
+    const msgs = document.getElementById("msgs");
+    const prompt = document.getElementById("prompt");
+    const btnSend = document.getElementById("btnSend");
+    const chatStatus = document.getElementById("chatStatus");
+
+    // ---------- State ----------
+    let supabaseClient = null;
+    let currentUser = null;
+
+    function log(el, text){
+      const ts = new Date().toLocaleTimeString();
+      el.textContent += `\n[${ts}] ${text}`;
+      el.scrollTop = el.scrollHeight;
+    }
+    function setLog(el, text){
+      el.textContent = text;
+      el.scrollTop = el.scrollHeight;
     }
 
-    // -----------------------------
-    // App (Mode B: Workspace first)
-    // -----------------------------
-    function App(){
-      const [cfg, setCfg] = useState(readConfig());
-      const [showModal, setShowModal] = useState(false);
+    function getCfg(){
+      return {
+        supabaseUrl: (localStorage.getItem(KEY.SUPABASE_URL) || "").trim(),
+        supabaseAnon: (localStorage.getItem(KEY.SUPABASE_ANON) || "").trim(),
+        apiBase: (localStorage.getItem(KEY.API_BASE) || "").trim().replace(/\/+$/,"")
+      };
+    }
 
-      const [busy, setBusy] = useState(false);
-      const [msg, setMsg] = useState("");
-      const [user, setUser] = useState(null);
+    function saveCfg(cfg){
+      localStorage.setItem(KEY.SUPABASE_URL, (cfg.supabaseUrl||"").trim());
+      localStorage.setItem(KEY.SUPABASE_ANON, (cfg.supabaseAnon||"").trim());
+      localStorage.setItem(KEY.API_BASE, (cfg.apiBase||"").trim().replace(/\/+$/,""));
+    }
 
-      const supabase = useMemo(()=>{
-        if(!isConfigured(cfg)) return null;
-        try{
-          return window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
-            auth: { persistSession:true, autoRefreshToken:true }
-          });
-        }catch(e){
-          return null;
-        }
-      }, [cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY]);
+    function resetCfg(){
+      localStorage.removeItem(KEY.SUPABASE_URL);
+      localStorage.removeItem(KEY.SUPABASE_ANON);
+      localStorage.removeItem(KEY.API_BASE);
+    }
 
-      const mode = !isConfigured(cfg) ? "Guest" : (user ? "Authenticated" : "Ready");
+    function updateChips(){
+      const cfg = getCfg();
 
-      useEffect(()=>{
-        // Auto-open modal if not configured (nice UX)
-        if(!isConfigured(cfg)) setShowModal(true);
-      }, []);
+      chipMode.textContent = currentUser ? "Mode: Authenticated" : "Mode: Ready";
 
-      useEffect(()=>{
-        // Track auth only if supabase exists
-        if(!supabase) { setUser(null); return; }
-
-        supabase.auth.getUser().then(({data})=>{
-          setUser(data?.user || null);
-        });
-
-        const { data: sub } = supabase.auth.onAuthStateChange((_event, session)=>{
-          setUser(session?.user || null);
-        });
-
-        return ()=> sub?.subscription?.unsubscribe?.();
-      }, [supabase]);
-
-      async function testBackend(){
-        setBusy(true); setMsg("");
-        try{
-          const base = (cfg.API_BASE || "https://avatarg-backend.vercel.app").replace(/\/+$/,"");
-          const res = await fetch(base + "/api/health");
-          const j = await res.json();
-          setMsg("✅ Backend OK:\n" + JSON.stringify(j, null, 2));
-        }catch(e){
-          setMsg("❌ Backend error:\n" + (e?.message || String(e)));
-        }finally{
-          setBusy(false);
-        }
+      if(cfg.apiBase){
+        chipApi.textContent = "API_BASE: set";
+        chipApi.classList.add("ok");
+        chipApi.classList.remove("bad");
+      }else{
+        chipApi.textContent = "API_BASE: not set";
+        chipApi.classList.remove("ok");
+        chipApi.classList.remove("bad");
       }
 
-      async function connect(){
-        if(!supabase){
-          setMsg("❗ ჯერ Supabase keys არ არის ჩასმული. დააჭირე Settings → ჩასვი keys.");
-          setShowModal(true);
+      if(cfg.supabaseUrl && cfg.supabaseAnon){
+        chipSb.textContent = "Supabase: set";
+        chipSb.classList.add("ok");
+        chipSb.classList.remove("bad");
+      }else{
+        chipSb.textContent = "Supabase: not set";
+        chipSb.classList.remove("ok");
+        chipSb.classList.remove("bad");
+      }
+
+      if(currentUser?.email){
+        chipUser.textContent = "User: " + currentUser.email;
+        chipUser.classList.add("ok");
+        btnLogout.style.display = "inline-flex";
+        btnConnect.textContent = "Connect / Sign in";
+      }else{
+        chipUser.textContent = "User: not signed in";
+        chipUser.classList.remove("ok");
+        btnLogout.style.display = "none";
+        btnConnect.textContent = "Connect / Sign in";
+      }
+    }
+
+    function openModal(){
+      const cfg = getCfg();
+      sbUrl.value = cfg.supabaseUrl;
+      sbAnon.value = cfg.supabaseAnon;
+      apiBase.value = cfg.apiBase || "https://avatarg-backend.vercel.app";
+      setLog(cfglog, "[cfg] Paste values and Save & Continue…");
+      modalBack.style.display = "flex";
+
+      // IMPORTANT: ensure keyboard opens on mobile by focusing input AFTER modal shown
+      setTimeout(() => {
+        sbUrl.focus();
+        sbUrl.scrollIntoView({behavior:"smooth", block:"center"});
+      }, 120);
+    }
+
+    function closeModal(){
+      modalBack.style.display = "none";
+    }
+
+    function ensureSupabase(){
+      const cfg = getCfg();
+      if(!cfg.supabaseUrl || !cfg.supabaseAnon){
+        log(syslog, "Supabase config missing. Open Settings and paste SUPABASE_URL + ANON key.");
+        chipSb.classList.add("bad");
+        return null;
+      }
+      if(!window.supabase){
+        log(syslog, "Supabase SDK not loaded (CDN).");
+        return null;
+      }
+      if(!supabaseClient){
+        supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon);
+        log(syslog, "Supabase client ready.");
+      }
+      return supabaseClient;
+    }
+
+    async function readUser(){
+      const sb = ensureSupabase();
+      if(!sb) return null;
+      try{
+        const { data, error } = await sb.auth.getUser();
+        if(error) throw error;
+        currentUser = data?.user || null;
+        updateChips();
+        return currentUser;
+      }catch(e){
+        log(syslog, "Auth getUser error: " + (e?.message || e));
+        currentUser = null;
+        updateChips();
+        return null;
+      }
+    }
+
+    async function magicLinkLogin(){
+      const sb = ensureSupabase();
+      if(!sb){
+        openModal();
+        return;
+      }
+
+      // Use a prompt to keep it simple and make keyboard open (browser built-in)
+      const email = window.prompt("Enter email for Magic Link login:");
+      if(!email) return;
+
+      try{
+        log(syslog, "Sending magic link…");
+        const { error } = await sb.auth.signInWithOtp({
+          email: email.trim(),
+          options: {
+            emailRedirectTo: window.location.href
+          }
+        });
+        if(error) throw error;
+        log(syslog, "Magic link sent. Check your email, open link on SAME device/browser.");
+        alert("Magic link sent ✅\nგახსენი email-იდან ლინკი ამავე ბრაუზერში.");
+      }catch(e){
+        log(syslog, "Login error: " + (e?.message || e));
+        alert("Login error: " + (e?.message || e));
+      }
+    }
+
+    async function logout(){
+      const sb = ensureSupabase();
+      if(!sb) return;
+      try{
+        await sb.auth.signOut();
+        currentUser = null;
+        supabaseClient = null;
+        log(syslog, "Signed out.");
+        updateChips();
+      }catch(e){
+        log(syslog, "Sign out error: " + (e?.message || e));
+      }
+    }
+
+    // ---------- Backend ----------
+    function withTimeout(ms){
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), ms);
+      return { ctrl, done: () => clearTimeout(t) };
+    }
+
+    async function testBackend(){
+      const cfg = getCfg();
+      if(!cfg.apiBase){
+        log(syslog, "API_BASE not set. Open Settings.");
+        chipApi.classList.add("bad");
+        openModal();
+        return;
+      }
+
+      const url = cfg.apiBase.replace(/\/+$/,"") + "/api/health";
+      const { ctrl, done } = withTimeout(12000);
+
+      try{
+        log(syslog, "Testing backend: " + url);
+        const res = await fetch(url, { method:"GET", signal: ctrl.signal, cache:"no-store" });
+        done();
+        const txt = await res.text();
+        if(!res.ok){
+          chipApi.classList.add("bad");
+          log(syslog, "Backend error: HTTP " + res.status + " " + txt);
+          alert("Backend error: HTTP " + res.status);
+          return;
+        }
+        chipApi.classList.add("ok");
+        chipApi.classList.remove("bad");
+        log(syslog, "Backend OK: " + txt);
+      }catch(e){
+        done();
+        chipApi.classList.add("bad");
+        log(syslog, "Backend error: " + (e?.message || e) + " (Failed to fetch = CORS/Network/HTTPS mismatch)");
+        alert("Backend error: Failed to fetch\n(ხშირად არის CORS ან API_BASE არასწორია)");
+      }
+    }
+
+    // ---------- Chat ----------
+    function loadChat(){
+      try{
+        const raw = localStorage.getItem(KEY.CHAT);
+        const arr = raw ? JSON.parse(raw) : [];
+        msgs.innerHTML = "";
+        arr.forEach(m => addMsg(m.role, m.text, false));
+        msgs.scrollTop = msgs.scrollHeight;
+      }catch{
+        msgs.innerHTML = "";
+      }
+    }
+
+    function saveChat(){
+      const items = [...msgs.querySelectorAll(".bubble")].map(b => ({
+        role: b.classList.contains("me") ? "user" : "assistant",
+        text: b.textContent || ""
+      }));
+      localStorage.setItem(KEY.CHAT, JSON.stringify(items.slice(-60)));
+    }
+
+    function addMsg(role, text, persist=true){
+      const div = document.createElement("div");
+      div.className = "bubble " + (role === "user" ? "me" : "ai");
+      div.textContent = text;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      if(persist) saveChat();
+    }
+
+    async function sendChat(){
+      const cfg = getCfg();
+      const text = (prompt.value || "").trim();
+      if(!text) return;
+
+      if(!cfg.apiBase){
+        addMsg("assistant", "❌ API_BASE არ არის დაყენებული. გახსენი Settings და ჩასვი backend domain.");
+        openModal();
+        return;
+      }
+
+      addMsg("user", text);
+      prompt.value = "";
+      chatStatus.textContent = "Status: sending…";
+      btnSend.disabled = true;
+
+      const url = cfg.apiBase.replace(/\/+$/,"") + "/api/ai";
+
+      const payload = {
+        message: text,
+        // optional metadata
+        client: "AvatarG-Workspace",
+        user: currentUser?.email || null
+      };
+
+      const { ctrl, done } = withTimeout(30000);
+
+      try{
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: ctrl.signal
+        });
+        done();
+
+        const ct = res.headers.get("content-type") || "";
+        let data = null;
+        if(ct.includes("application/json")){
+          data = await res.json();
+        }else{
+          const t = await res.text();
+          data = { text: t };
+        }
+
+        if(!res.ok){
+          const msg = data?.error || data?.message || ("HTTP " + res.status);
+          addMsg("assistant", "❌ Backend error: " + msg);
+          chatStatus.innerHTML = `<span class="dangerText">Status: error</span>`;
+          btnSend.disabled = false;
           return;
         }
 
-        const email = prompt("Enter email for Magic Link login:");
-        if(!email) return;
+        const answer =
+          data?.reply ||
+          data?.output ||
+          data?.text ||
+          data?.message ||
+          JSON.stringify(data, null, 2);
 
-        setBusy(true); setMsg("");
-
-        const redirectTo = window.location.origin; // same domain
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: redirectTo }
-        });
-
-        setBusy(false);
-
-        if(error) setMsg("❌ Login error: " + error.message);
-        else setMsg("✅ Magic link გაგზავნილია email-ზე. გახსენი link და დაბრუნდი აქ.");
+        addMsg("assistant", answer);
+        chatStatus.innerHTML = `<span class="okText">Status: ok</span>`;
+      }catch(e){
+        done();
+        addMsg("assistant", "❌ Failed to fetch / timeout. (CORS ან backend route პრობლემა)\n" + (e?.message || e));
+        chatStatus.innerHTML = `<span class="dangerText">Status: failed</span>`;
+      }finally{
+        btnSend.disabled = false;
       }
+    }
 
-      async function logout(){
-        if(!supabase) return;
-        setBusy(true);
-        await supabase.auth.signOut();
-        setBusy(false);
-        setMsg("✅ Signed out.");
+    // Enter to send
+    prompt.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendChat();
       }
-
-      return (
-        <div className="wrap">
-          <Modal
-            open={showModal}
-            onClose={()=>setShowModal(false)}
-            cfg={cfg}
-            onSave={(c)=>{ setCfg(c); setMsg("✅ Config saved. Now you can test backend and connect."); }}
-          />
-
-          <div className="shell">
-            <div className="top">
-              <div className="brand">
-                <div className="logo"></div>
-                <div>
-                  <div className="title">Avatar G Workspace</div>
-                  <div className="subtitle">Mode B — Workspace first, connect on demand</div>
-                </div>
-              </div>
-
-              <div className="meta">
-                <Pill>Mode: {mode}</Pill>
-                <Pill>API_BASE: {cfg.API_BASE ? "set" : "default"}</Pill>
-                <Pill>Supabase: {isConfigured(cfg) ? "set" : "missing"}</Pill>
-                <Pill>User: {user?.email || "not signed in"}</Pill>
-              </div>
-            </div>
-
-            <div className="body">
-              <div className="row">
-                <button className="btn-ghost" onClick={()=>setShowModal(true)} disabled={busy}>
-                  Settings (Supabase / API)
-                </button>
-
-                <button className="btn-ghost" onClick={testBackend} disabled={busy}>
-                  Test Backend
-                </button>
-
-                {!user ? (
-                  <button
-                    className="btn-primary"
-                    onClick={connect}
-                    disabled={busy || !isConfigured(cfg)}
-                    title={!isConfigured(cfg) ? "ჯერ ჩასვი Supabase keys" : ""}
-                  >
-                    Connect / Sign in
-                  </button>
-                ) : (
-                  <button className="btn-danger" onClick={logout} disabled={busy}>
-                    Logout
-                  </button>
-                )}
-              </div>
-
-              <div className="hint">
-                ✅ Workspace ყოველთვის იტვირთება.<br/>
-                🔒 Login ხდება მხოლოდ როცა დააჭერ <b>Connect / Sign in</b>.<br/>
-                🧪 პირველ ტესტად დააჭირე <b>Test Backend</b> — უნდა დაგიბრუნოს <b>status: ok</b>.
-              </div>
-
-              {msg ? <div className="box">{msg}</div> : null}
-
-              <div className="hint" style={{marginTop:18, color:"rgba(255,255,255,.70)"}}>
-                Next step: როცა Connect წარმატებით იმუშავებს, შემდეგ გავაკეთებთ **Projects UI** + **Upload** + **Chat** ღილაკებს (frontend calls backend routes).
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App/>);
-  </script>
-  <!-- =================== Avatar G Connect Patch (paste ABOVE </body>) =================== -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // 1) On-screen log (mobile friendly)
-  function agLog(msg){
-    let el = document.getElementById('ag-log');
-    if(!el){
-      el = document.createElement('pre');
-      el.id = 'ag-log';
-      el.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;max-height:170px;overflow:auto;padding:10px;border-radius:12px;background:rgba(0,0,0,.65);color:#bff;z-index:999999;font-size:12px;white-space:pre-wrap;';
-      el.textContent = 'Avatar G Debug Log:\n';
-      document.body.appendChild(el);
-    }
-    const time = new Date().toLocaleTimeString();
-    el.textContent = `[${time}] ${msg}\n` + el.textContent;
-  }
-
-  // 2) Read config from localStorage (your Settings modal saves there)
-  function getCfg(){
-    const supabaseUrl =
-      localStorage.getItem('SUPABASE_URL') ||
-      localStorage.getItem('supabaseUrl') ||
-      '';
-    const supabaseAnon =
-      localStorage.getItem('SUPABASE_ANON_KEY') ||
-      localStorage.getItem('supabaseAnonKey') ||
-      '';
-    return { supabaseUrl, supabaseAnon };
-  }
-
-  function makeClient(){
-    const { supabaseUrl, supabaseAnon } = getCfg();
-    if(!supabaseUrl || !supabaseAnon){
-      agLog('❌ Supabase config missing. Open Settings and paste SUPABASE_URL + ANON key.');
-      alert('Supabase config missing. Open Settings and paste SUPABASE_URL + ANON key.');
-      return null;
-    }
-    agLog('✅ Supabase client ready');
-    return window.supabase.createClient(supabaseUrl, supabaseAnon);
-  }
-
-  async function connectMagicLink(){
-    agLog('➡️ Connect clicked');
-    const sb = makeClient();
-    if(!sb) return;
-
-    const email = prompt('Enter your email for Magic Link login:');
-    if(!email){
-      agLog('⚠️ Cancelled (no email)');
-      return;
-    }
-
-    agLog('⏳ Sending magic link...');
-    const { error } = await sb.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + '/' }
     });
 
-    if(error){
-      agLog('❌ Supabase error: ' + error.message);
-      alert('Supabase error: ' + error.message);
-      return;
-    }
+    // ---------- Events ----------
+    btnSettings.addEventListener("click", openModal);
+    btnClose.addEventListener("click", closeModal);
+    modalBack.addEventListener("click", (e) => {
+      if(e.target === modalBack) closeModal();
+    });
 
-    agLog('✅ Magic link sent. Check email (also spam).');
-    alert('Magic link sent! Check your email (also spam).');
-  }
+    btnSave.addEventListener("click", () => {
+      const cfg = {
+        supabaseUrl: sbUrl.value.trim(),
+        supabaseAnon: sbAnon.value.trim(),
+        apiBase: apiBase.value.trim().replace(/\/+$/,"")
+      };
 
-  async function signOut(){
-    const sb = makeClient();
-    if(!sb) return;
-    const { error } = await sb.auth.signOut();
-    if(error){
-      agLog('❌ Sign out error: ' + error.message);
-      return;
-    }
-    agLog('✅ Signed out');
-    alert('Signed out');
-    location.reload();
-  }
+      // light validation
+      if(cfg.apiBase && !cfg.apiBase.startsWith("https://")){
+        setLog(cfglog, "❌ API_BASE უნდა იწყებოდეს https://");
+        return;
+      }
+      if(cfg.supabaseUrl && !cfg.supabaseUrl.includes("supabase.co")){
+        // still allow, just warn
+        log(cfglog, "⚠️ SUPABASE_URL არ ჰგავს supabase.co domain-ს. გადაამოწმე.");
+      }
 
-  // 3) Attach to your existing Connect button OR create backup buttons
-  document.addEventListener('DOMContentLoaded', () => {
-    agLog('✅ Page loaded');
+      saveCfg(cfg);
+      supabaseClient = null; // rebuild
+      setLog(cfglog, "✅ Config saved. You can test backend and connect.");
+      log(syslog, "Config saved.");
+      updateChips();
+      setTimeout(closeModal, 250);
+    });
 
-    // Try common selectors (we don't know your exact HTML id)
-    const connectBtn =
-      document.querySelector('[data-connect]') ||
-      document.getElementById('connectBtn') ||
-      document.getElementById('connect') ||
-      document.querySelector('button[data-action="connect"]');
+    btnReset.addEventListener("click", () => {
+      resetCfg();
+      supabaseClient = null;
+      currentUser = null;
+      setLog(cfglog, "✅ Reset done.");
+      setLog(syslog, "[boot] Reset done.");
+      updateChips();
+    });
 
-    if(connectBtn){
-      connectBtn.addEventListener('click', connectMagicLink);
-      agLog('✅ Connected handler attached to existing Connect button');
-    } else {
-      // Backup button if your UI button isn't found
-      const b = document.createElement('button');
-      b.textContent = 'Connect / Sign in (Backup)';
-      b.style.cssText = 'position:fixed;right:12px;bottom:200px;padding:10px 14px;border-radius:12px;border:none;background:#2dd4ff;color:#001018;font-weight:700;z-index:999999;';
-      b.addEventListener('click', connectMagicLink);
-      document.body.appendChild(b);
+    btnTest.addEventListener("click", testBackend);
 
-      const so = document.createElement('button');
-      so.textContent = 'Sign out';
-      so.style.cssText = 'position:fixed;right:12px;bottom:245px;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;z-index:999999;';
-      so.addEventListener('click', signOut);
-      document.body.appendChild(so);
+    btnConnect.addEventListener("click", async () => {
+      // Ensure config first
+      const cfg = getCfg();
+      if(!cfg.supabaseUrl || !cfg.supabaseAnon){
+        openModal();
+        return;
+      }
+      await magicLinkLogin();
+      // After magic link open, auth will update
+    });
 
-      agLog('⚠️ Your Connect button not found. Backup buttons injected.');
-    }
-  });
-</script>
-<!-- =================== /Avatar G Connect Patch =================== -->
+    btnLogout.addEventListener("click", logout);
+
+    btnSend.addEventListener("click", sendChat);
+
+    // ---------- Init ----------
+    (async function init(){
+      setLog(syslog, "[boot] Page loaded…");
+      updateChips();
+
+      // load chat from localStorage
+      loadChat();
+
+      // auto-init supabase if configured
+      const cfg = getCfg();
+      if(cfg.supabaseUrl && cfg.supabaseAnon){
+        ensureSupabase();
+        await readUser();
+
+        // Listen auth changes
+        try{
+          supabaseClient?.auth?.onAuthStateChange(async (event, session) => {
+            currentUser = session?.user || null;
+            updateChips();
+            log(syslog, "Auth event: " + event);
+          });
+        }catch(e){}
+      }
+
+      // quick backend hint
+      if(cfg.apiBase){
+        log(syslog, "API_BASE loaded: " + cfg.apiBase);
+      }else{
+        log(syslog, "API_BASE not set yet. Open Settings.");
+      }
+    })();
+  </script>
 </body>
 </html>
