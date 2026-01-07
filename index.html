@@ -512,5 +512,119 @@
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<App/>);
   </script>
+  <!-- =================== Avatar G Connect Patch (paste ABOVE </body>) =================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // 1) On-screen log (mobile friendly)
+  function agLog(msg){
+    let el = document.getElementById('ag-log');
+    if(!el){
+      el = document.createElement('pre');
+      el.id = 'ag-log';
+      el.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;max-height:170px;overflow:auto;padding:10px;border-radius:12px;background:rgba(0,0,0,.65);color:#bff;z-index:999999;font-size:12px;white-space:pre-wrap;';
+      el.textContent = 'Avatar G Debug Log:\n';
+      document.body.appendChild(el);
+    }
+    const time = new Date().toLocaleTimeString();
+    el.textContent = `[${time}] ${msg}\n` + el.textContent;
+  }
+
+  // 2) Read config from localStorage (your Settings modal saves there)
+  function getCfg(){
+    const supabaseUrl =
+      localStorage.getItem('SUPABASE_URL') ||
+      localStorage.getItem('supabaseUrl') ||
+      '';
+    const supabaseAnon =
+      localStorage.getItem('SUPABASE_ANON_KEY') ||
+      localStorage.getItem('supabaseAnonKey') ||
+      '';
+    return { supabaseUrl, supabaseAnon };
+  }
+
+  function makeClient(){
+    const { supabaseUrl, supabaseAnon } = getCfg();
+    if(!supabaseUrl || !supabaseAnon){
+      agLog('❌ Supabase config missing. Open Settings and paste SUPABASE_URL + ANON key.');
+      alert('Supabase config missing. Open Settings and paste SUPABASE_URL + ANON key.');
+      return null;
+    }
+    agLog('✅ Supabase client ready');
+    return window.supabase.createClient(supabaseUrl, supabaseAnon);
+  }
+
+  async function connectMagicLink(){
+    agLog('➡️ Connect clicked');
+    const sb = makeClient();
+    if(!sb) return;
+
+    const email = prompt('Enter your email for Magic Link login:');
+    if(!email){
+      agLog('⚠️ Cancelled (no email)');
+      return;
+    }
+
+    agLog('⏳ Sending magic link...');
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + '/' }
+    });
+
+    if(error){
+      agLog('❌ Supabase error: ' + error.message);
+      alert('Supabase error: ' + error.message);
+      return;
+    }
+
+    agLog('✅ Magic link sent. Check email (also spam).');
+    alert('Magic link sent! Check your email (also spam).');
+  }
+
+  async function signOut(){
+    const sb = makeClient();
+    if(!sb) return;
+    const { error } = await sb.auth.signOut();
+    if(error){
+      agLog('❌ Sign out error: ' + error.message);
+      return;
+    }
+    agLog('✅ Signed out');
+    alert('Signed out');
+    location.reload();
+  }
+
+  // 3) Attach to your existing Connect button OR create backup buttons
+  document.addEventListener('DOMContentLoaded', () => {
+    agLog('✅ Page loaded');
+
+    // Try common selectors (we don't know your exact HTML id)
+    const connectBtn =
+      document.querySelector('[data-connect]') ||
+      document.getElementById('connectBtn') ||
+      document.getElementById('connect') ||
+      document.querySelector('button[data-action="connect"]');
+
+    if(connectBtn){
+      connectBtn.addEventListener('click', connectMagicLink);
+      agLog('✅ Connected handler attached to existing Connect button');
+    } else {
+      // Backup button if your UI button isn't found
+      const b = document.createElement('button');
+      b.textContent = 'Connect / Sign in (Backup)';
+      b.style.cssText = 'position:fixed;right:12px;bottom:200px;padding:10px 14px;border-radius:12px;border:none;background:#2dd4ff;color:#001018;font-weight:700;z-index:999999;';
+      b.addEventListener('click', connectMagicLink);
+      document.body.appendChild(b);
+
+      const so = document.createElement('button');
+      so.textContent = 'Sign out';
+      so.style.cssText = 'position:fixed;right:12px;bottom:245px;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;z-index:999999;';
+      so.addEventListener('click', signOut);
+      document.body.appendChild(so);
+
+      agLog('⚠️ Your Connect button not found. Backup buttons injected.');
+    }
+  });
+</script>
+<!-- =================== /Avatar G Connect Patch =================== -->
 </body>
 </html>
