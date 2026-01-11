@@ -214,7 +214,7 @@
       margin:0 0 6px;
       display:block;
     }
-    input, textarea{
+    input, textarea, select{
       width:100%;
       padding:12px 12px;
       border-radius: 14px;
@@ -225,7 +225,7 @@
       font-size:14px;
       font-family: inherit;
     }
-    input:focus, textarea:focus{
+    input:focus, textarea:focus, select:focus{
       border-color: rgba(34,211,238,.55);
       box-shadow: 0 0 0 3px rgba(34,211,238,.15);
     }
@@ -288,16 +288,135 @@
       font-size:13px;
       color:var(--muted);
     }
+
+    /* ✅ Composer + toolbar */
     .composer{
       display:flex;
       gap:10px;
-      align-items:flex-end;
+      align-items:stretch;
     }
     .composer textarea{
+      flex:1;
       min-height: 48px;
-      max-height: 140px;
+      max-height: 160px;
       resize: vertical;
     }
+    .toolbar{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    .iconBtn{
+      width:48px;height:48px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      font-size:18px;
+    }
+    .iconBtn.primary{
+      background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(59,130,246,.85));
+      border: 1px solid rgba(255,255,255,.18);
+      color:#041018;
+      box-shadow: 0 12px 30px rgba(34,211,238,.12);
+      font-weight:900;
+    }
+    .iconBtn:disabled{opacity:.5; cursor:not-allowed}
+    .iconBtn:active:not(:disabled){transform:translateY(1px)}
+
+    .attachBar{
+      display:none;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:10px;
+      font-size:12px;
+      color:rgba(255,255,255,.78);
+      line-height:1.35;
+    }
+    .attachBar.show{display:block}
+    .filePills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      max-width:100%;
+    }
+    .pill span{
+      max-width:220px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .pill button{
+      border:none;
+      background: transparent;
+      color: rgba(255,255,255,.85);
+      cursor:pointer;
+      font-size:14px;
+      padding:0;
+      line-height:1;
+    }
+
+    /* ✅ Music drawer */
+    .drawer{
+      display:none;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:10px;
+    }
+    .drawer.show{display:block}
+    .drawerHead{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:10px;margin-bottom:10px;
+    }
+    .drawerHead .ttl{
+      font-size:12px;
+      color:rgba(255,255,255,.85);
+      font-weight:760;
+    }
+    .drawerGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .drawerGrid{grid-template-columns:1fr}
+      .toolbar{flex-direction:row}
+      .iconBtn{width:52px}
+      .composer{align-items:flex-end}
+    }
+    .miniBtn{
+      border:none;
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:800;
+      color:rgba(255,255,255,.92);
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      cursor:pointer;
+    }
+    .miniBtn.primary{
+      background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(59,130,246,.85));
+      border: 1px solid rgba(255,255,255,.18);
+      color:#041018;
+    }
+
     .small{
       font-size:12px;
       color:rgba(255,255,255,.70);
@@ -340,6 +459,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
   <div class="wrap">
     <div class="panel">
@@ -396,9 +516,81 @@
               <div class="bubble ai">👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.</div>
             </div>
 
+            <!-- ✅ Attachments bar -->
+            <div class="attachBar" id="attachBar">
+              <div id="attachInfo">
+                📎 Attachments მზადაა. Send-ზე დაჭერისას (თუ Supabase configured არის) ფაილები აიტვირთება და ჩაემატება შეტყობინებას როგორც URL.
+              </div>
+              <div class="filePills" id="filePills"></div>
+              <div class="small" id="attachHint" style="margin-top:8px"></div>
+            </div>
+
+            <!-- ✅ Music drawer -->
+            <div class="drawer" id="musicDrawer">
+              <div class="drawerHead">
+                <div class="ttl">🎵 Music Prompt Builder (Suno-ready)</div>
+                <button class="miniBtn" id="btnMusicClose">Close</button>
+              </div>
+
+              <div class="drawerGrid">
+                <div class="field" style="margin:0">
+                  <label class="label" for="mood">Mood</label>
+                  <select id="mood">
+                    <option value="uplifting, modern, confident">Uplifting / modern</option>
+                    <option value="cinematic, epic, inspirational">Cinematic / epic</option>
+                    <option value="lofi, chill, cozy">Lo-fi / chill</option>
+                    <option value="club, energetic, punchy">Club / energetic</option>
+                    <option value="pop, catchy, bright">Pop / catchy</option>
+                  </select>
+                </div>
+
+                <div class="field" style="margin:0">
+                  <label class="label" for="lang">Language</label>
+                  <select id="lang">
+                    <option value="Georgian">Georgian</option>
+                    <option value="English">English</option>
+                    <option value="Russian">Russian</option>
+                  </select>
+                </div>
+
+                <div class="field" style="margin:0">
+                  <label class="label" for="genre">Genre</label>
+                  <input id="genre" placeholder="e.g., Pop / R&B / EDM / Cinematic" value="Pop / Cinematic" />
+                </div>
+
+                <div class="field" style="margin:0">
+                  <label class="label" for="topic">Topic</label>
+                  <input id="topic" placeholder="e.g., Avatar G ad, new year vibe..." value="Avatar G platform promo" />
+                </div>
+
+                <div class="field" style="margin:0; grid-column:1 / -1">
+                  <label class="label" for="musicOut">Generated prompt</label>
+                  <textarea id="musicOut" rows="4" placeholder="Click Generate…"></textarea>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap">
+                <button class="miniBtn" id="btnMusicGen">Generate</button>
+                <button class="miniBtn primary" id="btnMusicInsert">Insert to Chat</button>
+              </div>
+
+              <div class="small" style="margin-top:8px;color:rgba(255,255,255,.75)">
+                Tip: “Insert to Chat” ჩასვამს prompt-ს ჩატის ველში, და შენ დააჭერ Send-ს.
+              </div>
+            </div>
+
+            <!-- ✅ Composer -->
             <div class="composer">
               <textarea id="prompt" placeholder="დაწერე მესიჯი… (Enter = send, Shift+Enter = new line)"></textarea>
-              <button class="btn primary" id="btnSend">Send</button>
+
+              <div class="toolbar">
+                <button class="iconBtn" id="btnAttach" title="Attach files">📎</button>
+                <button class="iconBtn" id="btnMusic" title="Music">🎵</button>
+                <button class="iconBtn primary" id="btnSend" title="Send">➤</button>
+              </div>
+
+              <!-- hidden file input -->
+              <input id="fileInput" type="file" multiple style="display:none" />
             </div>
 
             <div class="small" id="chatStatus">
@@ -413,6 +605,7 @@
     </div>
   </div>
 
+  <!-- Settings modal -->
   <div class="modalBack" id="modalBack" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modalHead">
@@ -481,7 +674,13 @@
       const CHAT_HISTORY_LIMIT = 60;     // cap local history
       const CHAT_CONTEXT_TURNS = 5;      // last N user+assistant turns for context
       const TIMEOUT_HEALTH_MS = 10000;
-      const TIMEOUT_AI_MS = 30000;
+      const TIMEOUT_AI_MS = 45000;
+
+      // ✅ Attachments (Supabase Storage)
+      // IMPORTANT: Supabase-ში შექმენი public bucket: "avatarg-uploads"
+      // Storage → Buckets → New bucket → name: avatarg-uploads → Public: ON
+      const UPLOAD_BUCKET = "avatarg-uploads";
+      const UPLOAD_PREFIX = "workspace_uploads";
 
       // ===================== DOM =====================
       const syslog = document.getElementById("syslog");
@@ -513,15 +712,36 @@
       const statusDot = document.getElementById("statusDot");
       const statusText = document.getElementById("statusText");
 
+      // Attachments UI
+      const btnAttach = document.getElementById("btnAttach");
+      const fileInput = document.getElementById("fileInput");
+      const attachBar = document.getElementById("attachBar");
+      const filePills = document.getElementById("filePills");
+      const attachHint = document.getElementById("attachHint");
+
+      // Music UI
+      const btnMusic = document.getElementById("btnMusic");
+      const musicDrawer = document.getElementById("musicDrawer");
+      const btnMusicClose = document.getElementById("btnMusicClose");
+      const btnMusicGen = document.getElementById("btnMusicGen");
+      const btnMusicInsert = document.getElementById("btnMusicInsert");
+      const mood = document.getElementById("mood");
+      const lang = document.getElementById("lang");
+      const genre = document.getElementById("genre");
+      const topic = document.getElementById("topic");
+      const musicOut = document.getElementById("musicOut");
+
       // ===================== STATE =====================
       let supabaseClient = null;
       let currentUser = null;
       let isSending = false;
       let chatHistory = []; // { role:'user'|'assistant', content:'...' }
 
+      // pending attachments
+      let pendingFiles = []; // File[]
+
       // ===================== HELPERS (SAFE) =====================
       function safeText(str) {
-        // We always use textContent, but keep this to avoid weird chars in logs.
         return String(str ?? "").replace(/\0/g, "").trim();
       }
 
@@ -724,7 +944,6 @@
             apiBase: apiBase ? apiBase.value.trim() : ""
           };
 
-          // API_BASE validation (allow empty => default)
           const normalizedApi = normalizeUrl(cfg.apiBase);
           if (normalizedApi && !isValidApiBase(normalizedApi)) {
             setLog(cfglog, "❌ API_BASE must be https:// (or http://localhost for testing)");
@@ -732,12 +951,10 @@
           }
           cfg.apiBase = normalizedApi || DEFAULT_API_BASE;
 
-          // Supabase URL sanity
           if (cfg.supabaseUrl && !cfg.supabaseUrl.includes("supabase")) {
             log(cfglog, "⚠️ SUPABASE_URL doesn't look like a Supabase domain");
           }
 
-          // anon key checks (never print key)
           if (cfg.supabaseAnon) {
             if (cfg.supabaseAnon.length < 100) {
               log(cfglog, "⚠️ SUPABASE_ANON_KEY looks too short");
@@ -778,8 +995,6 @@
       function ensureSupabase() {
         const cfg = getCfg();
         if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
-          log(syslog, "⚠️ Supabase not configured. Open Settings.");
-          if (chipSb) chipSb.classList.add("bad");
           return null;
         }
 
@@ -816,9 +1031,7 @@
           if (error) throw error;
           currentUser = data?.user || null;
           updateChips();
-          if (currentUser?.email) {
-            log(syslog, "✅ Signed in as: " + safeText(currentUser.email));
-          }
+          if (currentUser?.email) log(syslog, "✅ Signed in as: " + safeText(currentUser.email));
           return currentUser;
         } catch (e) {
           log(syslog, "Auth check error: " + safeText(e?.message || e));
@@ -831,6 +1044,7 @@
       async function magicLinkLogin() {
         const sb = ensureSupabase();
         if (!sb) {
+          log(syslog, "⚠️ Supabase not configured. Open Settings.");
           openModal();
           return;
         }
@@ -939,17 +1153,13 @@
               .filter(x => x && (x.role === "user" || x.role === "assistant") && typeof x.content === "string")
               .slice(-CHAT_HISTORY_LIMIT);
           }
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
 
       function persistChat() {
         try {
           localStorage.setItem(KEY.CHAT, JSON.stringify(chatHistory.slice(-CHAT_HISTORY_LIMIT)));
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
 
       function renderChat() {
@@ -983,10 +1193,7 @@
           const parts = text.split(url);
 
           const head = (parts[0] || "").trim();
-          if (head) {
-            const headNode = document.createTextNode(head);
-            div.appendChild(headNode);
-          }
+          if (head) div.appendChild(document.createTextNode(head));
 
           const img = document.createElement("img");
           img.src = url;
@@ -995,9 +1202,7 @@
           div.appendChild(img);
 
           const tail = (parts[1] || "").trim();
-          if (tail) {
-            div.appendChild(document.createTextNode("\n" + tail));
-          }
+          if (tail) div.appendChild(document.createTextNode("\n" + tail));
         } else {
           div.textContent = text;
         }
@@ -1016,7 +1221,6 @@
       }
 
       function buildChatContext() {
-        // last N turns (user+assistant) from history
         const maxItems = CHAT_CONTEXT_TURNS * 2;
         return chatHistory.slice(-maxItems).map(m => ({
           role: m.role,
@@ -1059,13 +1263,186 @@
         try { return JSON.stringify(data, null, 2); } catch { return String(data); }
       }
 
+      // ===================== ATTACHMENTS =====================
+      function updateAttachUI() {
+        if (!attachBar || !filePills || !attachHint) return;
+
+        filePills.innerHTML = "";
+        if (!pendingFiles.length) {
+          attachBar.classList.remove("show");
+          attachHint.textContent = "";
+          return;
+        }
+
+        attachBar.classList.add("show");
+
+        for (let i = 0; i < pendingFiles.length; i++) {
+          const f = pendingFiles[i];
+          const pill = document.createElement("div");
+          pill.className = "pill";
+
+          const name = document.createElement("span");
+          name.textContent = f.name;
+
+          const rm = document.createElement("button");
+          rm.type = "button";
+          rm.title = "Remove";
+          rm.textContent = "×";
+          rm.addEventListener("click", () => {
+            pendingFiles.splice(i, 1);
+            updateAttachUI();
+          });
+
+          pill.appendChild(name);
+          pill.appendChild(rm);
+          filePills.appendChild(pill);
+        }
+
+        const cfg = getCfg();
+        const hasSb = !!(cfg.supabaseUrl && cfg.supabaseAnon);
+        attachHint.textContent = hasSb
+          ? `✅ Upload will use Supabase bucket "${UPLOAD_BUCKET}".`
+          : `⚠️ Supabase არ არის დაყენებული — Upload ვერ იმუშავებს. Settings-ში ჩასვი Supabase URL + anon key.`;
+      }
+
+      function pickFiles() {
+        if (!fileInput) return;
+        fileInput.value = "";
+        fileInput.click();
+      }
+
+      if (btnAttach) btnAttach.addEventListener("click", pickFiles);
+
+      if (fileInput) {
+        fileInput.addEventListener("change", () => {
+          const files = Array.from(fileInput.files || []);
+          if (!files.length) return;
+
+          // Limit: keep it safe for mobile
+          const MAX_FILES = 6;
+          const MAX_MB_EACH = 10;
+
+          for (const f of files) {
+            if (pendingFiles.length >= MAX_FILES) break;
+            const mb = f.size / (1024 * 1024);
+            if (mb > MAX_MB_EACH) {
+              alert(`File too large: ${f.name}\nMax ${MAX_MB_EACH}MB per file.`);
+              continue;
+            }
+            pendingFiles.push(f);
+          }
+          updateAttachUI();
+        });
+      }
+
+      function safeExt(name) {
+        const m = String(name || "").toLowerCase().match(/\.([a-z0-9]{1,8})$/);
+        return m ? m[1] : "bin";
+      }
+
+      async function uploadPendingFiles() {
+        if (!pendingFiles.length) return [];
+
+        const sb = ensureSupabase();
+        if (!sb) {
+          // cannot upload
+          return [];
+        }
+
+        // Try to get user for a stable path; if not, still upload with random path
+        const userId = currentUser?.id || "guest";
+        const now = Date.now();
+
+        const urls = [];
+        for (let i = 0; i < pendingFiles.length; i++) {
+          const f = pendingFiles[i];
+          const ext = safeExt(f.name);
+          const cleanName = f.name.replace(/[^\w.\-]+/g, "_").slice(0, 80);
+          const path = `${UPLOAD_PREFIX}/${userId}/${now}_${i}_${cleanName}.${ext}`.replace(/\.([a-z0-9]{1,8})\.\1$/i, ".$1"); // avoid double ext
+
+          try {
+            // upload
+            const { error: upErr } = await sb.storage.from(UPLOAD_BUCKET).upload(path, f, {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: f.type || undefined
+            });
+
+            if (upErr) {
+              log(syslog, `❌ Upload failed (${f.name}): ` + safeText(upErr.message || upErr));
+              continue;
+            }
+
+            // public URL (bucket must be public)
+            const { data } = sb.storage.from(UPLOAD_BUCKET).getPublicUrl(path);
+            const publicUrl = data?.publicUrl || "";
+            if (publicUrl) {
+              urls.push(publicUrl);
+              log(syslog, `✅ Uploaded: ${f.name}`);
+            }
+          } catch (e) {
+            log(syslog, `❌ Upload error (${f.name}): ` + safeText(e?.message || e));
+          }
+        }
+
+        return urls;
+      }
+
+      // ===================== MUSIC DRAWER =====================
+      function toggleMusic(open) {
+        if (!musicDrawer) return;
+        const shouldOpen = typeof open === "boolean" ? open : !musicDrawer.classList.contains("show");
+        musicDrawer.classList.toggle("show", shouldOpen);
+        if (shouldOpen) {
+          // ensure attach bar not covering UX
+          // (we keep both allowed; no hard close)
+        }
+      }
+
+      if (btnMusic) btnMusic.addEventListener("click", () => toggleMusic());
+      if (btnMusicClose) btnMusicClose.addEventListener("click", () => toggleMusic(false));
+
+      function buildMusicPrompt() {
+        const m = safeText(mood?.value || "uplifting, modern, confident");
+        const l = safeText(lang?.value || "Georgian");
+        const g = safeText(genre?.value || "Pop / Cinematic");
+        const t = safeText(topic?.value || "Avatar G platform promo");
+
+        return [
+          `SONG BRIEF (Suno-ready)`,
+          `Language: ${l}`,
+          `Genre: ${g}`,
+          `Mood: ${m}`,
+          `Topic: ${t}`,
+          ``,
+          `Lyrics style: short, catchy hook + 2 verses, modern ad vibe, clean.`,
+          `Include: brand name "Avatar G" clearly, strong call-to-action at end.`,
+          `Avoid: explicit content, hate, violence.`,
+        ].join("\n");
+      }
+
+      if (btnMusicGen) {
+        btnMusicGen.addEventListener("click", () => {
+          if (!musicOut) return;
+          musicOut.value = buildMusicPrompt();
+        });
+      }
+      if (btnMusicInsert) {
+        btnMusicInsert.addEventListener("click", () => {
+          if (!prompt || !musicOut) return;
+          const val = musicOut.value.trim() || buildMusicPrompt();
+          prompt.value = (prompt.value ? (prompt.value.trim() + "\n\n") : "") + val;
+          prompt.focus();
+        });
+      }
+
       // ===================== CHAT SEND =====================
       async function sendChat() {
         if (isSending || !prompt || !btnSend) return;
 
         const cfg = getCfg();
-        const text = (prompt.value || "").trim();
-        if (!text) return;
+        let text = (prompt.value || "").trim();
+        if (!text && !pendingFiles.length) return;
 
         const base = normalizeUrl(cfg.apiBase || "");
         if (!base || !isValidApiBase(base)) {
@@ -1077,9 +1454,39 @@
         isSending = true;
         btnSend.disabled = true;
 
+        // If there are pending files, upload first (if possible)
+        let uploadedUrls = [];
+        if (pendingFiles.length) {
+          setStatus("Status: uploading attachments...", "sending");
+
+          // ensure supabase initialized if config exists
+          ensureSupabase();
+          // refresh user (optional)
+          await readUser();
+
+          uploadedUrls = await uploadPendingFiles();
+
+          if (!uploadedUrls.length) {
+            // still allow sending without URLs, but warn
+            log(syslog, "⚠️ No attachment URLs created (bucket missing or Supabase not configured).");
+          }
+        }
+
+        // Compose final message with attachment URLs (if any)
+        if (!text) text = "Attached files";
+        const urlsBlock = uploadedUrls.length
+          ? ("\n\nAttachments:\n" + uploadedUrls.map(u => "- " + u).join("\n"))
+          : (pendingFiles.length ? "\n\nAttachments:\n- (upload failed / not configured)" : "");
+
+        const userMsg = text + urlsBlock;
+
         // UI: immediately append user msg
-        addMessage("user", text);
+        addMessage("user", userMsg);
         prompt.value = "";
+
+        // clear pending files
+        pendingFiles = [];
+        updateAttachUI();
 
         setStatus("Status: sending...", "sending");
         showTyping();
@@ -1087,13 +1494,10 @@
         const url = base + "/api/ai";
         const context = buildChatContext();
 
-        // Compatibility:
-        // - Always send {message: "..."}
-        // - Also send {messages:[...]} so backend can use multi-turn if supported
         const payload = {
-          message: text,
+          message: userMsg,
           messages: context.length ? context : undefined,
-          client: "AvatarG-Workspace-v2",
+          client: "AvatarG-Workspace-v3",
           user: currentUser?.email || null,
           timestamp: new Date().toISOString()
         };
@@ -1109,7 +1513,6 @@
           });
           done();
 
-          // Ensure typing always removed
           hideTyping();
 
           const contentType = (res.headers.get("content-type") || "").toLowerCase();
@@ -1190,6 +1593,7 @@
         renderChat();
 
         updateChips();
+        updateAttachUI();
 
         const cfg = getCfg();
 
@@ -1198,10 +1602,8 @@
           ensureSupabase();
           await readUser();
 
-          // Auth state changes
           if (supabaseClient?.auth?.onAuthStateChange) {
             supabaseClient.auth.onAuthStateChange((event, session) => {
-              // Do NOT console.log secrets; just minimal UI update
               currentUser = session?.user || null;
               updateChips();
               if (event === "SIGNED_IN" && currentUser?.email) {
@@ -1227,8 +1629,8 @@
 
         log(syslog, "✅ Ready. Test backend or start chatting!");
       })();
+
     })();
   </script>
 </body>
 </html>
-```0
