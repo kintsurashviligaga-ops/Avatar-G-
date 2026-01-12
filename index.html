@@ -589,6 +589,7 @@
       let isSending = false;
       let chatHistory = [];
       let lastAssistantText = "";
+      let currentAudio = null;
 
       function safeText(str) {
         return String(str ?? "").replace(/\0/g, "").trim();
@@ -623,6 +624,16 @@
           return /\.(jpg|jpeg|png|gif|webp)$/i.test(u.pathname) || url.startsWith("data:image/");
         } catch {
           return url.startsWith("data:image/");
+        }
+      }
+
+      function isValidHttpUrl(url) {
+        if (!url || typeof url !== "string") return false;
+        try {
+          const u = new URL(url);
+          return u.protocol === "https:" || u.protocol === "http:";
+        } catch {
+          return false;
         }
       }
 
@@ -1469,22 +1480,37 @@
       }
 
       async function getSignedAudioUrl(audio_path) {
+        if (!audio_path || typeof audio_path !== "string") {
+          throw new Error("Invalid audio_path");
+        }
+
         const cfg = getCfg();
         const base = normalizeUrl(cfg.apiBase || "");
         if (!base || !isValidApiBase(base)) {
           throw new Error("API_BASE not set. Open Settings and set backend domain.");
         }
 
+        const pathStr = String(audio_path).trim();
+        const isUrl = pathStr.startsWith("http://") || pathStr.startsWith("https://") || pathStr.startsWith("data:");
+
         const url = base + "/api/music/signed-url";
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ audio_path })
+          body: JSON.stringify({ 
+            audio_path: pathStr,
+            is_url: isUrl
+          })
         });
 
         const data = await res.json().catch(() => null);
         if (!res.ok) throw new Error(data?.error || ("HTTP " + res.status));
         if (!data?.signedUrl) throw new Error("No signedUrl returned");
+
+        if (!isValidHttpUrl(data.signedUrl)) {
+          throw new Error("Invalid signedUrl returned from backend");
+        }
+
         return data.signedUrl;
       }
 
@@ -1570,8 +1596,14 @@
 
                 const signedUrl = await getSignedAudioUrl(job.audio_path);
 
-                const audio = new Audio(signedUrl);
-                audio.play();
+                if (currentAudio) {
+                  currentAudio.pause();
+                  currentAudio.currentTime = 0;
+                  currentAudio = null;
+                }
+
+                currentAudio = new Audio(signedUrl);
+                await currentAudio.play();
 
                 musicLogLine("▶️ Playing: " + shortId(job.id));
               } catch (e) {
