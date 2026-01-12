@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Avatar G — Workspace</title>
   <meta name="theme-color" content="#06121a" />
+
+  <!-- Basic hardening (best-effort for static HTML) -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="referrer" content="no-referrer" />
+
   <style>
     :root{
       --bg1:#06121a;
@@ -77,6 +82,7 @@
     .title{display:flex;flex-direction:column;line-height:1.1;}
     .title h1{font-size:18px;margin:0 0 4px;font-weight:780;letter-spacing:.2px;}
     .title p{margin:0;color:var(--muted);font-size:13px;}
+
     .chips{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;}
     .chip{
       font-size:12px;color:rgba(255,255,255,.82);
@@ -86,6 +92,7 @@
     }
     .chip.ok{border-color:rgba(70,230,161,.25); background:rgba(70,230,161,.08)}
     .chip.bad{border-color:rgba(255,77,77,.25); background:rgba(255,77,77,.08)}
+
     .row{display:flex;gap:10px;padding: 10px 18px 18px;flex-wrap:wrap;}
     .btn{
       border:none;border-radius: 14px;padding: 12px 14px;font-weight:750;
@@ -94,7 +101,7 @@
       border:1px solid var(--line);
       cursor:pointer;user-select:none;-webkit-tap-highlight-color: transparent;
       display:inline-flex;gap:10px;align-items:center;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease, opacity .2s ease;
     }
     .btn.primary{
       background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(59,130,246,.85));
@@ -214,13 +221,14 @@
       resize: vertical;
     }
     textarea:focus{border-color: rgba(34,211,238,.55);box-shadow: 0 0 0 3px rgba(34,211,238,.15);}
+
     .iconBtn{
       width:46px;height:46px;border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.06);
       display:flex;align-items:center;justify-content:center;
       cursor:pointer;user-select:none;-webkit-tap-highlight-color: transparent;
-      transition: transform .08s ease, background .2s ease;
+      transition: transform .08s ease, background .2s ease, opacity .2s ease;
       flex:0 0 auto;
     }
     .iconBtn:active{transform:translateY(1px)}
@@ -390,7 +398,9 @@
     .twoCol{display:grid;grid-template-columns: 1fr 1fr;gap:12px;}
     @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -402,7 +412,7 @@
           <h1>Avatar G Workspace</h1>
           <p>Production Frontend — Connect & Chat</p>
         </div>
-        <div class="chips" id="chips">
+        <div class="chips" id="chips" aria-label="System status chips">
           <div class="chip" id="chipMode">Mode: Ready</div>
           <div class="chip" id="chipApi">API: not set</div>
           <div class="chip" id="chipSb">Supabase: not set</div>
@@ -411,10 +421,10 @@
       </div>
 
       <div class="row">
-        <button class="btn" id="btnSettings">⚙️ Settings</button>
-        <button class="btn" id="btnTest">🔍 Test Backend</button>
-        <button class="btn primary" id="btnConnect">🔐 Connect / Sign in</button>
-        <button class="btn danger" id="btnLogout" style="display:none">Logout</button>
+        <button class="btn" id="btnSettings" type="button">⚙️ Settings</button>
+        <button class="btn" id="btnTest" type="button">🔍 Test Backend</button>
+        <button class="btn primary" id="btnConnect" type="button">🔐 Connect / Sign in</button>
+        <button class="btn danger" id="btnLogout" type="button" style="display:none">Logout</button>
       </div>
 
       <div class="grid">
@@ -432,7 +442,7 @@
           <div class="hint">
             ✅ <b>Tip:</b> თუ "Failed to fetch" ჩანს, ეს ხშირად არის:<br/>
             • CORS პრობლემა (backend უნდა allow-ებდეს თქვენს frontend domain-ს)<br/>
-            • API_BASE არასწორია (უნდა იყოს: https://avatarg-backend.vercel.app)<br/>
+            • API_BASE არასწორია (მაგ: https://avatarg-backend.vercel.app)<br/>
             • Backend offline-ია ან route არ არსებობს
           </div>
           <div class="log" id="syslog">[boot] Page loaded…</div>
@@ -442,13 +452,13 @@
           <div class="chatHeader">
             <h2>💬 Chat</h2>
             <div style="display:flex; gap:10px;">
-              <button class="btn ghost" id="btnMusic" style="padding:8px 12px; font-size:12px">🎵 Music</button>
-              <button class="btn danger" id="btnClear" style="padding:8px 12px; font-size:12px">🗑 Clear</button>
+              <button class="btn ghost" id="btnMusic" type="button" style="padding:8px 12px; font-size:12px">🎵 Music</button>
+              <button class="btn danger" id="btnClear" type="button" style="padding:8px 12px; font-size:12px">🗑 Clear</button>
             </div>
           </div>
 
           <div class="chatBox">
-            <div class="msgs" id="msgs">
+            <div class="msgs" id="msgs" aria-live="polite" aria-label="Chat messages">
               <div class="bubble ai">👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.</div>
             </div>
 
@@ -456,21 +466,21 @@
               <div class="audioRow">
                 <div class="audioTitle">🎧 Generated Audio (Compose)</div>
                 <div style="display:flex; gap:10px;">
-                  <button class="btn ghost" id="btnComposeFromLast" style="padding:8px 12px; font-size:12px">🪄 Compose last lyrics</button>
-                  <button class="btn" id="btnDownloadAudio" style="padding:8px 12px; font-size:12px">⬇️ Download</button>
+                  <button class="btn ghost" id="btnComposeFromLast" type="button" style="padding:8px 12px; font-size:12px">🪄 Compose last lyrics</button>
+                  <button class="btn" id="btnDownloadAudio" type="button" style="padding:8px 12px; font-size:12px">⬇️ Download</button>
                 </div>
               </div>
               <audio id="audioPlayer" controls autoplay></audio>
               <div class="small" id="audioMeta" style="margin-top:6px; opacity:.8"></div>
             </div>
 
-            <div class="attachTray" id="attachTray">
+            <div class="attachTray" id="attachTray" aria-label="Attachment preview">
               <div class="attachMeta">
                 <div class="attachName" id="attachName">file</div>
                 <div class="attachSub" id="attachSub">Ready to send</div>
               </div>
               <div class="attachActions">
-                <div class="pill" id="btnAttachRemove">Remove</div>
+                <div class="pill" id="btnAttachRemove" role="button" tabindex="0">Remove</div>
               </div>
             </div>
 
@@ -478,22 +488,22 @@
               <div class="inputWrap">
                 <textarea id="prompt" placeholder="დაწერე მესიჯი… (Enter = send, Shift+Enter = new line)"></textarea>
 
-                <div class="iconBtn" id="btnAttach" title="Attach file">
-                  <svg viewBox="0 0 24 24" fill="none">
+                <div class="iconBtn" id="btnAttach" title="Attach file" role="button" tabindex="0" aria-label="Attach file">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M21 12.5V17a4 4 0 0 1-4 4H7a5 5 0 0 1 0-10h11a3 3 0 0 1 0 6H9a1 1 0 0 1 0-2h9a1 1 0 0 0 0-2H7a3 3 0 0 0 0 6h10a2 2 0 0 0 2-2v-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
 
-                <div class="iconBtn" id="btnMusicMini" title="Music prompt builder">
-                  <svg viewBox="0 0 24 24" fill="none">
+                <div class="iconBtn" id="btnMusicMini" title="Music prompt builder" role="button" tabindex="0" aria-label="Open music prompt builder">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M9 18V6l12-2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="7" cy="18" r="3" stroke="currentColor" stroke-width="2"/>
                     <circle cx="19" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
                   </svg>
                 </div>
 
-                <div class="iconBtn" id="btnCompose" title="Compose lyrics to audio">
-                  <svg viewBox="0 0 24 24" fill="none">
+                <div class="iconBtn" id="btnCompose" title="Compose lyrics to audio" role="button" tabindex="0" aria-label="Compose to audio">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 3v18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     <path d="M5 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     <path d="M7 21h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -501,8 +511,8 @@
                 </div>
               </div>
 
-              <div class="iconBtn primary" id="btnSend" title="Send">
-                <svg viewBox="0 0 24 24" fill="none">
+              <div class="iconBtn primary" id="btnSend" title="Send" role="button" tabindex="0" aria-label="Send message">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M22 2L15 22l-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -525,11 +535,11 @@
   </div>
 
   <!-- Settings Modal -->
-  <div class="modalBack" id="cfgModalBack" role="dialog" aria-modal="true">
+  <div class="modalBack" id="cfgModalBack" role="dialog" aria-modal="true" aria-label="Settings modal">
     <div class="modal">
       <div class="modalHead">
         <h3>⚙️ Connect Avatar G</h3>
-        <button class="x" id="btnCfgClose" aria-label="Close">×</button>
+        <button class="x" id="btnCfgClose" aria-label="Close" type="button">×</button>
       </div>
 
       <div class="modalBody">
@@ -560,22 +570,27 @@
           • ეს მნიშვნელობები ინახება მხოლოდ localStorage-ში (ამ ბრაუზერში)
         </div>
 
+        <div class="hint">
+          📎 Attach limit: <b>5MB</b> (images show inline; other files send as note).<br/>
+          🧠 Chat context: last <b>6 turns</b> (to keep backend fast).
+        </div>
+
         <div class="log" id="cfglog">[cfg] Ready…</div>
       </div>
 
       <div class="modalActions">
-        <button class="btn" id="btnReset">🗑 Reset</button>
-        <button class="btn primary" id="btnSave">💾 Save & Continue</button>
+        <button class="btn" id="btnReset" type="button">🗑 Reset</button>
+        <button class="btn primary" id="btnSave" type="button">💾 Save & Continue</button>
       </div>
     </div>
   </div>
 
   <!-- Music Modal -->
-  <div class="modalBack" id="musicModalBack" role="dialog" aria-modal="true">
+  <div class="modalBack" id="musicModalBack" role="dialog" aria-modal="true" aria-label="Music builder modal">
     <div class="modal">
       <div class="modalHead">
         <h3>🎵 Music Prompt Builder (Suno-ready)</h3>
-        <button class="x" id="btnMusicClose" aria-label="Close">×</button>
+        <button class="x" id="btnMusicClose" aria-label="Close" type="button">×</button>
       </div>
 
       <div class="modalBody">
@@ -634,14 +649,14 @@
       </div>
 
       <div class="modalActions">
-        <button class="btn" id="btnMusicGen">Generate</button>
-        <button class="btn primary" id="btnMusicInsert">Insert to Chat</button>
+        <button class="btn" id="btnMusicGen" type="button">Generate</button>
+        <button class="btn primary" id="btnMusicInsert" type="button">Insert to Chat</button>
       </div>
     </div>
   </div>
 
   <script>
-    (function() {
+    (function () {
       "use strict";
 
       const KEY = {
@@ -727,60 +742,66 @@
       // Audio state
       let audioUrl = "";
       let lastAudioBlob = null;
+      let lastAudioExt = "mp3";
 
       function safeText(str) { return String(str ?? "").replace(/\0/g, "").trim(); }
       function normalizeUrl(url) { return String(url || "").trim().replace(/\/+$/, ""); }
-      function isLocalhost(u){ return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(u); }
-      function isValidApiBase(url){
+      function isLocalhost(u) { return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(u); }
+
+      function isValidApiBase(url) {
         if (!url) return false;
         const normalized = normalizeUrl(url);
-        try{
+        try {
           const u = new URL(normalized);
           if (u.protocol === "https:") return true;
           if (u.protocol === "http:" && isLocalhost(normalized)) return true;
           return false;
-        }catch{ return false; }
+        } catch { return false; }
       }
 
-      function setStatus(text, type="idle"){
+      function setStatus(text, type = "idle") {
         if (statusText) statusText.textContent = safeText(text);
-        if (statusDot){
-          statusDot.classList.remove("idle","sending","success","error");
+        if (statusDot) {
+          statusDot.classList.remove("idle", "sending", "success", "error");
           statusDot.classList.add(type);
         }
       }
 
-      function log(el, text){
+      function log(el, text) {
         if (!el) return;
         const ts = new Date().toLocaleTimeString();
         el.textContent += "\n[" + ts + "] " + safeText(text);
         el.scrollTop = el.scrollHeight;
       }
-      function setLog(el, text){
+
+      function setLog(el, text) {
         if (!el) return;
         el.textContent = safeText(text);
         el.scrollTop = el.scrollHeight;
       }
-      function withTimeout(ms){
+
+      function withTimeout(ms) {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), ms);
         return { ctrl, done: () => clearTimeout(t) };
       }
-      function explainFetchFailure(err, resStatus){
+
+      function explainFetchFailure(err, resStatus) {
         const msg = String(err?.message || err || "").toLowerCase();
         if (err?.name === "AbortError") return "Request Timeout — სცადე კიდევ ერთხელ ან გაამოკლე ტექსტი.";
         if (msg.includes("failed to fetch") || msg.includes("network")) return "Network/CORS Error — ხშირად ეს არის CORS ან API_BASE არასწორია.";
         if (typeof resStatus === "number" && resStatus >= 400) return "Backend Error — სერვერმა დააბრუნა შეცდომა. გადაამოწმე route და ლოგები.";
         return "Request Failed — უცნობი შეცდომა. გადაამოწმე backend და CORS.";
       }
-      function humanSize(bytes){
-        const b = Number(bytes||0);
+
+      function humanSize(bytes) {
+        const b = Number(bytes || 0);
         if (b < 1024) return b + " B";
-        if (b < 1024*1024) return (b/1024).toFixed(1) + " KB";
-        return (b/(1024*1024)).toFixed(2) + " MB";
+        if (b < 1024 * 1024) return (b / 1024).toFixed(1) + " KB";
+        return (b / (1024 * 1024)).toFixed(2) + " MB";
       }
 
-      function getCfg(){
+      function getCfg() {
         const storedApi = normalizeUrl(localStorage.getItem(KEY.API_BASE) || "");
         const api = storedApi ? storedApi : DEFAULT_API_BASE;
         return {
@@ -789,23 +810,25 @@
           apiBase: normalizeUrl(api)
         };
       }
-      function saveCfg(cfg){
+
+      function saveCfg(cfg) {
         localStorage.setItem(KEY.SUPABASE_URL, normalizeUrl(cfg.supabaseUrl || ""));
         localStorage.setItem(KEY.SUPABASE_ANON, (cfg.supabaseAnon || "").trim());
         localStorage.setItem(KEY.API_BASE, normalizeUrl(cfg.apiBase || DEFAULT_API_BASE));
       }
-      function resetCfg(){
+
+      function resetCfg() {
         localStorage.removeItem(KEY.SUPABASE_URL);
         localStorage.removeItem(KEY.SUPABASE_ANON);
         localStorage.removeItem(KEY.API_BASE);
       }
 
-      function updateApiBadge(){
+      function updateApiBadge() {
         if (!apiBadge || !apiBase) return;
         const val = normalizeUrl(apiBase.value);
-        apiBadge.classList.remove("ok","bad");
-        if (!val){ apiBadge.textContent = "API_BASE: empty (will use default)"; return; }
-        if (isValidApiBase(val)){
+        apiBadge.classList.remove("ok", "bad");
+        if (!val) { apiBadge.textContent = "API_BASE: empty (will use default)"; return; }
+        if (isValidApiBase(val)) {
           apiBadge.textContent = "API_BASE: ✓ valid";
           apiBadge.classList.add("ok");
         } else {
@@ -814,25 +837,25 @@
         }
       }
 
-      function updateChips(){
+      function updateChips() {
         const cfg = getCfg();
 
-        if (chipMode){
+        if (chipMode) {
           chipMode.textContent = currentUser ? "Mode: Authenticated" : "Mode: Ready";
           chipMode.classList.toggle("ok", !!currentUser);
         }
-        if (chipApi){
-          if (cfg.apiBase && isValidApiBase(cfg.apiBase)){
+        if (chipApi) {
+          if (cfg.apiBase && isValidApiBase(cfg.apiBase)) {
             chipApi.textContent = "API: ✓";
             chipApi.classList.add("ok"); chipApi.classList.remove("bad");
           } else {
             chipApi.textContent = "API: not set";
             chipApi.classList.remove("ok");
-            if (cfg.apiBase) chipApi.classList.add("bad");
+            chipApi.classList.toggle("bad", !!cfg.apiBase);
           }
         }
-        if (chipSb){
-          if (cfg.supabaseUrl && cfg.supabaseAnon){
+        if (chipSb) {
+          if (cfg.supabaseUrl && cfg.supabaseAnon) {
             chipSb.textContent = "Supabase: ✓";
             chipSb.classList.add("ok"); chipSb.classList.remove("bad");
           } else {
@@ -840,8 +863,8 @@
             chipSb.classList.remove("ok"); chipSb.classList.remove("bad");
           }
         }
-        if (chipUser){
-          if (currentUser?.email){
+        if (chipUser) {
+          if (currentUser?.email) {
             chipUser.textContent = "User: " + safeText(currentUser.email.split("@")[0]);
             chipUser.classList.add("ok");
             if (btnLogout) btnLogout.style.display = "inline-flex";
@@ -854,12 +877,10 @@
           }
         }
 
-        if (apiLine){
-          apiLine.textContent = "API Base: " + (cfg.apiBase || DEFAULT_API_BASE);
-        }
+        if (apiLine) apiLine.textContent = "API Base: " + (cfg.apiBase || DEFAULT_API_BASE);
       }
 
-      function openCfg(){
+      function openCfg() {
         const cfg = getCfg();
         if (sbUrl) sbUrl.value = cfg.supabaseUrl;
         if (sbAnon) sbAnon.value = cfg.supabaseAnon;
@@ -869,274 +890,31 @@
         if (cfgModalBack) cfgModalBack.classList.add("show");
         setTimeout(() => sbUrl && sbUrl.focus(), 120);
       }
-      function closeCfg(){ if (cfgModalBack) cfgModalBack.classList.remove("show"); }
+      function closeCfg() { if (cfgModalBack) cfgModalBack.classList.remove("show"); }
+
+      function openMusic() { if (musicModalBack) musicModalBack.classList.add("show"); setTimeout(() => musicOut && musicOut.focus(), 120); }
+      function closeMusic() { if (musicModalBack) musicModalBack.classList.remove("show"); }
+
+      function addClickAndKey(el, fn) {
+        if (!el) return;
+        el.addEventListener("click", fn);
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(); }
+        });
+      }
 
       if (btnSettings) btnSettings.addEventListener("click", openCfg);
       if (btnCfgClose) btnCfgClose.addEventListener("click", closeCfg);
       if (cfgModalBack) cfgModalBack.addEventListener("click", (e) => { if (e.target === cfgModalBack) closeCfg(); });
       if (apiBase) apiBase.addEventListener("input", updateApiBadge);
 
-      if (btnSave){
-        btnSave.addEventListener("click", () => {
-          const cfg = {
-            supabaseUrl: sbUrl ? sbUrl.value.trim() : "",
-            supabaseAnon: sbAnon ? sbAnon.value.trim() : "",
-            apiBase: apiBase ? apiBase.value.trim() : ""
-          };
+      if (btnMusic) btnMusic.addEventListener("click", openMusic);
+      if (btnMusicMini) btnMusicMini.addEventListener("click", openMusic);
+      if (btnMusicClose) btnMusicClose.addEventListener("click", closeMusic);
+      if (musicModalBack) musicModalBack.addEventListener("click", (e) => { if (e.target === musicModalBack) closeMusic(); });
 
-          const normalizedApi = normalizeUrl(cfg.apiBase);
-          if (normalizedApi && !isValidApiBase(normalizedApi)){
-            setLog(cfglog, "❌ API_BASE must be https:// (or http://localhost for testing)");
-            return;
-          }
-          cfg.apiBase = normalizedApi || DEFAULT_API_BASE;
-
-          if (cfg.supabaseAnon && cfg.supabaseAnon.toLowerCase().includes("service_role")){
-            setLog(cfglog, "❌ DANGER: This looks like a service_role key! Only use anon key here.");
-            return;
-          }
-
-          saveCfg(cfg);
-          supabaseClient = null;
-
-          setLog(cfglog, "✅ Config saved! Close and test backend.");
-          log(syslog, "Config saved.");
-          updateChips();
-          setTimeout(closeCfg, 600);
-        });
-      }
-
-      if (btnReset){
-        btnReset.addEventListener("click", () => {
-          if (!confirm("Reset all config? This will clear Supabase + API_BASE settings.")) return;
-          resetCfg();
-          supabaseClient = null;
-          currentUser = null;
-          updateChips();
-          setLog(cfglog, "✅ Config reset.");
-          log(syslog, "Config reset.");
-          if (sbUrl) sbUrl.value = "";
-          if (sbAnon) sbAnon.value = "";
-          if (apiBase) apiBase.value = "";
-          updateApiBadge();
-        });
-      }
-
-      function ensureSupabase(){
-        const cfg = getCfg();
-        if (!cfg.supabaseUrl || !cfg.supabaseAnon){
-          log(syslog, "⚠️ Supabase not configured. Open Settings.");
-          if (chipSb) chipSb.classList.add("bad");
-          return null;
-        }
-        if (!window.supabase || typeof window.supabase.createClient !== "function"){
-          log(syslog, "❌ Supabase SDK not loaded (CDN issue). Refresh or try another network.");
-          return null;
-        }
-        if (!supabaseClient){
-          try{
-            supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon, {
-              auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
-            });
-            log(syslog, "✅ Supabase client initialized.");
-          }catch(e){
-            log(syslog, "❌ Supabase init error: " + safeText(e?.message || e));
-            return null;
-          }
-        }
-        return supabaseClient;
-      }
-
-      async function readUser(){
-        const sb = ensureSupabase();
-        if (!sb) return null;
-        try{
-          const { data, error } = await sb.auth.getUser();
-          if (error) throw error;
-          currentUser = data?.user || null;
-          updateChips();
-          if (currentUser?.email) log(syslog, "✅ Signed in as: " + safeText(currentUser.email));
-          return currentUser;
-        }catch(e){
-          log(syslog, "Auth check error: " + safeText(e?.message || e));
-          currentUser = null;
-          updateChips();
-          return null;
-        }
-      }
-
-      async function magicLinkLogin(){
-        const sb = ensureSupabase();
-        if (!sb){ openCfg(); return; }
-        const email = window.prompt("Enter your email for Magic Link login:");
-        if (!email || !email.includes("@")) { if (email) alert("Invalid email format"); return; }
-        try{
-          log(syslog, "📧 Sending magic link to: " + safeText(email));
-          const redirectTo = window.location.href.split("?")[0].split("#")[0];
-          const { error } = await sb.auth.signInWithOtp({ email: email.trim(), options: { emailRedirectTo: redirectTo } });
-          if (error) throw error;
-          log(syslog, "✅ Magic link sent! Check your email inbox.");
-          alert("✅ Magic link sent!\n\nCheck your email and click the link.\nOpen it in THIS browser.");
-        }catch(e){
-          log(syslog, "❌ Login error: " + safeText(e?.message || e));
-          alert("Login failed: " + safeText(e?.message || e));
-        }
-      }
-
-      async function logout(){
-        const sb = ensureSupabase();
-        if (!sb) return;
-        try{
-          await sb.auth.signOut();
-          currentUser = null;
-          updateChips();
-          log(syslog, "✅ Signed out.");
-        }catch(e){
-          log(syslog, "Sign out error: " + safeText(e?.message || e));
-        }
-      }
-
-      if (btnConnect) btnConnect.addEventListener("click", async () => {
-        const cfg = getCfg();
-        if (!cfg.supabaseUrl || !cfg.supabaseAnon) { openCfg(); return; }
-        await magicLinkLogin();
-      });
-      if (btnLogout) btnLogout.addEventListener("click", logout);
-
-      async function testBackend(){
-        const cfg = getCfg();
-        const base = normalizeUrl(cfg.apiBase || "");
-        if (!base || !isValidApiBase(base)){
-          log(syslog, "⚠️ API_BASE invalid. Open Settings.");
-          if (chipApi) chipApi.classList.add("bad");
-          openCfg();
-          return;
-        }
-        const url = base + "/api/health";
-        const { ctrl, done } = withTimeout(TIMEOUT_HEALTH_MS);
-
-        try{
-          log(syslog, "🔍 Testing: " + safeText(url));
-          const res = await fetch(url, { method:"GET", signal: ctrl.signal, cache:"no-store" });
-          done();
-
-          const text = await res.text().catch(() => "");
-          if (!res.ok){
-            if (chipApi){ chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
-            const hint = explainFetchFailure(null, res.status);
-            log(syslog, "❌ Backend error: HTTP " + res.status + " — " + safeText(text.substring(0, 200)));
-            alert("Backend Error\nHTTP " + res.status + "\n\n" + hint + "\n\nCheck CORS + route: /api/health");
-            return;
-          }
-
-          if (chipApi){ chipApi.classList.add("ok"); chipApi.classList.remove("bad"); }
-          log(syslog, "✅ Backend OK: " + safeText(text.substring(0, 160)));
-          alert("✅ Backend is online!\n\n" + safeText(text.substring(0, 200)));
-        }catch(e){
-          done();
-          if (chipApi){ chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
-          const hint = explainFetchFailure(e);
-          log(syslog, "❌ Backend test failed: " + safeText(hint));
-          alert("Backend Test Failed\n\n" + hint + "\n\nCommon causes:\n• CORS not configured\n• Wrong API_BASE URL\n• Backend offline");
-        }
-      }
-      if (btnTest) btnTest.addEventListener("click", testBackend);
-
-      function loadChat(){
-        try{
-          const raw = localStorage.getItem(KEY.CHAT);
-          if (!raw) return;
-          const arr = JSON.parse(raw);
-          if (Array.isArray(arr)){
-            chatHistory = arr
-              .filter(x => x && (x.role === "user" || x.role === "assistant") && typeof x.content === "string")
-              .slice(-CHAT_HISTORY_LIMIT);
-          }
-        }catch{}
-      }
-      function persistChat(){
-        try{ localStorage.setItem(KEY.CHAT, JSON.stringify(chatHistory.slice(-CHAT_HISTORY_LIMIT))); }catch{}
-      }
-
-      function appendBubble(role, content, meta){
-        if (!msgs) return;
-
-        const div = document.createElement("div");
-        div.className = "bubble " + (role === "user" ? "me" : "ai");
-        div.textContent = String(content ?? "");
-
-        if (meta && (meta.fileName || meta.fileUrl)){
-          const m = document.createElement("div");
-          m.className = "metaLine";
-          m.textContent = meta.fileUrl
-            ? ("Attachment: " + (meta.fileName || "file") + " — " + meta.fileUrl)
-            : ("Attachment: " + (meta.fileName || "file"));
-          div.appendChild(m);
-        }
-
-        const text = String(content ?? "");
-        const dataImg = text.match(/data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+/i);
-        const httpImg = text.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/i);
-
-        const imgUrl = dataImg?.[0] || httpImg?.[0];
-        if (imgUrl){
-          const img = document.createElement("img");
-          img.src = imgUrl;
-          img.alt = "Image";
-          img.loading = "lazy";
-          div.appendChild(img);
-        }
-
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function renderChat(){
-        if (!msgs) return;
-        msgs.innerHTML = "";
-        if (!chatHistory.length){
-          appendBubble("assistant", "👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.");
-          return;
-        }
-        for (const m of chatHistory){
-          appendBubble(m.role, m.content, m.meta);
-        }
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function addMessage(role, content, meta){
-        const item = { role, content: String(content ?? ""), meta: meta || null };
-        chatHistory.push(item);
-        if (chatHistory.length > CHAT_HISTORY_LIMIT) chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
-        persistChat();
-        appendBubble(role, item.content, item.meta);
-      }
-
-      function buildChatContext(){
-        const maxItems = CHAT_CONTEXT_TURNS * 2;
-        return chatHistory
-          .slice(-maxItems)
-          .map(m => ({ role: m.role, content: String(m.content || "").trim() }))
-          .filter(m => m.content);
-      }
-
-      function showTyping(){
-        if (!msgs) return;
-        hideTyping();
-        const typing = document.createElement("div");
-        typing.className = "typing";
-        typing.id = "typing";
-        typing.innerHTML = '<span>Avatar G</span><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
-        msgs.appendChild(typing);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-      function hideTyping(){
-        const typing = document.getElementById("typing");
-        if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-      }
-
-      // ✅ FIXED: Robust response extraction (handles {ok:true,result:{...}})
-      function extractResponse(data){
+      // ✅ FIXED: Robust response extraction (handles {ok:true,result:{...}} + multiple formats)
+      function extractResponse(data) {
         if (!data) return "(empty)";
         if (typeof data === "string") return data;
 
@@ -1154,76 +932,12 @@
 
         if (typeof content === "string" && content.trim()) return content.trim();
 
-        // fallback: try "content" arrays (some SDK formats)
         if (Array.isArray(root?.content) && root.content[0]?.text) return String(root.content[0].text);
 
         try { return JSON.stringify(root, null, 2); } catch { return String(root); }
       }
 
-      function setAttachment(fileObj){
-        attached = fileObj;
-        if (!attachTray || !attachName || !attachSub) return;
-        if (!attached){
-          attachTray.classList.remove("show");
-          return;
-        }
-        attachTray.classList.add("show");
-        attachName.textContent = attached.name || "file";
-        attachSub.textContent = (attached.isImage ? "Image ready" : "File ready") + " • " + humanSize(attached.size || 0);
-      }
-      function clearAttachment(){ setAttachment(null); }
-
-      async function fileToDataUrl(file){
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(new Error("File read failed"));
-          reader.readAsDataURL(file);
-        });
-      }
-
-      if (btnAttach && fileInput){
-        btnAttach.addEventListener("click", () => fileInput.click());
-        fileInput.addEventListener("change", async () => {
-          const f = fileInput.files && fileInput.files[0];
-          if (!f) return;
-
-          if (f.size > MAX_FILE_BYTES){
-            alert("File too large. Max 5MB.");
-            fileInput.value = "";
-            return;
-          }
-
-          const isImage = /^image\//i.test(f.type);
-          try{
-            const dataUrl = await fileToDataUrl(f);
-            setAttachment({
-              name: f.name,
-              type: f.type || "application/octet-stream",
-              size: f.size,
-              dataUrl: String(dataUrl || ""),
-              isImage
-            });
-            log(syslog, "📎 Attached: " + f.name + " (" + humanSize(f.size) + ")");
-          }catch(e){
-            alert("Failed to read file");
-          }finally{
-            fileInput.value = "";
-          }
-        });
-      }
-      if (btnAttachRemove) btnAttachRemove.addEventListener("click", clearAttachment);
-
-      // ===================== MUSIC PROMPT BUILDER =====================
-      function openMusic(){ if (musicModalBack) musicModalBack.classList.add("show"); setTimeout(() => musicOut && musicOut.focus(), 120); }
-      function closeMusic(){ if (musicModalBack) musicModalBack.classList.remove("show"); }
-
-      if (btnMusic) btnMusic.addEventListener("click", openMusic);
-      if (btnMusicMini) btnMusicMini.addEventListener("click", openMusic);
-      if (btnMusicClose) btnMusicClose.addEventListener("click", closeMusic);
-      if (musicModalBack) musicModalBack.addEventListener("click", (e) => { if (e.target === musicModalBack) closeMusic(); });
-
-      function buildMusicPrompt(){
+      function buildMusicPrompt() {
         const m = safeText(mood?.value);
         const l = safeText(lang?.value);
         const g = safeText(genre?.value);
@@ -1245,18 +959,14 @@
         ].join("\n");
       }
 
-      if (btnMusicGen){
+      if (btnMusicGen) {
         btnMusicGen.addEventListener("click", () => {
           const generated = buildMusicPrompt();
           if (musicOut) musicOut.value = generated;
-          if (prompt){
-            prompt.value = (prompt.value ? prompt.value.trim() + "\n\n" : "") + generated;
-            prompt.focus();
-          }
         });
       }
 
-      if (btnMusicInsert){
+      if (btnMusicInsert) {
         btnMusicInsert.addEventListener("click", () => {
           if (!musicOut || !prompt) return;
           const v = safeText(musicOut.value);
@@ -1267,33 +977,380 @@
         });
       }
 
+      if (btnSave) {
+        btnSave.addEventListener("click", () => {
+          const cfg = {
+            supabaseUrl: sbUrl ? sbUrl.value.trim() : "",
+            supabaseAnon: sbAnon ? sbAnon.value.trim() : "",
+            apiBase: apiBase ? apiBase.value.trim() : ""
+          };
+
+          const normalizedApi = normalizeUrl(cfg.apiBase);
+          if (normalizedApi && !isValidApiBase(normalizedApi)) {
+            setLog(cfglog, "❌ API_BASE must be https:// (or http://localhost for testing)");
+            return;
+          }
+          cfg.apiBase = normalizedApi || DEFAULT_API_BASE;
+
+          if (cfg.supabaseAnon && cfg.supabaseAnon.toLowerCase().includes("service_role")) {
+            setLog(cfglog, "❌ DANGER: This looks like a service_role key! Only use anon key here.");
+            return;
+          }
+
+          saveCfg(cfg);
+          supabaseClient = null;
+
+          setLog(cfglog, "✅ Config saved! Close and test backend.");
+          log(syslog, "Config saved.");
+          updateChips();
+          setTimeout(closeCfg, 600);
+        });
+      }
+
+      if (btnReset) {
+        btnReset.addEventListener("click", () => {
+          if (!confirm("Reset all config? This will clear Supabase + API_BASE settings.")) return;
+          resetCfg();
+          supabaseClient = null;
+          currentUser = null;
+          updateChips();
+          setLog(cfglog, "✅ Config reset.");
+          log(syslog, "Config reset.");
+          if (sbUrl) sbUrl.value = "";
+          if (sbAnon) sbAnon.value = "";
+          if (apiBase) apiBase.value = "";
+          updateApiBadge();
+        });
+      }
+
+      function ensureSupabase() {
+        const cfg = getCfg();
+        if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
+          log(syslog, "⚠️ Supabase not configured. Open Settings.");
+          if (chipSb) chipSb.classList.add("bad");
+          return null;
+        }
+        if (!window.supabase || typeof window.supabase.createClient !== "function") {
+          log(syslog, "❌ Supabase SDK not loaded (CDN issue). Refresh or try another network.");
+          return null;
+        }
+        if (!supabaseClient) {
+          try {
+            supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon, {
+              auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+            });
+            log(syslog, "✅ Supabase client initialized.");
+          } catch (e) {
+            log(syslog, "❌ Supabase init error: " + safeText(e?.message || e));
+            return null;
+          }
+        }
+        return supabaseClient;
+      }
+
+      async function readUser() {
+        const sb = ensureSupabase();
+        if (!sb) return null;
+        try {
+          const { data, error } = await sb.auth.getUser();
+          if (error) throw error;
+          currentUser = data?.user || null;
+          updateChips();
+          if (currentUser?.email) log(syslog, "✅ Signed in as: " + safeText(currentUser.email));
+          return currentUser;
+        } catch (e) {
+          log(syslog, "Auth check error: " + safeText(e?.message || e));
+          currentUser = null;
+          updateChips();
+          return null;
+        }
+      }
+
+      async function magicLinkLogin() {
+        const sb = ensureSupabase();
+        if (!sb) { openCfg(); return; }
+        const email = window.prompt("Enter your email for Magic Link login:");
+        if (!email || !email.includes("@")) { if (email) alert("Invalid email format"); return; }
+        try {
+          log(syslog, "📧 Sending magic link to: " + safeText(email));
+          const redirectTo = window.location.href.split("?")[0].split("#")[0];
+          const { error } = await sb.auth.signInWithOtp({
+            email: email.trim(),
+            options: { emailRedirectTo: redirectTo }
+          });
+          if (error) throw error;
+          log(syslog, "✅ Magic link sent! Check your email inbox.");
+          alert("✅ Magic link sent!\n\nCheck your email and click the link.\nOpen it in THIS browser.");
+        } catch (e) {
+          log(syslog, "❌ Login error: " + safeText(e?.message || e));
+          alert("Login failed: " + safeText(e?.message || e));
+        }
+      }
+
+      async function logout() {
+        const sb = ensureSupabase();
+        if (!sb) return;
+        try {
+          await sb.auth.signOut();
+          currentUser = null;
+          updateChips();
+          log(syslog, "✅ Signed out.");
+        } catch (e) {
+          log(syslog, "Sign out error: " + safeText(e?.message || e));
+        }
+      }
+
+      if (btnConnect) btnConnect.addEventListener("click", async () => {
+        const cfg = getCfg();
+        if (!cfg.supabaseUrl || !cfg.supabaseAnon) { openCfg(); return; }
+        await magicLinkLogin();
+      });
+      if (btnLogout) btnLogout.addEventListener("click", logout);
+
+      async function testBackend() {
+        const cfg = getCfg();
+        const base = normalizeUrl(cfg.apiBase || "");
+        if (!base || !isValidApiBase(base)) {
+          log(syslog, "⚠️ API_BASE invalid. Open Settings.");
+          if (chipApi) chipApi.classList.add("bad");
+          openCfg();
+          return;
+        }
+        const url = base + "/api/health";
+        const { ctrl, done } = withTimeout(TIMEOUT_HEALTH_MS);
+
+        try {
+          log(syslog, "🔍 Testing: " + safeText(url));
+          const res = await fetch(url, { method: "GET", signal: ctrl.signal, cache: "no-store" });
+          done();
+
+          const text = await res.text().catch(() => "");
+          if (!res.ok) {
+            if (chipApi) { chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
+            const hint = explainFetchFailure(null, res.status);
+            log(syslog, "❌ Backend error: HTTP " + res.status + " — " + safeText(text.substring(0, 200)));
+            alert("Backend Error\nHTTP " + res.status + "\n\n" + hint + "\n\nCheck CORS + route: /api/health");
+            return;
+          }
+
+          if (chipApi) { chipApi.classList.add("ok"); chipApi.classList.remove("bad"); }
+          log(syslog, "✅ Backend OK: " + safeText(text.substring(0, 160)));
+          alert("✅ Backend is online!\n\n" + safeText(text.substring(0, 200)));
+        } catch (e) {
+          done();
+          if (chipApi) { chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
+          const hint = explainFetchFailure(e);
+          log(syslog, "❌ Backend test failed: " + safeText(hint));
+          alert("Backend Test Failed\n\n" + hint + "\n\nCommon causes:\n• CORS not configured\n• Wrong API_BASE URL\n• Backend offline");
+        }
+      }
+      if (btnTest) btnTest.addEventListener("click", testBackend);
+
+      function loadChat() {
+        try {
+          const raw = localStorage.getItem(KEY.CHAT);
+          if (!raw) return;
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            chatHistory = arr
+              .filter(x => x && (x.role === "user" || x.role === "assistant") && typeof x.content === "string")
+              .slice(-CHAT_HISTORY_LIMIT);
+          }
+        } catch { }
+      }
+      function persistChat() {
+        try { localStorage.setItem(KEY.CHAT, JSON.stringify(chatHistory.slice(-CHAT_HISTORY_LIMIT))); } catch { }
+      }
+
+      function looksLikeDataImage(s) {
+        return /data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+/i.test(s || "");
+      }
+      function findFirstDataImage(s) {
+        const m = String(s || "").match(/data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+/i);
+        return m ? m[0] : "";
+      }
+      function findFirstHttpImage(s) {
+        const m = String(s || "").match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)(\?[^\s]+)?/i);
+        return m ? m[0] : "";
+      }
+
+      function appendBubble(role, content, meta) {
+        if (!msgs) return;
+
+        const raw = String(content ?? "");
+        let displayText = raw;
+
+        // ✅ UX FIX: If message contains a huge base64 image, don't dump it as text
+        const dataImg = findFirstDataImage(raw);
+        const httpImg = dataImg ? "" : findFirstHttpImage(raw);
+        const imgUrl = dataImg || httpImg;
+
+        if (dataImg) {
+          displayText = raw.replace(dataImg, "[Image attached]");
+        }
+
+        const div = document.createElement("div");
+        div.className = "bubble " + (role === "user" ? "me" : "ai");
+        div.textContent = displayText;
+
+        if (meta && (meta.fileName || meta.fileUrl)) {
+          const m = document.createElement("div");
+          m.className = "metaLine";
+          m.textContent = meta.fileUrl
+            ? ("Attachment: " + (meta.fileName || "file") + " — " + meta.fileUrl)
+            : ("Attachment: " + (meta.fileName || "file"));
+          div.appendChild(m);
+        }
+
+        if (imgUrl) {
+          const img = document.createElement("img");
+          img.src = imgUrl;
+          img.alt = "Image";
+          img.loading = "lazy";
+          div.appendChild(img);
+        }
+
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function renderChat() {
+        if (!msgs) return;
+        msgs.innerHTML = "";
+        if (!chatHistory.length) {
+          appendBubble("assistant", "👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.");
+          return;
+        }
+        for (const m of chatHistory) appendBubble(m.role, m.content, m.meta);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function addMessage(role, content, meta) {
+        const item = { role, content: String(content ?? ""), meta: meta || null };
+        chatHistory.push(item);
+        if (chatHistory.length > CHAT_HISTORY_LIMIT) chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
+        persistChat();
+        appendBubble(role, item.content, item.meta);
+      }
+
+      function buildChatContext() {
+        const maxItems = CHAT_CONTEXT_TURNS * 2;
+        return chatHistory
+          .slice(-maxItems)
+          .map(m => ({ role: m.role, content: String(m.content || "").trim() }))
+          .filter(m => m.content);
+      }
+
+      function showTyping() {
+        if (!msgs) return;
+        hideTyping();
+        const typing = document.createElement("div");
+        typing.className = "typing";
+        typing.id = "typing";
+        typing.innerHTML = '<span>Avatar G</span><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+        msgs.appendChild(typing);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+      function hideTyping() {
+        const typing = document.getElementById("typing");
+        if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
+      }
+
+      function setAttachment(fileObj) {
+        attached = fileObj;
+        if (!attachTray || !attachName || !attachSub) return;
+        if (!attached) { attachTray.classList.remove("show"); return; }
+        attachTray.classList.add("show");
+        attachName.textContent = attached.name || "file";
+        attachSub.textContent = (attached.isImage ? "Image ready" : "File ready") + " • " + humanSize(attached.size || 0);
+      }
+      function clearAttachment() { setAttachment(null); }
+
+      async function fileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("File read failed"));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function bindFilePick() {
+        if (!btnAttach || !fileInput) return;
+
+        addClickAndKey(btnAttach, () => fileInput.click());
+
+        fileInput.addEventListener("change", async () => {
+          const f = fileInput.files && fileInput.files[0];
+          if (!f) return;
+
+          if (f.size > MAX_FILE_BYTES) {
+            alert("File too large. Max 5MB.");
+            fileInput.value = "";
+            return;
+          }
+
+          const isImage = /^image\//i.test(f.type);
+          try {
+            const dataUrl = await fileToDataUrl(f);
+            setAttachment({
+              name: f.name,
+              type: f.type || "application/octet-stream",
+              size: f.size,
+              dataUrl: String(dataUrl || ""),
+              isImage
+            });
+            log(syslog, "📎 Attached: " + f.name + " (" + humanSize(f.size) + ")");
+          } catch (e) {
+            alert("Failed to read file");
+          } finally {
+            fileInput.value = "";
+          }
+        });
+      }
+
+      bindFilePick();
+      addClickAndKey(btnAttachRemove, clearAttachment);
+
       // ===================== COMPOSE FLOW =====================
-      function cleanupAudioUrl(){
-        try{ if (audioUrl) URL.revokeObjectURL(audioUrl); }catch{}
+      function cleanupAudioUrl() {
+        try { if (audioUrl) URL.revokeObjectURL(audioUrl); } catch { }
         audioUrl = "";
         lastAudioBlob = null;
+        lastAudioExt = "mp3";
         if (audioPlayer) audioPlayer.removeAttribute("src");
         if (audioCard) audioCard.classList.remove("show");
         if (audioMeta) audioMeta.textContent = "";
       }
 
-      function showAudio(blob, metaText){
+      function guessExtFromMime(mime) {
+        const m = String(mime || "").toLowerCase();
+        if (m.includes("audio/wav")) return "wav";
+        if (m.includes("audio/mpeg") || m.includes("audio/mp3")) return "mp3";
+        if (m.includes("audio/ogg")) return "ogg";
+        if (m.includes("audio/webm")) return "webm";
+        if (m.includes("audio/aac")) return "aac";
+        return "mp3";
+      }
+
+      function showAudio(blob, metaText) {
         cleanupAudioUrl();
         lastAudioBlob = blob;
+        lastAudioExt = guessExtFromMime(blob?.type);
         audioUrl = URL.createObjectURL(blob);
-        if (audioPlayer){
+        if (audioPlayer) {
           audioPlayer.src = audioUrl;
           audioPlayer.load();
-          audioPlayer.play().catch(()=>{});
+          audioPlayer.play().catch(() => { });
         }
         if (audioMeta) audioMeta.textContent = metaText || "";
         if (audioCard) audioCard.classList.add("show");
       }
 
-      function getLastAssistantText(){
-        for (let i = chatHistory.length - 1; i >= 0; i--){
+      function getLastAssistantText() {
+        for (let i = chatHistory.length - 1; i >= 0; i--) {
           const m = chatHistory[i];
-          if (m && m.role === "assistant" && typeof m.content === "string"){
+          if (m && m.role === "assistant" && typeof m.content === "string") {
             const t = m.content.trim();
             if (t) return t;
           }
@@ -1301,23 +1358,20 @@
         return "";
       }
 
-      async function composeToAudio(text){
+      async function composeToAudio(text) {
         const lyrics = safeText(text);
-        if (!lyrics){
-          alert("No lyrics/text found to compose.");
-          return;
-        }
+        if (!lyrics) { alert("No lyrics/text found to compose."); return; }
 
         setStatus("Status: composing audio...", "sending");
         log(syslog, "🎵 Compose started...");
         cleanupAudioUrl();
 
-        try{
+        try {
           const { ctrl, done } = withTimeout(TIMEOUT_COMPOSE_MS);
 
           const cfg = getCfg();
           const base = normalizeUrl(cfg.apiBase || "");
-          if (!base || !isValidApiBase(base)){
+          if (!base || !isValidApiBase(base)) {
             done();
             setStatus("Status: error", "error");
             alert("API_BASE not set. Open Settings and set backend domain.");
@@ -1334,24 +1388,23 @@
 
           done();
 
-          if (!res.ok){
-            const txt = await res.text().catch(()=> "");
+          if (!res.ok) {
+            const txt = await res.text().catch(() => "");
             const hint = explainFetchFailure(null, res.status);
-            log(syslog, "❌ Compose failed: HTTP " + res.status + " " + txt.slice(0,200));
+            log(syslog, "❌ Compose failed: HTTP " + res.status + " " + txt.slice(0, 200));
             setStatus("Status: error", "error");
-            alert("Compose failed (HTTP " + res.status + ")\n\n" + hint + "\n\n" + txt.slice(0,600));
+            alert("Compose failed (HTTP " + res.status + ")\n\n" + hint + "\n\n" + txt.slice(0, 600));
             return;
           }
 
           const blob = await res.blob();
-          const metaText = "OK • " + humanSize(blob.size) + " • " + new Date().toLocaleTimeString();
+          const metaText = "OK • " + humanSize(blob.size) + " • " + (blob.type ? blob.type : "audio") + " • " + new Date().toLocaleTimeString();
           showAudio(blob, metaText);
 
           addMessage("assistant", "🎧 Audio ready ✅\n(Compose complete — Audio Player ნახე ქვემოთ)");
           setStatus("Status: success ✓", "success");
           log(syslog, "✅ Compose success: " + humanSize(blob.size));
-
-        }catch(e){
+        } catch (e) {
           const hint = explainFetchFailure(e);
           log(syslog, "❌ Compose error: " + hint);
           setStatus("Status: error", "error");
@@ -1359,39 +1412,32 @@
         }
       }
 
-      if (btnCompose){
-        btnCompose.addEventListener("click", async () => {
-          const text = (prompt && prompt.value ? prompt.value.trim() : "");
-          if (!text){
-            await composeToAudio(getLastAssistantText());
-          } else {
-            await composeToAudio(text);
-          }
-        });
-      }
+      if (btnCompose) addClickAndKey(btnCompose, async () => {
+        const text = (prompt && prompt.value ? prompt.value.trim() : "");
+        if (!text) await composeToAudio(getLastAssistantText());
+        else await composeToAudio(text);
+      });
 
-      if (btnComposeFromLast){
-        btnComposeFromLast.addEventListener("click", async () => {
-          await composeToAudio(getLastAssistantText());
-        });
-      }
+      if (btnComposeFromLast) btnComposeFromLast.addEventListener("click", async () => {
+        await composeToAudio(getLastAssistantText());
+      });
 
-      if (btnDownloadAudio){
+      if (btnDownloadAudio) {
         btnDownloadAudio.addEventListener("click", () => {
           if (!lastAudioBlob) return alert("No audio yet.");
           const url = URL.createObjectURL(lastAudioBlob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = "avatarg-compose.mp3";
+          a.download = "avatarg-compose." + (lastAudioExt || "mp3");
           document.body.appendChild(a);
           a.click();
           a.remove();
-          setTimeout(()=>{ try{ URL.revokeObjectURL(url); }catch{} }, 2000);
+          setTimeout(() => { try { URL.revokeObjectURL(url); } catch { } }, 2000);
         });
       }
 
       // ===================== CHAT SEND =====================
-      async function sendChat(){
+      async function sendChat() {
         if (isSending || !prompt || !btnSend) return;
 
         const cfg = getCfg();
@@ -1399,7 +1445,7 @@
         if (!text && !attached) return;
 
         const base = normalizeUrl(cfg.apiBase || "");
-        if (!base || !isValidApiBase(base)){
+        if (!base || !isValidApiBase(base)) {
           addMessage("assistant", "❌ API_BASE არ არის სწორად დაყენებული.\n\nგახსენი Settings და ჩასვი backend domain (https://...).");
           openCfg();
           return;
@@ -1412,13 +1458,13 @@
         let userText = text;
         let meta = null;
 
-        if (attached){
-          if (attached.isImage){
+        if (attached) {
+          meta = { fileName: attached.name, fileType: attached.type, fileSize: attached.size };
+          if (attached.isImage) {
+            // Send image as dataURL (backend should handle)
             userText = (userText ? userText + "\n\n" : "") + attached.dataUrl;
-            meta = { fileName: attached.name, fileType: attached.type, fileSize: attached.size };
           } else {
             userText = (userText ? userText + "\n\n" : "") + `[Attachment: ${attached.name} (${humanSize(attached.size)})]`;
-            meta = { fileName: attached.name, fileType: attached.type, fileSize: attached.size };
           }
         }
 
@@ -1442,10 +1488,10 @@
 
         const { ctrl, done } = withTimeout(TIMEOUT_AI_MS);
 
-        try{
+        try {
           const res = await fetch(url, {
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
             signal: ctrl.signal
           });
@@ -1456,10 +1502,10 @@
           const contentType = (res.headers.get("content-type") || "").toLowerCase();
           let out = "";
 
-          if (contentType.includes("application/json")){
+          if (contentType.includes("application/json")) {
             const data = await res.json().catch(() => null);
 
-            if (!res.ok){
+            if (!res.ok) {
               const errMsg = data?.error || data?.message || ("HTTP " + res.status);
               const hint = data?.hint ? ("\n\nHint: " + String(data.hint)) : "";
               out = "❌ Backend Error:\n" + safeText(errMsg) + safeText(hint);
@@ -1470,7 +1516,7 @@
             }
           } else {
             const txt = await res.text().catch(() => "");
-            if (!res.ok){
+            if (!res.ok) {
               out = "❌ Backend Error (HTTP " + res.status + "):\n" + safeText(txt.substring(0, 900));
               setStatus("Status: error", "error");
             } else {
@@ -1480,7 +1526,7 @@
           }
 
           addMessage("assistant", out);
-        }catch(e){
+        } catch (e) {
           done();
           hideTyping();
 
@@ -1502,17 +1548,17 @@
         }
       }
 
-      if (prompt){
+      if (prompt) {
         prompt.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" && !e.shiftKey){
+          if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             sendChat();
           }
         });
       }
-      if (btnSend) btnSend.addEventListener("click", sendChat);
+      if (btnSend) addClickAndKey(btnSend, sendChat);
 
-      if (btnClear){
+      if (btnClear) {
         btnClear.addEventListener("click", () => {
           if (!confirm("Clear all chat history? This cannot be undone.")) return;
           chatHistory = [];
@@ -1525,48 +1571,42 @@
       }
 
       // ===================== INIT =====================
-      (async function init(){
+      (async function init() {
         setLog(syslog, "[boot] Avatar G Workspace loaded");
         setStatus("Status: idle", "idle");
 
         loadChat();
         renderChat();
-
         updateChips();
 
         const cfg = getCfg();
 
-        if (cfg.supabaseUrl && cfg.supabaseAnon){
+        if (cfg.supabaseUrl && cfg.supabaseAnon) {
           ensureSupabase();
           await readUser();
 
-          if (supabaseClient?.auth?.onAuthStateChange){
+          if (supabaseClient?.auth?.onAuthStateChange) {
             supabaseClient.auth.onAuthStateChange((event, session) => {
               currentUser = session?.user || null;
               updateChips();
-              if (event === "SIGNED_IN" && currentUser?.email){
-                log(syslog, "✅ Auth: Signed in as " + safeText(currentUser.email));
-              } else if (event === "SIGNED_OUT"){
-                log(syslog, "✅ Auth: Signed out");
-              }
+              if (event === "SIGNED_IN" && currentUser?.email) log(syslog, "✅ Auth: Signed in as " + safeText(currentUser.email));
+              if (event === "SIGNED_OUT") log(syslog, "✅ Auth: Signed out");
             });
           }
         } else {
-          if (!localStorage.getItem(KEY.SEEN_CFG_HINT)){
+          if (!localStorage.getItem(KEY.SEEN_CFG_HINT)) {
             log(syslog, "⚠️ Supabase not configured. Open Settings to connect.");
             localStorage.setItem(KEY.SEEN_CFG_HINT, "1");
           }
         }
 
-        if (cfg.apiBase && isValidApiBase(cfg.apiBase)){
-          log(syslog, "✅ API_BASE loaded: " + safeText(cfg.apiBase));
-        } else {
-          log(syslog, "⚠️ API_BASE not set or invalid. Open Settings.");
-        }
+        if (cfg.apiBase && isValidApiBase(cfg.apiBase)) log(syslog, "✅ API_BASE loaded: " + safeText(cfg.apiBase));
+        else log(syslog, "⚠️ API_BASE not set or invalid. Open Settings.");
 
         log(syslog, "✅ Ready. Test backend or start chatting!");
       })();
     })();
   </script>
 </body>
-  </html>
+</html>
+```0
