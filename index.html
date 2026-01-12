@@ -427,6 +427,15 @@
               <button class="btn primary" id="btnSend">Send</button>
             </div>
 
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+              <button class="btn" id="btnUseAsMusic" disabled>🎵 Use last answer → Music</button>
+              <button class="btn" id="btnEditLast" disabled>✏️ Edit last answer</button>
+            </div>
+
+            <div class="hint" id="chatHint" style="display:none">
+              ✅ ბოლო AI პასუხი გადატანილია Music prompt-ში. ახლა დააჭირე <b>Create Music Job</b>.
+            </div>
+
             <div class="small" id="chatStatus">
               <span class="statusLine">
                 <span class="statusDot idle" id="statusDot"></span>
@@ -564,6 +573,9 @@
       const btnSend = document.getElementById("btnSend");
       const statusDot = document.getElementById("statusDot");
       const statusText = document.getElementById("statusText");
+      const btnUseAsMusic = document.getElementById("btnUseAsMusic");
+      const btnEditLast = document.getElementById("btnEditLast");
+      const chatHint = document.getElementById("chatHint");
 
       const musicLog = document.getElementById("musicLog");
       const musicJobsEl = document.getElementById("musicJobs");
@@ -576,6 +588,7 @@
       let currentUser = null;
       let isSending = false;
       let chatHistory = [];
+      let lastAssistantText = "";
 
       function safeText(str) {
         return String(str ?? "").replace(/\0/g, "").trim();
@@ -659,6 +672,44 @@
 
       function shortId(id) {
         return String(id || "").slice(0, 8);
+      }
+
+      function tryParseJson(text) {
+        const t = String(text || "").trim();
+        if (!t) return null;
+        if (!(t.startsWith("{") || t.startsWith("["))) return null;
+        try { return JSON.parse(t); } catch { return null; }
+      }
+
+      function setLastAssistant(content) {
+        lastAssistantText = String(content || "").trim();
+
+        const ok = !!lastAssistantText && !lastAssistantText.startsWith("❌") && !lastAssistantText.startsWith("⏱️");
+        if (btnUseAsMusic) btnUseAsMusic.disabled = !ok;
+        if (btnEditLast) btnEditLast.disabled = !ok;
+      }
+
+      function buildMusicPromptFromAnswer(answer) {
+        const txt = String(answer || "").trim();
+        if (!txt) return "";
+
+        const lyricsMatch =
+          txt.match(/(?:LYRICS|Lyrics|ლირიკა|text)\s*[:\-]?\s*([\s\S]*?)(?=\n\s*(?:SONG DESCRIPTION|Description|STYLE|Prompt|დასახელება|სტილი)\s*[:\-]|$)/i);
+
+        const descMatch =
+          txt.match(/(?:SONG DESCRIPTION|Description|STYLE|Prompt|სტილი|აღწერა)\s*[:\-]?\s*([\s\S]*)$/i);
+
+        const lyrics = lyricsMatch?.[1]?.trim();
+        const desc = descMatch?.[1]?.trim();
+
+        if (lyrics || desc) {
+          return [
+            desc ? ("STYLE / DESCRIPTION:\n" + desc) : "",
+            lyrics ? ("\n\nLYRICS:\n" + lyrics) : ""
+          ].join("").trim();
+        }
+
+        return txt;
       }
 
       function getCfg() {
@@ -1062,6 +1113,9 @@
         }
         persistChat();
         appendBubble(role, content);
+        if (role === "assistant") {
+          setLastAssistant(content);
+        }
         if (msgs) msgs.scrollTop = msgs.scrollHeight;
       }
 
@@ -1216,11 +1270,17 @@
               }
             } else {
               const txt = await res.text().catch(() => "");
+              const parsed = tryParseJson(txt);
+
               if (!res.ok) {
                 out = "❌ Backend Error (HTTP " + res.status + "):\n" + safeText(txt.substring(0, 700));
                 setStatus("Status: error", "error");
               } else {
-                out = txt || "(empty response)";
+                if (parsed) {
+                  out = extractResponse(parsed);
+                } else {
+                  out = txt || "(empty response)";
+                }
                 setStatus("Status: success ✓", "success");
               }
             }
@@ -1298,6 +1358,7 @@
               chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
             }
             persistChat();
+            setLastAssistant(accumulatedText);
           }
         } catch (err) {
           bubble.textContent = "❌ Streaming error: " + safeText(err?.message || err);
@@ -1322,6 +1383,39 @@
           renderChat();
           log(syslog, "Chat cleared.");
           setStatus("Status: idle", "idle");
+        });
+      }
+
+      if (btnUseAsMusic) {
+        btnUseAsMusic.addEventListener("click", () => {
+          const built = buildMusicPromptFromAnswer(lastAssistantText);
+          if (!built) return;
+
+          if (musicPrompt) musicPrompt.value = built;
+
+          if (chatHint) {
+            chatHint.style.display = "block";
+            setTimeout(() => { chatHint.style.display = "none"; }, 3500);
+          }
+
+          if (musicPrompt) musicPrompt.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+      }
+
+      if (btnEditLast) {
+        btnEditLast.addEventListener("click", () => {
+          if (!lastAssistantText) return;
+          const edited = window.prompt("Edit last AI answer:", lastAssistantText);
+          if (edited == null) return;
+          for (let i = chatHistory.length - 1; i >= 0; i--) {
+            if (chatHistory[i].role === "assistant") {
+              chatHistory[i].content = String(edited);
+              break;
+            }
+          }
+          persistChat();
+          renderChat();
+          setLastAssistant(edited);
         });
       }
 
