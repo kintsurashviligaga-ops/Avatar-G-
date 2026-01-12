@@ -51,6 +51,7 @@
       overflow:hidden;
       backdrop-filter: blur(10px);
       position:relative;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     .top{
       display:flex;
@@ -323,6 +324,38 @@
       user-select:none;
     }
 
+    /* Audio card (NEW) */
+    .audioCard{
+      display:none;
+      margin-top:10px;
+      padding:12px;
+      border-radius: 14px;
+      border:1px solid rgba(34,211,238,.18);
+      background: rgba(34,211,238,.06);
+      gap:10px;
+    }
+    .audioCard.show{display:block}
+    .audioRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .audioTitle{
+      font-size:12px;
+      color:rgba(255,255,255,.78);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    audio{
+      width:100%;
+      margin-top:10px;
+      border-radius: 12px;
+      outline:none;
+    }
+
     /* Modal */
     .modalBack{
       position:fixed; inset:0;
@@ -436,9 +469,6 @@
     @media (max-width: 720px){
       .twoCol{grid-template-columns:1fr}
     }
-
-    /* Mobile keyboard safe */
-    .panel{padding-bottom: env(safe-area-inset-bottom);}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -502,6 +532,19 @@
               <div class="bubble ai">👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.</div>
             </div>
 
+            <!-- NEW: Audio Player -->
+            <div class="audioCard" id="audioCard">
+              <div class="audioRow">
+                <div class="audioTitle">🎧 Generated Audio (Compose)</div>
+                <div style="display:flex; gap:10px;">
+                  <button class="btn ghost" id="btnComposeFromLast" style="padding:8px 12px; font-size:12px">🪄 Compose last lyrics</button>
+                  <button class="btn" id="btnDownloadAudio" style="padding:8px 12px; font-size:12px">⬇️ Download</button>
+                </div>
+              </div>
+              <audio id="audioPlayer" controls autoplay></audio>
+              <div class="small" id="audioMeta" style="margin-top:6px; opacity:.8"></div>
+            </div>
+
             <div class="attachTray" id="attachTray">
               <div class="attachMeta">
                 <div class="attachName" id="attachName">file</div>
@@ -516,14 +559,12 @@
               <div class="inputWrap">
                 <textarea id="prompt" placeholder="დაწერე მესიჯი… (Enter = send, Shift+Enter = new line)"></textarea>
 
-                <!-- Attach -->
                 <div class="iconBtn" id="btnAttach" title="Attach file">
                   <svg viewBox="0 0 24 24" fill="none">
                     <path d="M21 12.5V17a4 4 0 0 1-4 4H7a5 5 0 0 1 0-10h11a3 3 0 0 1 0 6H9a1 1 0 0 1 0-2h9a1 1 0 0 0 0-2H7a3 3 0 0 0 0 6h10a2 2 0 0 0 2-2v-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
 
-                <!-- Music quick -->
                 <div class="iconBtn" id="btnMusicMini" title="Music prompt builder">
                   <svg viewBox="0 0 24 24" fill="none">
                     <path d="M9 18V6l12-2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -531,9 +572,17 @@
                     <circle cx="19" cy="16" r="3" stroke="currentColor" stroke-width="2"/>
                   </svg>
                 </div>
+
+                <!-- NEW: quick compose button -->
+                <div class="iconBtn" id="btnCompose" title="Compose lyrics to audio">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M5 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M7 21h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
               </div>
 
-              <!-- Send -->
               <div class="iconBtn primary" id="btnSend" title="Send">
                 <svg viewBox="0 0 24 24" fill="none">
                   <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -677,7 +726,6 @@
     (function() {
       "use strict";
 
-      // ===================== STORAGE KEYS =====================
       const KEY = {
         SUPABASE_URL: "AVATARG_SUPABASE_URL",
         SUPABASE_ANON: "AVATARG_SUPABASE_ANON",
@@ -686,15 +734,14 @@
         SEEN_CFG_HINT: "AVATARG_SEEN_CFG_HINT"
       };
 
-      // ===================== CONFIG =====================
       const DEFAULT_API_BASE = "https://avatarg-backend.vercel.app";
       const CHAT_HISTORY_LIMIT = 80;
       const CHAT_CONTEXT_TURNS = 6;
       const TIMEOUT_HEALTH_MS = 10000;
       const TIMEOUT_AI_MS = 45000;
-      const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB to keep browser safe
+      const TIMEOUT_COMPOSE_MS = 60000;
+      const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
-      // ===================== DOM =====================
       const syslog = document.getElementById("syslog");
       const cfglog = document.getElementById("cfglog");
 
@@ -746,14 +793,24 @@
       const must = document.getElementById("must");
       const musicOut = document.getElementById("musicOut");
 
-      // ===================== STATE =====================
+      // NEW: Audio player DOM
+      const audioCard = document.getElementById("audioCard");
+      const audioPlayer = document.getElementById("audioPlayer");
+      const audioMeta = document.getElementById("audioMeta");
+      const btnCompose = document.getElementById("btnCompose");
+      const btnComposeFromLast = document.getElementById("btnComposeFromLast");
+      const btnDownloadAudio = document.getElementById("btnDownloadAudio");
+
       let supabaseClient = null;
       let currentUser = null;
       let isSending = false;
       let chatHistory = [];
-      let attached = null; // {name,type,size,dataUrl,isImage}
+      let attached = null;
 
-      // ===================== HELPERS =====================
+      // NEW: audio state
+      let audioUrl = "";
+      let lastAudioBlob = null;
+
       function safeText(str) { return String(str ?? "").replace(/\0/g, "").trim(); }
       function normalizeUrl(url) { return String(url || "").trim().replace(/\/+$/, ""); }
       function isLocalhost(u){ return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(u); }
@@ -794,7 +851,7 @@
         const msg = String(err?.message || err || "").toLowerCase();
         if (err?.name === "AbortError") return "Request Timeout — სცადე კიდევ ერთხელ ან გაამოკლე ტექსტი.";
         if (msg.includes("failed to fetch") || msg.includes("network")) return "Network/CORS Error — ხშირად ეს არის CORS ან API_BASE არასწორია.";
-        if (typeof resStatus === "number" && resStatus >= 400) return "Backend Error — სერვერმა დააბრუნა შეცდომა. გადაამოწმე /api/ai route და ლოგები.";
+        if (typeof resStatus === "number" && resStatus >= 400) return "Backend Error — სერვერმა დააბრუნა შეცდომა. გადაამოწმე route და ლოგები.";
         return "Request Failed — უცნობი შეცდომა. გადაამოწმე backend და CORS.";
       }
       function humanSize(bytes){
@@ -804,7 +861,6 @@
         return (b/(1024*1024)).toFixed(2) + " MB";
       }
 
-      // ===================== CONFIG =====================
       function getCfg(){
         const storedApi = normalizeUrl(localStorage.getItem(KEY.API_BASE) || "");
         const api = storedApi ? storedApi : DEFAULT_API_BASE;
@@ -838,7 +894,6 @@
         }
       }
 
-      // ===================== CHIPS =====================
       function updateChips(){
         const cfg = getCfg();
 
@@ -853,7 +908,7 @@
           } else {
             chipApi.textContent = "API: not set";
             chipApi.classList.remove("ok");
-            chipApi.classList.add(cfg.apiBase ? "bad" : "");
+            if (cfg.apiBase) chipApi.classList.add("bad");
           }
         }
         if (chipSb){
@@ -884,7 +939,6 @@
         }
       }
 
-      // ===================== MODAL: SETTINGS =====================
       function openCfg(){
         const cfg = getCfg();
         if (sbUrl) sbUrl.value = cfg.supabaseUrl;
@@ -948,7 +1002,6 @@
         });
       }
 
-      // ===================== SUPABASE =====================
       function ensureSupabase(){
         const cfg = getCfg();
         if (!cfg.supabaseUrl || !cfg.supabaseAnon){
@@ -1030,7 +1083,6 @@
       });
       if (btnLogout) btnLogout.addEventListener("click", logout);
 
-      // ===================== BACKEND TEST =====================
       async function testBackend(){
         const cfg = getCfg();
         const base = normalizeUrl(cfg.apiBase || "");
@@ -1070,7 +1122,6 @@
       }
       if (btnTest) btnTest.addEventListener("click", testBackend);
 
-      // ===================== CHAT STORAGE =====================
       function loadChat(){
         try{
           const raw = localStorage.getItem(KEY.CHAT);
@@ -1092,8 +1143,6 @@
 
         const div = document.createElement("div");
         div.className = "bubble " + (role === "user" ? "me" : "ai");
-
-        // If content is special object-like string with attachment markers, still render as text.
         div.textContent = String(content ?? "");
 
         if (meta && (meta.fileName || meta.fileUrl)){
@@ -1105,7 +1154,6 @@
           div.appendChild(m);
         }
 
-        // Render image if content includes a data URL image marker OR http image link
         const text = String(content ?? "");
         const dataImg = text.match(/data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+/i);
         const httpImg = text.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/i);
@@ -1152,7 +1200,6 @@
           .filter(m => m.content);
       }
 
-      // ===================== TYPING =====================
       function showTyping(){
         if (!msgs) return;
         hideTyping();
@@ -1168,7 +1215,6 @@
         if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
       }
 
-      // ===================== RESPONSE EXTRACTION =====================
       function extractResponse(data){
         if (!data) return "(empty)";
         if (typeof data === "string") return data;
@@ -1182,7 +1228,6 @@
         try { return JSON.stringify(data, null, 2); } catch { return String(data); }
       }
 
-      // ===================== ATTACHMENTS =====================
       function setAttachment(fileObj){
         attached = fileObj;
         if (!attachTray || !attachName || !attachSub) return;
@@ -1235,7 +1280,6 @@
           }
         });
       }
-
       if (btnAttachRemove) btnAttachRemove.addEventListener("click", clearAttachment);
 
       // ===================== MUSIC PROMPT BUILDER =====================
@@ -1255,8 +1299,8 @@
         const x = safeText(must?.value);
 
         const langLine = (l === "Georgian") ? "Language: Georgian (ka)" : (l === "Russian") ? "Language: Russian" : "Language: English";
-
         const extras = x ? ("\nMust include: " + x) : "";
+
         return [
           "SUNO PROMPT (ready):",
           "Mood: " + m,
@@ -1273,8 +1317,6 @@
         btnMusicGen.addEventListener("click", () => {
           const generated = buildMusicPrompt();
           if (musicOut) musicOut.value = generated;
-
-          // Auto insert into chat input for best UX
           if (prompt){
             prompt.value = (prompt.value ? prompt.value.trim() + "\n\n" : "") + generated;
             prompt.focus();
@@ -1290,6 +1332,133 @@
           prompt.value = (prompt.value ? prompt.value.trim() + "\n\n" : "") + v;
           prompt.focus();
           closeMusic();
+        });
+      }
+
+      // ===================== NEW: COMPOSE FLOW =====================
+      function cleanupAudioUrl(){
+        try{
+          if (audioUrl) URL.revokeObjectURL(audioUrl);
+        }catch{}
+        audioUrl = "";
+        lastAudioBlob = null;
+        if (audioPlayer) audioPlayer.removeAttribute("src");
+        if (audioCard) audioCard.classList.remove("show");
+        if (audioMeta) audioMeta.textContent = "";
+      }
+
+      function showAudio(blob, metaText){
+        cleanupAudioUrl();
+        lastAudioBlob = blob;
+        audioUrl = URL.createObjectURL(blob);
+        if (audioPlayer){
+          audioPlayer.src = audioUrl;
+          audioPlayer.load();
+          audioPlayer.play().catch(()=>{});
+        }
+        if (audioMeta) audioMeta.textContent = metaText || "";
+        if (audioCard) audioCard.classList.add("show");
+      }
+
+      function getLastAssistantText(){
+        for (let i = chatHistory.length - 1; i >= 0; i--){
+          const m = chatHistory[i];
+          if (m && m.role === "assistant" && typeof m.content === "string"){
+            const t = m.content.trim();
+            if (t) return t;
+          }
+        }
+        return "";
+      }
+
+      async function composeToAudio(text){
+        const lyrics = safeText(text);
+        if (!lyrics){
+          alert("No lyrics/text found to compose.");
+          return;
+        }
+
+        setStatus("Status: composing audio...", "sending");
+        log(syslog, "🎵 Compose started (ElevenLabs)...");
+        cleanupAudioUrl();
+
+        try{
+          const { ctrl, done } = withTimeout(TIMEOUT_COMPOSE_MS);
+
+          // IMPORTANT: backend route is on backend domain, not frontend
+          const cfg = getCfg();
+          const base = normalizeUrl(cfg.apiBase || "");
+          if (!base || !isValidApiBase(base)){
+            done();
+            setStatus("Status: error", "error");
+            alert("API_BASE not set. Open Settings and set backend domain.");
+            openCfg();
+            return;
+          }
+
+          const res = await fetch(base + "/api/music/compose", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: lyrics }),
+            signal: ctrl.signal
+          });
+
+          done();
+
+          if (!res.ok){
+            const txt = await res.text().catch(()=> "");
+            const hint = explainFetchFailure(null, res.status);
+            log(syslog, "❌ Compose failed: HTTP " + res.status + " " + txt.slice(0,200));
+            setStatus("Status: error", "error");
+            alert("Compose failed (HTTP " + res.status + ")\n\n" + hint + "\n\n" + txt.slice(0,600));
+            return;
+          }
+
+          const blob = await res.blob();
+          const metaText = "OK • " + humanSize(blob.size) + " • " + new Date().toLocaleTimeString();
+          showAudio(blob, metaText);
+
+          addMessage("assistant", "🎧 Audio ready ✅\n(Compose complete — see Audio Player ქვემოთ)");
+          setStatus("Status: success ✓", "success");
+          log(syslog, "✅ Compose success: " + humanSize(blob.size));
+
+        }catch(e){
+          const hint = explainFetchFailure(e);
+          log(syslog, "❌ Compose error: " + hint);
+          setStatus("Status: error", "error");
+          alert("Compose error\n\n" + hint + "\n\n" + String(e?.message || e));
+        }
+      }
+
+      if (btnCompose){
+        btnCompose.addEventListener("click", async () => {
+          const text = (prompt && prompt.value ? prompt.value.trim() : "");
+          if (!text){
+            // fallback: last assistant msg
+            await composeToAudio(getLastAssistantText());
+          } else {
+            await composeToAudio(text);
+          }
+        });
+      }
+
+      if (btnComposeFromLast){
+        btnComposeFromLast.addEventListener("click", async () => {
+          await composeToAudio(getLastAssistantText());
+        });
+      }
+
+      if (btnDownloadAudio){
+        btnDownloadAudio.addEventListener("click", () => {
+          if (!lastAudioBlob) return alert("No audio yet.");
+          const url = URL.createObjectURL(lastAudioBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "avatarg-compose.mp3";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(()=>{ try{ URL.revokeObjectURL(url); }catch{} }, 2000);
         });
       }
 
@@ -1312,23 +1481,19 @@
         btnSend.style.opacity = ".7";
         btnSend.style.pointerEvents = "none";
 
-        // Build user message with attachment note
         let userText = text;
         let meta = null;
 
         if (attached){
           if (attached.isImage){
-            // show in chat immediately as preview
             userText = (userText ? userText + "\n\n" : "") + attached.dataUrl;
             meta = { fileName: attached.name, fileType: attached.type, fileSize: attached.size };
           } else {
-            // include minimal descriptor (do NOT send raw file bytes to backend unless you later add server upload)
             userText = (userText ? userText + "\n\n" : "") + `[Attachment: ${attached.name} (${humanSize(attached.size)})]`;
             meta = { fileName: attached.name, fileType: attached.type, fileSize: attached.size };
           }
         }
 
-        // UI append user msg
         addMessage("user", userText || "(empty)", meta);
         prompt.value = "";
         clearAttachment();
@@ -1427,6 +1592,7 @@
           renderChat();
           log(syslog, "Chat cleared.");
           setStatus("Status: idle", "idle");
+          cleanupAudioUrl();
         });
       }
 
@@ -1442,7 +1608,6 @@
 
         const cfg = getCfg();
 
-        // Supabase init (optional)
         if (cfg.supabaseUrl && cfg.supabaseAnon){
           ensureSupabase();
           await readUser();
@@ -1465,7 +1630,6 @@
           }
         }
 
-        // API line
         if (cfg.apiBase && isValidApiBase(cfg.apiBase)){
           log(syslog, "✅ API_BASE loaded: " + safeText(cfg.apiBase));
         } else {
