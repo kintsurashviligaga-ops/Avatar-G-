@@ -1289,6 +1289,10 @@
               } else {
                 if (parsed) {
                   out = extractResponse(parsed);
+// ❌ block raw JSON output
+if (out && typeof out === "string" && out.trim().startsWith("{")) {
+  out = "⚠️ Backend returned raw JSON.\nPlease fix response format.";
+}
                 } else {
                   out = txt || "(empty response)";
                 }
