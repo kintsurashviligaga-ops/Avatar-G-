@@ -1,1719 +1,997 @@
-```html
-<!doctype html>
-<html lang="ka">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Avatar G — Workspace</title>
-  <meta name="theme-color" content="#06121a" />
-  <style>
-    :root{
-      --bg1:#06121a;
-      --bg2:#0a2533;
-      --card:rgba(0,0,0,.35);
-      --card2:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --danger:#ff4d4d;
-      --ok:#46e6a1;
-      --cyan:#22d3ee;
-      --blue:#3b82f6;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --radius2: 14px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-      background:
-        radial-gradient(1200px 800px at 20% 20%, rgba(34,211,238,.14), transparent 60%),
-        radial-gradient(900px 700px at 70% 30%, rgba(59,130,246,.12), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      overflow-x:hidden;
-    }
-    .wrap{
-      min-height:100vh;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      padding: 18px 14px 24px;
-    }
-    .panel{
-      width:min(980px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--line);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-      position:relative;
-    }
-    .top{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      padding:18px 18px 10px;
-    }
-    .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: radial-gradient(circle at 30% 30%, rgba(34,211,238,.9), rgba(59,130,246,.7));
-      box-shadow: 0 12px 30px rgba(34,211,238,.12);
-      border:1px solid rgba(255,255,255,.16);
-      flex:0 0 auto;
-    }
-    .title{
-      display:flex;flex-direction:column;line-height:1.1;
-    }
-    .title h1{
-      font-size:18px;margin:0 0 4px;font-weight:760;letter-spacing:.2px;
-    }
-    .title p{
-      margin:0;color:var(--muted);font-size:13px;
-    }
-    .chips{
-      margin-left:auto;
-      display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;
-    }
-    .chip{
-      font-size:12px;
-      color:rgba(255,255,255,.82);
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-      padding:7px 10px;border-radius:999px;
-      white-space:nowrap;
-    }
-    .chip.ok{border-color:rgba(70,230,161,.25); background:rgba(70,230,161,.08)}
-    .chip.bad{border-color:rgba(255,77,77,.25); background:rgba(255,77,77,.08)}
-    .row{
-      display:flex;
-      gap:14px;
-      padding: 10px 18px 18px;
-      flex-wrap:wrap;
-    }
-    .btn{
-      border:none;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight:700;
-      color:rgba(255,255,255,.92);
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--line);
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      display:inline-flex;gap:10px;align-items:center;
-      transition: all 0.15s ease;
-    }
-    .btn.primary{
-      background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(59,130,246,.85));
-      border: 1px solid rgba(255,255,255,.18);
-      color:#041018;
-      box-shadow: 0 12px 30px rgba(34,211,238,.18);
-    }
-    .btn.danger{
-      background: rgba(255,77,77,.10);
-      border:1px solid rgba(255,77,77,.28);
-    }
-    .btn:disabled{opacity:.5; cursor:not-allowed}
-    .btn:active:not(:disabled){transform:translateY(1px)}
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap:14px;
-      padding: 0 18px 18px;
-    }
-    @media (max-width: 860px){
-      .chips{display:none}
-    }
-    .card{
-      background: rgba(0,0,0,.22);
-      border:1px solid var(--line);
-      border-radius: var(--radius2);
-      padding:14px;
-      min-height: 220px;
-    }
-    .card h2{
-      margin:0 0 10px;
-      font-size:14px;
-      color:rgba(255,255,255,.90);
-      letter-spacing:.2px;
-    }
-    .muted{color:var(--muted);font-size:13px}
-    .klist{margin:10px 0 0; padding:0 0 0 18px; color:var(--muted); font-size:13px}
-    .klist li{margin:6px 0}
-    .log{
-      margin-top:10px;
-      background: rgba(0,0,0,.28);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 12px;
-      padding:10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      color:rgba(255,255,255,.82);
-      max-height: 160px;
-      overflow:auto;
-      white-space:pre-wrap;
-    }
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(4px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index:9999;
-    }
-    .modal{
-      width:min(720px, 100%);
-      max-height: 90vh;
-      overflow:auto;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(10,25,35,.98), rgba(6,18,26,.98));
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: 0 22px 80px rgba(0,0,0,.6);
-    }
-    .modalHead{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:14px 14px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      position:sticky;
-      top:0;
-      background: rgba(6,18,26,.95);
-      backdrop-filter: blur(8px);
-      z-index:1;
-    }
-    .modalHead h3{
-      margin:0;
-      font-size:14px;
-      font-weight:760;
-    }
-    .modalHead .x{
-      margin-left:auto;
-      width:40px;height:40px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-      color:rgba(255,255,255,.88);
-      font-size:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .modalBody{padding:14px}
-    .field{margin-bottom:12px;}
-    .label{
-      font-size:12px;
-      color:rgba(255,255,255,.75);
-      margin:0 0 6px;
-      display:block;
-    }
-    input, textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color:rgba(255,255,255,.92);
-      outline:none;
-      font-size:14px;
-      font-family: inherit;
-    }
-    input:focus, textarea:focus{
-      border-color: rgba(34,211,238,.55);
-      box-shadow: 0 0 0 3px rgba(34,211,238,.15);
-    }
-    .modalActions{
-      display:flex; gap:10px; justify-content:flex-end;
-      padding: 12px 14px 14px;
-      border-top:1px solid rgba(255,255,255,.10);
-      flex-wrap:wrap;
-    }
-    .chatBox{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height: 360px;
-    }
-    .chatHeader{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:8px;
-    }
-    .msgs{
-      flex:1;
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding: 12px;
-      overflow:auto;
-      max-height: 420px;
-    }
-    .bubble{
-      max-width: 90%;
-      padding:10px 12px;
-      border-radius: 14px;
-      margin: 8px 0;
-      border:1px solid rgba(255,255,255,.10);
-      line-height:1.35;
-      font-size:14px;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-    .me{
-      margin-left:auto;
-      background: rgba(34,211,238,.10);
-      border-color: rgba(34,211,238,.22);
-    }
-    .ai{background: rgba(255,255,255,.06);}
-    .bubble img{
-      max-width:100%;
-      border-radius:8px;
-      margin-top:6px;
-      display:block;
-    }
-    .typing{
-      display:inline-block;
-      padding:8px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:13px;
-      color:var(--muted);
-    }
-    .composer{
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-    }
-    .composer textarea{
-      min-height: 48px;
-      max-height: 140px;
-      resize: vertical;
-    }
-    .small{
-      font-size:12px;
-      color:rgba(255,255,255,.70);
-    }
-    .hint{
-      margin-top:8px;
-      padding:10px;
-      border-radius: 14px;
-      border:1px dashed rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color:rgba(255,255,255,.74);
-      font-size:12px;
-      line-height:1.4;
-    }
-    .warning{
-      margin-top:8px;
-      padding:10px;
-      border-radius: 14px;
-      border:1px solid rgba(255,193,7,.3);
-      background: rgba(255,193,7,.08);
-      color:rgba(255,240,180,.95);
-      font-size:12px;
-      line-height:1.4;
-    }
-    .statusLine{display:inline-flex; align-items:center; gap:8px;}
-    .statusDot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.35);}
-    .statusDot.idle{background:rgba(255,255,255,.35)}
-    .statusDot.sending{background:var(--cyan)}
-    .statusDot.success{background:var(--ok)}
-    .statusDot.error{background:var(--danger)}
-    .cfgBadge{
-      display:inline-flex;align-items:center;gap:8px;
-      margin-top:8px;padding:8px 10px;border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
-      font-size:12px;color:rgba(255,255,255,.78);
-    }
-    .cfgBadge.ok{border-color:rgba(70,230,161,.25);background:rgba(70,230,161,.08)}
-    .cfgBadge.bad{border-color:rgba(255,77,77,.25);background:rgba(255,77,77,.08)}
-    .jobRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      margin:8px 0;
-    }
-    .jobMeta{display:flex; flex-direction:column; gap:2px; max-width:65%;}
-    .jobTitle{font-size:13px; color:rgba(255,255,255,.9); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .jobSub{font-size:12px; color:rgba(255,255,255,.6);}
-    .badge{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-    }
-    .badge.done{border-color:rgba(70,230,161,.25); background:rgba(70,230,161,.08)}
-    .badge.processing{border-color:rgba(34,211,238,.25); background:rgba(34,211,238,.08)}
-    .badge.error{border-color:rgba(255,77,77,.25); background:rgba(255,77,77,.08)}
-    .jobBtns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-  <div class="wrap">
-    <div class="panel">
-      <div class="top">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="title">
-          <h1>Avatar G Workspace</h1>
-          <p>Production Frontend — Connect & Chat</p>
-        </div>
-        <div class="chips" id="chips">
-          <div class="chip" id="chipMode">Mode: Ready</div>
-          <div class="chip" id="chipApi">API: not set</div>
-          <div class="chip" id="chipSb">Supabase: not set</div>
-          <div class="chip" id="chipUser">User: guest</div>
-        </div>
-      </div>
-
-      <div class="row">
-        <button class="btn" id="btnSettings">⚙️ Settings</button>
-        <button class="btn" id="btnTest">🔍 Test Backend</button>
-        <button class="btn primary" id="btnConnect">🔐 Connect / Sign in</button>
-        <button class="btn danger" id="btnLogout" style="display:none">Logout</button>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h2>✅ სისტემის სტატუსი</h2>
-          <div class="muted">
-            აქ შეგიძლია:
-            <ul class="klist">
-              <li>დააყენო Supabase URL + anon key + API_BASE</li>
-              <li>შეამოწმო backend health (/api/health)</li>
-              <li>გაიარო Magic Link Login (email)</li>
-              <li>გამოიყენო Chat — რომელიც backend-ს ეძახის</li>
-            </ul>
-          </div>
-          <div class="hint">
-            ✅ <b>Tip:</b> თუ "Failed to fetch" ჩანს, ეს ხშირად არის:<br/>
-            • CORS პრობლემა (backend უნდა allow-ებდეს თქვენს frontend domain-ს)<br/>
-            • API_BASE არასწორია (უნდა იყოს: https://avatarg-backend.vercel.app)<br/>
-            • Backend offline-ია ან route არ არსებობს
-          </div>
-          <div class="log" id="syslog">[boot] Page loaded…</div>
-        </div>
-
-        <div class="card">
-          <div class="chatHeader">
-            <h2>💬 Chat</h2>
-            <button class="btn danger" id="btnClear" style="padding:8px 12px; font-size:12px">🗑 Clear</button>
-          </div>
-
-          <div class="chatBox">
-            <div class="msgs" id="msgs">
-              <div class="bubble ai">👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.</div>
-            </div>
-
-            <div class="composer">
-              <textarea id="prompt" placeholder="დაწერე მესიჯი… (Enter = send, Shift+Enter = new line)"></textarea>
-              <button class="btn primary" id="btnSend">Send</button>
-            </div>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-              <button class="btn" id="btnUseAsMusic" disabled>🎵 Use last answer → Music</button>
-              <button class="btn" id="btnEditLast" disabled>✏️ Edit last answer</button>
-            </div>
-
-            <div class="hint" id="chatHint" style="display:none">
-              ✅ ბოლო AI პასუხი გადატანილია Music prompt-ში. ახლა დააჭირე <b>Create Music Job</b>.
-            </div>
-
-            <div class="small" id="chatStatus">
-              <span class="statusLine">
-                <span class="statusDot idle" id="statusDot"></span>
-                <span id="statusText">Status: idle</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="chatHeader">
-            <h2>🎵 Music</h2>
-            <button class="btn" id="btnRefreshMusic" style="padding:8px 12px; font-size:12px">↻ Refresh</button>
-          </div>
-
-          <div class="field">
-            <label class="label" for="musicPrompt">Prompt (what to generate)</label>
-            <textarea id="musicPrompt" rows="3" placeholder="მაგ: cinematic ambient background, 15 sec, no vocals..."></textarea>
-          </div>
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn primary" id="btnCreateMusic">➕ Create Music Job</button>
-            <button class="btn" id="btnOpenStorage">📦 Open Storage</button>
-          </div>
-
-          <div class="hint">
-            ✅ Worker უნდა მუშაობდეს (შენთან უკვე მუშაობს).<br/>
-            Job შექმნის შემდეგ status გახდება: queued → processing → done და audio_path გამოჩნდება.
-          </div>
-
-          <div class="log" id="musicLog">[music] Ready…</div>
-
-          <div style="margin-top:12px;">
-            <div class="small" style="margin-bottom:6px; color:rgba(255,255,255,.70)">Latest jobs:</div>
-            <div id="musicJobs"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true">
-    <div class="modal">
-      <div class="modalHead">
-        <h3>⚙️ Connect Avatar G</h3>
-        <button class="x" id="btnClose" aria-label="Close">×</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="small" style="margin-bottom:10px">
-          Paste your config once — saved in localStorage (this browser only).
-        </div>
-
-        <div class="field">
-          <label class="label" for="sbUrl">SUPABASE_URL</label>
-          <input id="sbUrl" type="url" inputmode="url" placeholder="https://xxxx.supabase.co" autocomplete="off" />
-        </div>
-
-        <div class="field">
-          <label class="label" for="apiBase">API_BASE (backend domain)</label>
-          <input id="apiBase" type="url" inputmode="url" placeholder="https://avatarg-backend.vercel.app" autocomplete="off" />
-          <div class="cfgBadge" id="apiBadge">API_BASE: not checked</div>
-        </div>
-
-        <div class="field">
-          <label class="label" for="sbAnon">SUPABASE_ANON_KEY (public key only)</label>
-          <textarea id="sbAnon" rows="3" placeholder="eyJhbGciOi..." autocomplete="off"></textarea>
-        </div>
-
-        <div class="warning">
-          ⚠️ <b>Security Warning:</b><br/>
-          • აქ ჩასვი მხოლოდ <b>anon public key</b> (ჩვეულებრივ იწყება: <b>eyJhbGciOi</b>)<br/>
-          • <b>არასდროს ჩასვა service_role</b> — ეს არის საიდუმლო გასაღები და შეუძლია პროექტის სრულად გატეხვა<br/>
-          • ეს მნიშვნელობები ინახება მხოლოდ localStorage-ში (ამ ბრაუზერში) და არ იგზავნება სხვაგან, გარდა Supabase-ის
-        </div>
-
-        <div class="small" style="margin-top:10px">
-          Get these from: Supabase → Project Settings → API<br/>
-          API_BASE არის შენი backend HTTPS domain (მაგ: https://avatarg-backend.vercel.app)
-        </div>
-
-        <div class="log" id="cfglog">[cfg] Ready…</div>
-      </div>
-
-      <div class="modalActions">
-        <button class="btn" id="btnReset">🗑 Reset</button>
-        <button class="btn primary" id="btnSave">💾 Save & Continue</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function() {
-      "use strict";
-
-      const KEY = {
-        SUPABASE_URL: "AVATARG_SUPABASE_URL",
-        SUPABASE_ANON: "AVATARG_SUPABASE_ANON",
-        API_BASE: "AVATARG_API_BASE",
-        CHAT: "AVATARG_CHAT_LOG",
-        SEEN_CFG_HINT: "AVATARG_SEEN_CFG_HINT"
-      };
-
-      const DEFAULT_API_BASE = "https://avatarg-backend.vercel.app";
-      const CHAT_HISTORY_LIMIT = 60;
-      const CHAT_CONTEXT_TURNS = 5;
-      const TIMEOUT_HEALTH_MS = 10000;
-      const TIMEOUT_AI_MS = 30000;
-
-      const syslog = document.getElementById("syslog");
-      const cfglog = document.getElementById("cfglog");
-      const modalBack = document.getElementById("modalBack");
-      const apiBadge = document.getElementById("apiBadge");
-
-      const chipMode = document.getElementById("chipMode");
-      const chipApi = document.getElementById("chipApi");
-      const chipSb = document.getElementById("chipSb");
-      const chipUser = document.getElementById("chipUser");
-
-      const btnSettings = document.getElementById("btnSettings");
-      const btnTest = document.getElementById("btnTest");
-      const btnConnect = document.getElementById("btnConnect");
-      const btnLogout = document.getElementById("btnLogout");
-      const btnClose = document.getElementById("btnClose");
-      const btnSave = document.getElementById("btnSave");
-      const btnReset = document.getElementById("btnReset");
-      const btnClear = document.getElementById("btnClear");
-
-      const sbUrl = document.getElementById("sbUrl");
-      const sbAnon = document.getElementById("sbAnon");
-      const apiBase = document.getElementById("apiBase");
-
-      const msgs = document.getElementById("msgs");
-      const prompt = document.getElementById("prompt");
-      const btnSend = document.getElementById("btnSend");
-      const statusDot = document.getElementById("statusDot");
-      const statusText = document.getElementById("statusText");
-      const btnUseAsMusic = document.getElementById("btnUseAsMusic");
-      const btnEditLast = document.getElementById("btnEditLast");
-      const chatHint = document.getElementById("chatHint");
-
-      const musicLog = document.getElementById("musicLog");
-      const musicJobsEl = document.getElementById("musicJobs");
-      const musicPrompt = document.getElementById("musicPrompt");
-      const btnCreateMusic = document.getElementById("btnCreateMusic");
-      const btnRefreshMusic = document.getElementById("btnRefreshMusic");
-      const btnOpenStorage = document.getElementById("btnOpenStorage");
-
-      let supabaseClient = null;
-      let currentUser = null;
-      let isSending = false;
-      let chatHistory = [];
-      let lastAssistantText = "";
-      let currentAudio = null;
-
-      function safeText(str) {
-        return String(str ?? "").replace(/\0/g, "").trim();
-      }
-
-      function normalizeUrl(url) {
-        return String(url || "").trim().replace(/\/+$/, "");
-      }
-
-      function isLocalhost(u) {
-        return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(u);
-      }
-
-      function isValidApiBase(url) {
-        if (!url) return false;
-        const normalized = normalizeUrl(url);
-        try {
-          const u = new URL(normalized);
-          if (u.protocol === "https:") return true;
-          if (u.protocol === "http:" && isLocalhost(normalized)) return true;
-          return false;
-        } catch {
-          return false;
-        }
-      }
-
-      function isValidImageUrl(url) {
-        if (!url || typeof url !== "string") return false;
-        try {
-          const u = new URL(url);
-          if (u.protocol !== "https:" && !u.protocol.startsWith("data:")) return false;
-          return /\.(jpg|jpeg|png|gif|webp)$/i.test(u.pathname) || url.startsWith("data:image/");
-        } catch {
-          return url.startsWith("data:image/");
-        }
-      }
-
-      function isValidHttpUrl(url) {
-        if (!url || typeof url !== "string") return false;
-        try {
-          const u = new URL(url);
-          return u.protocol === "https:" || u.protocol === "http:";
-        } catch {
-          return false;
-        }
-      }
-
-      function setStatus(text, type = "idle") {
-        if (statusText) statusText.textContent = safeText(text);
-        if (statusDot) {
-          statusDot.classList.remove("idle","sending","success","error");
-          statusDot.classList.add(type);
-        }
-      }
-
-      function log(el, text) {
-        if (!el) return;
-        const ts = new Date().toLocaleTimeString();
-        el.textContent += "\n[" + ts + "] " + safeText(text);
-        el.scrollTop = el.scrollHeight;
-      }
-
-      function setLog(el, text) {
-        if (!el) return;
-        el.textContent = safeText(text);
-        el.scrollTop = el.scrollHeight;
-      }
-
-      function withTimeout(ms) {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), ms);
-        return { ctrl, done: () => clearTimeout(t) };
-      }
-
-      function explainFetchFailure(err, resStatus) {
-        const msg = String(err?.message || err || "").toLowerCase();
-        if (err?.name === "AbortError") {
-          return "Request Timeout — სცადე კიდევ ერთხელ ან გაამოკლე ტექსტი.";
-        }
-        if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("network")) {
-          return "Network/CORS Error — ხშირად ეს არის CORS (backend უნდა allow-ებდეს frontend domain-ს) ან API_BASE არასწორია.";
-        }
-        if (msg.includes("dns") || msg.includes("enotfound")) {
-          return "DNS Error — domain ვერ მოიძებნა. გადაამოწმე API_BASE.";
-        }
-        if (typeof resStatus === "number" && resStatus >= 400) {
-          return "Backend Error — სერვერმა დააბრუნა შეცდომა. გადაამოწმე /api/ai route და ლოგები.";
-        }
-        return "Request Failed — უცნობი შეცდომა. გადაამოწმე backend და CORS.";
-      }
-
-      function shortId(id) {
-        return String(id || "").slice(0, 8);
-      }
-
-      function tryParseJson(text) {
-        const t = String(text || "").trim();
-        if (!t) return null;
-        if (!(t.startsWith("{") || t.startsWith("["))) return null;
-        try { return JSON.parse(t); } catch { return null; }
-      }
-
-      function setLastAssistant(content) {
-        lastAssistantText = String(content || "").trim();
-
-        const ok = !!lastAssistantText && !lastAssistantText.startsWith("❌") && !lastAssistantText.startsWith("⏱️");
-        if (btnUseAsMusic) btnUseAsMusic.disabled = !ok;
-        if (btnEditLast) btnEditLast.disabled = !ok;
-      }
-
-      function buildMusicPromptFromAnswer(answer) {
-        const txt = String(answer || "").trim();
-        if (!txt) return "";
-
-        const lyricsMatch =
-          txt.match(/(?:LYRICS|Lyrics|ლირიკა|text)\s*[:\-]?\s*([\s\S]*?)(?=\n\s*(?:SONG DESCRIPTION|Description|STYLE|Prompt|დასახელება|სტილი)\s*[:\-]|$)/i);
-
-        const descMatch =
-          txt.match(/(?:SONG DESCRIPTION|Description|STYLE|Prompt|სტილი|აღწერა)\s*[:\-]?\s*([\s\S]*)$/i);
-
-        const lyrics = lyricsMatch?.[1]?.trim();
-        const desc = descMatch?.[1]?.trim();
-
-        if (lyrics || desc) {
-          return [
-            desc ? ("STYLE / DESCRIPTION:\n" + desc) : "",
-            lyrics ? ("\n\nLYRICS:\n" + lyrics) : ""
-          ].join("").trim();
-        }
-
-        return txt;
-      }
-
-      function getCfg() {
-        const storedApi = normalizeUrl(localStorage.getItem(KEY.API_BASE) || "");
-        const api = storedApi ? storedApi : DEFAULT_API_BASE;
-        return {
-          supabaseUrl: normalizeUrl(localStorage.getItem(KEY.SUPABASE_URL) || ""),
-          supabaseAnon: (localStorage.getItem(KEY.SUPABASE_ANON) || "").trim(),
-          apiBase: normalizeUrl(api)
-        };
-      }
-
-      function saveCfg(cfg) {
-        localStorage.setItem(KEY.SUPABASE_URL, normalizeUrl(cfg.supabaseUrl || ""));
-        localStorage.setItem(KEY.SUPABASE_ANON, (cfg.supabaseAnon || "").trim());
-        localStorage.setItem(KEY.API_BASE, normalizeUrl(cfg.apiBase || DEFAULT_API_BASE));
-      }
-
-      function resetCfg() {
-        localStorage.removeItem(KEY.SUPABASE_URL);
-        localStorage.removeItem(KEY.SUPABASE_ANON);
-        localStorage.removeItem(KEY.API_BASE);
-      }
-
-      function updateApiBadge() {
-        if (!apiBadge || !apiBase) return;
-        const val = normalizeUrl(apiBase.value);
-        apiBadge.classList.remove("ok","bad");
-        if (!val) {
-          apiBadge.textContent = "API_BASE: empty (will use default)";
-          return;
-        }
-        if (isValidApiBase(val)) {
-          apiBadge.textContent = "API_BASE: ✓ valid";
-          apiBadge.classList.add("ok");
-        } else {
-          apiBadge.textContent = "API_BASE: ✕ invalid (https:// required, except http://localhost)";
-          apiBadge.classList.add("bad");
-        }
-      }
-
-      function updateChips() {
-        const cfg = getCfg();
-
-        if (chipMode) {
-          chipMode.textContent = currentUser ? "Mode: Authenticated" : "Mode: Ready";
-          chipMode.classList.toggle("ok", !!currentUser);
-        }
-
-        if (chipApi) {
-          if (cfg.apiBase && isValidApiBase(cfg.apiBase)) {
-            chipApi.textContent = "API: ✓";
-            chipApi.classList.add("ok");
-            chipApi.classList.remove("bad");
-          } else {
-            chipApi.textContent = "API: not set";
-            chipApi.classList.remove("ok");
-            chipApi.classList.add(cfg.apiBase ? "bad" : "");
-          }
-        }
-
-        if (chipSb) {
-          if (cfg.supabaseUrl && cfg.supabaseAnon) {
-            chipSb.textContent = "Supabase: ✓";
-            chipSb.classList.add("ok");
-            chipSb.classList.remove("bad");
-          } else {
-            chipSb.textContent = "Supabase: not set";
-            chipSb.classList.remove("ok");
-            chipSb.classList.remove("bad");
-          }
-        }
-
-        if (chipUser) {
-          if (currentUser?.email) {
-            chipUser.textContent = "User: " + safeText(currentUser.email.split("@")[0]);
-            chipUser.classList.add("ok");
-            if (btnLogout) btnLogout.style.display = "inline-flex";
-            if (btnConnect) btnConnect.textContent = "🔐 Re-connect";
-          } else {
-            chipUser.textContent = "User: guest";
-            chipUser.classList.remove("ok");
-            if (btnLogout) btnLogout.style.display = "none";
-            if (btnConnect) btnConnect.textContent = "🔐 Connect / Sign in";
-          }
-        }
-      }
-
-      function openModal() {
-        const cfg = getCfg();
-        if (sbUrl) sbUrl.value = cfg.supabaseUrl;
-        if (sbAnon) sbAnon.value = cfg.supabaseAnon;
-        if (apiBase) apiBase.value = cfg.apiBase || DEFAULT_API_BASE;
-
-        setLog(cfglog, "[cfg] Paste values and Save…");
-        updateApiBadge();
-
-        if (modalBack) modalBack.style.display = "flex";
-        setTimeout(() => sbUrl && sbUrl.focus(), 120);
-      }
-
-      function closeModal() {
-        if (modalBack) modalBack.style.display = "none";
-      }
-
-      if (btnSettings) btnSettings.addEventListener("click", openModal);
-      if (btnClose) btnClose.addEventListener("click", closeModal);
-      if (modalBack) {
-        modalBack.addEventListener("click", (e) => {
-          if (e.target === modalBack) closeModal();
-        });
-      }
-      if (apiBase) apiBase.addEventListener("input", updateApiBadge);
-
-      if (btnSave) {
-        btnSave.addEventListener("click", () => {
-          const cfg = {
-            supabaseUrl: sbUrl ? sbUrl.value.trim() : "",
-            supabaseAnon: sbAnon ? sbAnon.value.trim() : "",
-            apiBase: apiBase ? apiBase.value.trim() : ""
-          };
-
-          const normalizedApi = normalizeUrl(cfg.apiBase);
-          if (normalizedApi && !isValidApiBase(normalizedApi)) {
-            setLog(cfglog, "❌ API_BASE must be https:// (or http://localhost for testing)");
-            return;
-          }
-          cfg.apiBase = normalizedApi || DEFAULT_API_BASE;
-
-          if (cfg.supabaseUrl && !cfg.supabaseUrl.includes("supabase")) {
-            log(cfglog, "⚠️ SUPABASE_URL doesn't look like a Supabase domain");
-          }
-
-          if (cfg.supabaseAnon) {
-            if (cfg.supabaseAnon.length < 100) {
-              log(cfglog, "⚠️ SUPABASE_ANON_KEY looks too short");
-            }
-            if (cfg.supabaseAnon.toLowerCase().includes("service_role")) {
-              setLog(cfglog, "❌ DANGER: This looks like a service_role key! Only use anon key here.");
-              return;
-            }
-          }
-
-          saveCfg(cfg);
-          supabaseClient = null;
-
-          setLog(cfglog, "✅ Config saved! Close and test backend.");
-          log(syslog, "Config saved.");
-          updateChips();
-          setTimeout(closeModal, 650);
-        });
-      }
-
-      if (btnReset) {
-        btnReset.addEventListener("click", () => {
-          if (!confirm("Reset all config? This will clear Supabase + API_BASE settings.")) return;
-          resetCfg();
-          supabaseClient = null;
-          currentUser = null;
-          updateChips();
-          setLog(cfglog, "✅ Config reset.");
-          log(syslog, "Config reset.");
-          if (sbUrl) sbUrl.value = "";
-          if (sbAnon) sbAnon.value = "";
-          if (apiBase) apiBase.value = "";
-          updateApiBadge();
-        });
-      }
-
-      function ensureSupabase() {
-        const cfg = getCfg();
-        if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
-          log(syslog, "⚠️ Supabase not configured. Open Settings.");
-          if (chipSb) chipSb.classList.add("bad");
-          return null;
-        }
-
-        if (!window.supabase || typeof window.supabase.createClient !== "function") {
-          log(syslog, "❌ Supabase SDK not loaded (CDN issue). Refresh or try another network.");
-          return null;
-        }
-
-        if (!supabaseClient) {
-          try {
-            supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnon, {
-              auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-              }
-            });
-            log(syslog, "✅ Supabase client initialized.");
-          } catch (e) {
-            log(syslog, "❌ Supabase init error: " + safeText(e?.message || e));
-            return null;
-          }
-        }
-
-        return supabaseClient;
-      }
-
-      async function readUser() {
-        const sb = ensureSupabase();
-        if (!sb) return null;
-
-        try {
-          const { data, error } = await sb.auth.getUser();
-          if (error) throw error;
-          currentUser = data?.user || null;
-          updateChips();
-          if (currentUser?.email) {
-            log(syslog, "✅ Signed in as: " + safeText(currentUser.email));
-          }
-          return currentUser;
-        } catch (e) {
-          log(syslog, "Auth check error: " + safeText(e?.message || e));
-          currentUser = null;
-          updateChips();
-          return null;
-        }
-      }
-
-      async function magicLinkLogin() {
-        const sb = ensureSupabase();
-        if (!sb) {
-          openModal();
-          return;
-        }
-
-        const email = window.prompt("Enter your email for Magic Link login:");
-        if (!email || !email.includes("@")) {
-          if (email) alert("Invalid email format");
-          return;
-        }
-
-        try {
-          log(syslog, "📧 Sending magic link to: " + safeText(email));
-          const redirectTo = window.location.href.split("?")[0].split("#")[0];
-
-          const { error } = await sb.auth.signInWithOtp({
-            email: email.trim(),
-            options: { emailRedirectTo: redirectTo }
-          });
-
-          if (error) throw error;
-          log(syslog, "✅ Magic link sent! Check your email inbox.");
-          alert("✅ Magic link sent!\n\nCheck your email and click the link.\nMake sure to open it in THIS browser.");
-        } catch (e) {
-          log(syslog, "❌ Login error: " + safeText(e?.message || e));
-          alert("Login failed: " + safeText(e?.message || e));
-        }
-      }
-
-      async function logout() {
-        const sb = ensureSupabase();
-        if (!sb) return;
-
-        try {
-          await sb.auth.signOut();
-          currentUser = null;
-          updateChips();
-          log(syslog, "✅ Signed out.");
-        } catch (e) {
-          log(syslog, "Sign out error: " + safeText(e?.message || e));
-        }
-      }
-
-      if (btnConnect) {
-        btnConnect.addEventListener("click", async () => {
-          const cfg = getCfg();
-          if (!cfg.supabaseUrl || !cfg.supabaseAnon) {
-            openModal();
-            return;
-          }
-          await magicLinkLogin();
-        });
-      }
-      if (btnLogout) btnLogout.addEventListener("click", logout);
-
-      async function testBackend() {
-        const cfg = getCfg();
-        const base = normalizeUrl(cfg.apiBase || "");
-
-        if (!base || !isValidApiBase(base)) {
-          log(syslog, "⚠️ API_BASE invalid. Open Settings.");
-          if (chipApi) chipApi.classList.add("bad");
-          openModal();
-          return;
-        }
-
-        const url = base + "/api/health";
-        const { ctrl, done } = withTimeout(TIMEOUT_HEALTH_MS);
-
-        try {
-          log(syslog, "🔍 Testing: " + safeText(url));
-          const res = await fetch(url, { method: "GET", signal: ctrl.signal, cache: "no-store" });
-          done();
-
-          const text = await res.text().catch(() => "");
-          if (!res.ok) {
-            if (chipApi) { chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
-            const hint = explainFetchFailure(null, res.status);
-            log(syslog, "❌ Backend error: HTTP " + res.status + " — " + safeText(text.substring(0, 200)));
-            alert("Backend Error\nHTTP " + res.status + "\n\n" + hint + "\n\nCheck CORS + route: /api/health");
-            return;
-          }
-
-          if (chipApi) { chipApi.classList.add("ok"); chipApi.classList.remove("bad"); }
-          log(syslog, "✅ Backend OK: " + safeText(text.substring(0, 150)));
-          alert("✅ Backend is online!\n\n" + safeText(text.substring(0, 200)));
-        } catch (e) {
-          done();
-          if (chipApi) { chipApi.classList.add("bad"); chipApi.classList.remove("ok"); }
-          const hint = explainFetchFailure(e);
-          log(syslog, "❌ Backend test failed: " + safeText(hint));
-          alert("Backend Test Failed\n\n" + hint + "\n\nCommon causes:\n• CORS not configured\n• Wrong API_BASE URL\n• Backend offline");
-        }
-      }
-
-      if (btnTest) btnTest.addEventListener("click", testBackend);
-
-      function loadChat() {
-        try {
-          const raw = localStorage.getItem(KEY.CHAT);
-          if (!raw) return;
-          const arr = JSON.parse(raw);
-          if (Array.isArray(arr)) {
-            chatHistory = arr
-              .filter(x => x && (x.role === "user" || x.role === "assistant") && typeof x.content === "string")
-              .slice(-CHAT_HISTORY_LIMIT);
-          }
-        } catch {
-        }
-      }
-
-      function persistChat() {
-        try {
-          localStorage.setItem(KEY.CHAT, JSON.stringify(chatHistory.slice(-CHAT_HISTORY_LIMIT)));
-        } catch {
-        }
-      }
-
-      function renderChat() {
-        if (!msgs) return;
-        msgs.innerHTML = "";
-        if (!chatHistory.length) {
-          const hello = document.createElement("div");
-          hello.className = "bubble ai";
-          hello.textContent = "👋 გამარჯობა! გააქტიურე backend connection და დაიწყე ჩატი.";
-          msgs.appendChild(hello);
-          msgs.scrollTop = msgs.scrollHeight;
-          return;
-        }
-        for (const m of chatHistory) {
-          appendBubble(m.role, m.content);
-        }
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function appendBubble(role, content) {
-        if (!msgs) return;
-
-        const div = document.createElement("div");
-        div.className = "bubble " + (role === "user" ? "me" : "ai");
-
-        const text = String(content ?? "");
-        
-        const imageMatch = text.match(/(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)|data:image\/[^;]+;base64,[^\s]+)/i);
-
-        if (imageMatch && isValidImageUrl(imageMatch[0])) {
-          const url = imageMatch[0];
-          const parts = text.split(url);
-
-          const head = (parts[0] || "").trim();
-          if (head) {
-            const headNode = document.createTextNode(head);
-            div.appendChild(headNode);
-          }
-
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "Image";
-          img.loading = "lazy";
-          div.appendChild(img);
-
-          const tail = (parts[1] || "").trim();
-          if (tail) {
-            div.appendChild(document.createTextNode("\n" + tail));
-          }
-        } else {
-          div.textContent = text;
-        }
-
-        msgs.appendChild(div);
-      }
-
-      function addMessage(role, content) {
-        chatHistory.push({ role, content: String(content ?? "") });
-        if (chatHistory.length > CHAT_HISTORY_LIMIT) {
-          chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
-        }
-        persistChat();
-        appendBubble(role, content);
-        if (role === "assistant") {
-          setLastAssistant(content);
-        }
-        if (msgs) msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function buildChatContext() {
-        const maxItems = CHAT_CONTEXT_TURNS * 2;
-        return chatHistory.slice(-maxItems).map(m => ({
-          role: m.role,
-          content: String(m.content || "").trim()
-        })).filter(m => m.content);
-      }
-
-      function showTyping() {
-        if (!msgs) return;
-        hideTyping();
-        const typing = document.createElement("div");
-        typing.className = "typing";
-        typing.id = "typing";
-        typing.textContent = "⏳ typing...";
-        msgs.appendChild(typing);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function hideTyping() {
-        const typing = document.getElementById("typing");
-        if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-      }
-
-      function extractResponse(data) {
-        if (!data) return "(empty)";
-
-        if (data?.ok === true && data?.result) {
-          data = data.result;
-        }
-
-        if (typeof data === "string") return data;
-
-        if (data?.text) return String(data.text);
-        if (data?.reply) return String(data.reply);
-        if (data?.message) return String(data.message);
-        if (data?.output) return String(data.output);
-
-        if (data?.choices?.[0]?.message?.content) {
-          return String(data.choices[0].message.content);
-        }
-
-        if (data?.choices?.[0]?.text) {
-          return String(data.choices[0].text);
-        }
-
-        if (data?.data?.choices?.[0]?.message?.content) {
-          return String(data.data.choices[0].message.content);
-        }
-
-        if (Array.isArray(data?.content)) {
-          const textBlock = data.content.find(x => x?.text);
-          if (textBlock?.text) return String(textBlock.text);
-        }
-
-        if (data?.imageUrl && isValidImageUrl(data.imageUrl)) {
-          return "Generated image:\n" + data.imageUrl;
-        }
-        if (Array.isArray(data?.images) && data.images.length > 0) {
-          const urls = data.images.filter(isValidImageUrl);
-          if (urls.length) return "Generated images:\n" + urls.join("\n");
-        }
-
-        try {
-          return JSON.stringify(data, null, 2);
-        } catch {
-          return String(data);
-        }
-      }
-
-      async function sendChat() {
-        if (isSending || !prompt || !btnSend) return;
-
-        const cfg = getCfg();
-        const text = (prompt.value || "").trim();
-        if (!text) return;
-
-        const base = normalizeUrl(cfg.apiBase || "");
-        if (!base || !isValidApiBase(base)) {
-          addMessage("assistant", "❌ API_BASE არ არის სწორად დაყენებული.\n\nგახსენი Settings და ჩასვი backend domain (https://...).");
-          openModal();
-          return;
-        }
-
-        isSending = true;
-        btnSend.disabled = true;
-
-        addMessage("user", text);
-        prompt.value = "";
-
-        setStatus("Status: sending...", "sending");
-        showTyping();
-
-        const context = buildChatContext();
-        const payload = {
-          message: text,
-          messages: context.length ? context : undefined,
-          client: "AvatarG-Workspace-v3",
-          user: currentUser?.email || null,
-          timestamp: new Date().toISOString()
-        };
-
-        const streamUrl = base + "/api/chat/stream";
-        const regularUrl = base + "/api/ai";
-
-        try {
-          const streamRes = await fetch(streamUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          if (streamRes.ok && streamRes.headers.get("content-type")?.includes("text/event-stream")) {
-            hideTyping();
-            await handleStreamingResponse(streamRes);
-            setStatus("Status: success ✓", "success");
-          } else {
-            throw new Error("Streaming not available");
-          }
-        } catch (streamErr) {
-          hideTyping();
-          const { ctrl, done } = withTimeout(TIMEOUT_AI_MS);
-
-          try {
-            const res = await fetch(regularUrl, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
-              signal: ctrl.signal
-            });
-            done();
-
-            hideTyping();
-
-            const contentType = (res.headers.get("content-type") || "").toLowerCase();
-            let out = "";
-
-            if (contentType.includes("application/json")) {
-              const data = await res.json().catch(() => null);
-
-              if (!res.ok) {
-                const errMsg = data?.error || data?.message || ("HTTP " + res.status);
-                const hint = data?.hint ? ("\n\nHint: " + String(data.hint)) : "";
-                out = "❌ Backend Error:\n" + safeText(errMsg) + safeText(hint);
-                setStatus("Status: error", "error");
-              } else {
-                out = extractResponse(data);
-                setStatus("Status: success ✓", "success");
-              }
-            } else {
-              const txt = await res.text().catch(() => "");
-              const parsed = tryParseJson(txt);
-
-              if (!res.ok) {
-                out = "❌ Backend Error (HTTP " + res.status + "):\n" + safeText(txt.substring(0, 700));
-                setStatus("Status: error", "error");
-              } else {
-                if (parsed) {
-                  out = extractResponse(parsed);
-// ❌ block raw JSON output
-if (out && typeof out === "string" && out.trim().startsWith("{")) {
-  out = "⚠️ Backend returned raw JSON.\nPlease fix response format.";
+'use client';
+
+import React, { useMemo, useState } from 'react';
+
+/**
+ * Avatar G — Workspace (Home)
+ * File: app/page.tsx
+ * Requires: Tailwind CSS enabled (create-next-app with Tailwind)
+ * Optional: add gradient background in globals.css (I’ll give after if needed)
+ */
+
+type ServiceKey = 'avatar' | 'voice' | 'image' | 'video' | 'music' | 'production';
+
+type Service = {
+  key: ServiceKey;
+  title: string;
+  subtitle: string;
+  icon: string; // emoji placeholder (later swap to real icons)
+  accent: 'cyan' | 'emerald' | 'violet' | 'orange' | 'blue' | 'pink';
+};
+
+type AssetType = 'avatar' | 'voice' | 'image' | 'video' | 'music' | 'project';
+
+type HistoryItem = {
+  id: string;
+  createdAt: string;
+  service: ServiceKey;
+  title: string;
+  promptSummary: string;
+  status: 'ready' | 'processing' | 'error';
+};
+
+type LibraryItem = {
+  id: string;
+  type: AssetType;
+  title: string;
+  createdAt: string;
+  sizeLabel?: string;
+};
+
+type ChatMessage = {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  text: string;
+  createdAt: string;
+};
+
+const SERVICES: Service[] = [
+  {
+    key: 'avatar',
+    title: 'Avatar Builder',
+    subtitle: 'Identity • Live Camera • Style Engine',
+    icon: '👤',
+    accent: 'emerald'
+  },
+  {
+    key: 'voice',
+    title: 'Voice Lab',
+    subtitle: 'Accent • Cloning • Emotional Tone',
+    icon: '🎙️',
+    accent: 'cyan'
+  },
+  {
+    key: 'image',
+    title: 'Image Architect',
+    subtitle: '8K • Brand Kit • Lighting Control',
+    icon: '🎨',
+    accent: 'violet'
+  },
+  {
+    key: 'video',
+    title: 'Video Cine-Lab',
+    subtitle: 'Camera Path • Motion • VFX',
+    icon: '📽️',
+    accent: 'orange'
+  },
+  {
+    key: 'music',
+    title: 'Music Studio',
+    subtitle: 'BPM Sync • Genre Morph • Lyrics-to-Audio',
+    icon: '🎵',
+    accent: 'blue'
+  },
+  {
+    key: 'production',
+    title: 'AI Production',
+    subtitle: 'Timeline • Lip-Sync • One-Click Remix',
+    icon: '🎬',
+    accent: 'pink'
+  }
+];
+
+function nowLabel() {
+  const d = new Date();
+  return d.toLocaleString(undefined, {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
-                } else {
-                  out = txt || "(empty response)";
-                }
-                setStatus("Status: success ✓", "success");
-              }
-            }
 
-            addMessage("assistant", out);
-          } catch (e) {
-            done();
-            hideTyping();
+function uid(prefix = 'id') {
+  return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now()}`;
+}
 
-            if (e?.name === "AbortError") {
-              addMessage("assistant", "⏱️ Request Timeout\n\nსცადე კიდევ ერთხელ ან გაამოკლე ტექსტი.");
-              setStatus("Status: timeout", "error");
-            } else {
-              const hint = explainFetchFailure(e);
-              const rawMsg = safeText(e?.message || e);
+function accentClasses(accent: Service['accent']) {
+  // No hard colors requested by user; using Tailwind primitives with subtle accents
+  // Keep it premium & restrained.
+  switch (accent) {
+    case 'emerald':
+      return 'from-emerald-400/20 to-emerald-200/5 ring-emerald-200/20';
+    case 'cyan':
+      return 'from-cyan-400/20 to-cyan-200/5 ring-cyan-200/20';
+    case 'violet':
+      return 'from-violet-400/20 to-violet-200/5 ring-violet-200/20';
+    case 'orange':
+      return 'from-orange-400/20 to-orange-200/5 ring-orange-200/20';
+    case 'blue':
+      return 'from-blue-400/20 to-blue-200/5 ring-blue-200/20';
+    case 'pink':
+      return 'from-pink-400/20 to-pink-200/5 ring-pink-200/20';
+    default:
+      return 'from-white/10 to-white/5 ring-white/10';
+  }
+}
 
-              addMessage(
-                "assistant",
-                "❌ " + hint +
-                (rawMsg ? ("\n\nDetails: " + rawMsg) : "") +
-                "\n\nშესაძლო მიზეზები:\n• Backend offline-ია\n• CORS არ არის configured\n• Route არ არსებობს (/api/ai)\n• Timeout (ძალიან გრძელი პროცესი)"
-              );
+export default function Page() {
+  // Global App State (V2 simple local state; later swap to Zustand/Redux)
+  const [activeService, setActiveService] = useState<Service | null>(null);
+  const [chatTab, setChatTab] = useState<'chat' | 'history' | 'library'>('chat');
+  const [status, setStatus] = useState<'idle' | 'processing' | 'error'>('idle');
 
-              setStatus("Status: failed", "error");
-            }
-          }
-        } finally {
-          isSending = false;
-          if (btnSend) btnSend.disabled = false;
+  const [credits, setCredits] = useState<number>(1250);
+  const [storageUsedGb, setStorageUsedGb] = useState<number>(1.2);
+  const storageTotalGb = 5;
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
+    {
+      id: uid('m'),
+      role: 'system',
+      text: 'Welcome to Avatar G Workspace. Select a service or ask the AI Helper to build a professional prompt.',
+      createdAt: nowLabel()
+    }
+  ]);
+
+  const [history, setHistory] = useState<HistoryItem[]>(() => [
+    {
+      id: uid('h'),
+      createdAt: nowLabel(),
+      service: 'music',
+      title: 'Music: Corporate ambient (Draft)',
+      promptSummary: 'Genre: Corporate • Mood: Calm • BPM: Auto • Instrument: Synth',
+      status: 'ready'
+    },
+    {
+      id: uid('h'),
+      createdAt: nowLabel(),
+      service: 'avatar',
+      title: 'Avatar: Business male (Draft)',
+      promptSummary: 'Region: Tbilisi • Style: Business • Lighting: Soft Studio',
+      status: 'ready'
+    }
+  ]);
+
+  const [library, setLibrary] = useState<LibraryItem[]>(() => [
+    { id: uid('a'), type: 'image', title: 'Background: Modern Office', createdAt: nowLabel(), sizeLabel: '4.8MB' },
+    { id: uid('a'), type: 'voice', title: 'Voice: Tbilisi soft', createdAt: nowLabel(), sizeLabel: '2.1MB' },
+    { id: uid('a'), type: 'music', title: 'Track: Calm corporate loop', createdAt: nowLabel(), sizeLabel: '7.4MB' }
+  ]);
+
+  const filteredHistory = useMemo(() => history, [history]);
+  const filteredLibrary = useMemo(() => library, [library]);
+
+  function pushSystemLog(text: string) {
+    setMessages((prev) => [
+      ...prev,
+      { id: uid('m'), role: 'system', text, createdAt: nowLabel() }
+    ]);
+  }
+
+  function sendMessage(text: string) {
+    if (!text.trim()) return;
+    setMessages((prev) => [
+      ...prev,
+      { id: uid('m'), role: 'user', text: text.trim(), createdAt: nowLabel() }
+    ]);
+
+    // Simulated assistant response (replace with real API later)
+    setStatus('processing');
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid('m'),
+          role: 'assistant',
+          text:
+            "Got it. I can convert that into a professional prompt. Tell me: platform (Reels/TikTok/YouTube), tone (business/cinematic/fun), and language (KA/EN/RU).",
+          createdAt: nowLabel()
         }
+      ]);
+      setStatus('idle');
+    }, 650);
+  }
+
+  function simulateGenerate(service: Service) {
+    // This is UI-only: creates history + consumes credits + adds library item.
+    setStatus('processing');
+    pushSystemLog(`[boot] ${service.title}: processing request...`);
+    setCredits((c) => Math.max(0, c - 12));
+
+    setTimeout(() => {
+      const newHistory: HistoryItem = {
+        id: uid('h'),
+        createdAt: nowLabel(),
+        service: service.key,
+        title: `${service.title}: New output`,
+        promptSummary: 'Generated via Prompt Builder • (demo)',
+        status: 'ready'
+      };
+      setHistory((prev) => [newHistory, ...prev]);
+
+      const newAsset: LibraryItem = {
+        id: uid('a'),
+        type:
+          service.key === 'avatar'
+            ? 'avatar'
+            : service.key === 'voice'
+              ? 'voice'
+              : service.key === 'image'
+                ? 'image'
+                : service.key === 'video'
+                  ? 'video'
+                  : service.key === 'music'
+                    ? 'music'
+                    : 'project',
+        title: `${service.title} Output`,
+        createdAt: nowLabel(),
+        sizeLabel: '—'
+      };
+      setLibrary((prev) => [newAsset, ...prev]);
+
+      setStorageUsedGb((gb) => Math.min(storageTotalGb, +(gb + 0.05).toFixed(2)));
+      pushSystemLog(`[ok] ${service.title}: done. Saved to Library + History.`);
+      setStatus('idle');
+    }, 900);
+  }
+
+  function attachFromHistory(item: HistoryItem) {
+    pushSystemLog(`[attach] History → Chat: "${item.title}"`);
+    setChatTab('chat');
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: uid('m'),
+        role: 'system',
+        text: `Attached from History: ${item.title} — ${item.promptSummary}`,
+        createdAt: nowLabel()
       }
+    ]);
+  }
 
-      async function handleStreamingResponse(response) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let accumulatedText = "";
-
-        const bubble = document.createElement("div");
-        bubble.className = "bubble ai";
-        bubble.textContent = "";
-        msgs.appendChild(bubble);
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed || !trimmed.startsWith("data: ")) continue;
-              if (trimmed === "data: [DONE]") continue;
-
-              const jsonStr = trimmed.slice(6);
-              try {
-                const parsed = JSON.parse(jsonStr);
-                const token = parsed?.choices?.[0]?.delta?.content || "";
-                if (token) {
-                  accumulatedText += token;
-                  bubble.textContent = accumulatedText;
-                  msgs.scrollTop = msgs.scrollHeight;
-                }
-              } catch {
-              }
-            }
-          }
-
-          if (accumulatedText) {
-            chatHistory.push({ role: "assistant", content: accumulatedText });
-            if (chatHistory.length > CHAT_HISTORY_LIMIT) {
-              chatHistory = chatHistory.slice(-CHAT_HISTORY_LIMIT);
-            }
-            persistChat();
-            setLastAssistant(accumulatedText);
-          }
-        } catch (err) {
-          bubble.textContent = "❌ Streaming error: " + safeText(err?.message || err);
-        }
+  function attachFromLibrary(item: LibraryItem) {
+    pushSystemLog(`[attach] Library → Chat: "${item.title}"`);
+    setChatTab('chat');
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: uid('m'),
+        role: 'system',
+        text: `Attached from Library: ${item.type.toUpperCase()} — ${item.title}`,
+        createdAt: nowLabel()
       }
+    ]);
+  }
 
-      if (prompt) {
-        prompt.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendChat();
-          }
-        });
-      }
-      if (btnSend) btnSend.addEventListener("click", sendChat);
+  return (
+    <div className="min-h-screen text-white">
+      {/* Background */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-[#050505] via-[#071428] to-[#0a192f]" />
+      <div className="fixed inset-0 -z-10 opacity-40 [background:radial-gradient(1200px_circle_at_20%_10%,rgba(0,210,255,0.16),transparent_55%),radial-gradient(900px_circle_at_80%_35%,rgba(180,90,255,0.14),transparent_55%),radial-gradient(1100px_circle_at_60%_90%,rgba(255,120,180,0.10),transparent_60%)]" />
 
-      if (btnClear) {
-        btnClear.addEventListener("click", () => {
-          if (!confirm("Clear all chat history? This cannot be undone.")) return;
-          chatHistory = [];
-          localStorage.removeItem(KEY.CHAT);
-          renderChat();
-          log(syslog, "Chat cleared.");
-          setStatus("Status: idle", "idle");
-        });
-      }
+      <div className="mx-auto flex min-h-screen w-full max-w-[1400px] gap-4 px-4 py-4 md:px-6">
+        {/* Sidebar */}
+        <aside className="hidden w-[76px] flex-col md:flex">
+          <GlassCard className="h-full p-2">
+            <div className="flex flex-col items-center gap-3 py-2">
+              <LogoMark />
+              <div className="mt-1 h-px w-full bg-white/10" />
+              {SERVICES.map((s) => (
+                <SidebarIcon
+                  key={s.key}
+                  icon={s.icon}
+                  label={s.title}
+                  active={activeService?.key === s.key}
+                  onClick={() => {
+                    setActiveService(s);
+                    pushSystemLog(`[ui] Open service: ${s.title}`);
+                  }}
+                />
+              ))}
+            </div>
+            <div className="mt-auto px-2 pb-2">
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-2 text-center text-xs text-white/70">
+                <div className="font-semibold text-white/90">API</div>
+                <div className="mt-1">
+                  <span className="inline-flex items-center gap-1">
+                    <span
+                      className={[
+                        'h-2 w-2 rounded-full',
+                        status === 'idle' ? 'bg-emerald-400' : status === 'processing' ? 'bg-cyan-300' : 'bg-rose-400'
+                      ].join(' ')}
+                    />
+                    {status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
+        </aside>
 
-      if (btnUseAsMusic) {
-        btnUseAsMusic.addEventListener("click", () => {
-          const built = buildMusicPromptFromAnswer(lastAssistantText);
-          if (!built) return;
+        {/* Main Column */}
+        <main className="flex min-w-0 flex-1 flex-col gap-4">
+          {/* Top Bar */}
+          <GlassCard className="px-4 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="md:hidden">
+                  <LogoMark />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold tracking-wide text-white/90">Avatar G — AI Workspace</div>
+                  <div className="text-xs text-white/55">The Neural Station • Glass UI • Silver Borders • Live Helper</div>
+                </div>
+              </div>
 
-          if (musicPrompt) musicPrompt.value = built;
+              <div className="flex items-center gap-2">
+                <StatPill label="Credits" value={`${credits} CR`} />
+                <StatPill
+                  label="Storage"
+                  value={`${storageUsedGb.toFixed(1)}GB / ${storageTotalGb}GB`}
+                />
+                <button
+                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+                  onClick={() => {
+                    pushSystemLog('[ui] Open: Global Library');
+                    setChatTab('library');
+                  }}
+                >
+                  Open Library
+                </button>
+              </div>
+            </div>
+          </GlassCard>
 
-          if (chatHint) {
-            chatHint.style.display = "block";
-            setTimeout(() => { chatHint.style.display = "none"; }, 3500);
-          }
+          {/* Workspace Grid */}
+          <div className="grid gap-4 lg:grid-cols-[1fr_420px]">
+            <div className="min-w-0">
+              <GlassCard className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-lg font-semibold">Workspace Grid</div>
+                    <div className="text-sm text-white/60">
+                      Pick a service. Each service has Prompt Builder + Library + Generate/View/Play/Download/Upload.
+                    </div>
+                  </div>
 
-          if (musicPrompt) musicPrompt.scrollIntoView({ behavior: "smooth", block: "center" });
-        });
-      }
+                  <button
+                    className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+                    onClick={() => {
+                      setActiveService(null);
+                      pushSystemLog('[ui] Closed service overlay');
+                    }}
+                  >
+                    Close Overlay
+                  </button>
+                </div>
 
-      if (btnEditLast) {
-        btnEditLast.addEventListener("click", () => {
-          if (!lastAssistantText) return;
-          const edited = window.prompt("Edit last AI answer:", lastAssistantText);
-          if (edited == null) return;
-          for (let i = chatHistory.length - 1; i >= 0; i--) {
-            if (chatHistory[i].role === "assistant") {
-              chatHistory[i].content = String(edited);
-              break;
-            }
-          }
-          persistChat();
-          renderChat();
-          setLastAssistant(edited);
-        });
-      }
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {SERVICES.map((s) => (
+                    <ServiceCard
+                      key={s.key}
+                      service={s}
+                      onOpen={() => {
+                        setActiveService(s);
+                        pushSystemLog(`[ui] Open service: ${s.title}`);
+                      }}
+                    />
+                  ))}
+                </div>
 
-      function musicLogLine(text) {
-        log(musicLog, text);
-      }
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <GlassCard className="p-4">
+                    <div className="text-sm font-semibold text-white/85">Smart Templates</div>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                      <QuickTemplate
+                        title="Business Promo"
+                        onClick={() => sendMessage('Build a Business Promo prompt pack: avatar + voice + background + music.')}
+                      />
+                      <QuickTemplate
+                        title="Holiday Greeting"
+                        onClick={() => sendMessage('Create a Holiday Greeting template: warm tone, festive visuals, short 9:16.')}
+                      />
+                      <QuickTemplate
+                        title="Breaking News"
+                        onClick={() => sendMessage('Generate a Breaking News style prompt: studio look, confident voice, captions.')}
+                      />
+                      <QuickTemplate
+                        title="Surprise Me"
+                        onClick={() => sendMessage('Auto-fill the best settings for a premium cinematic ad in Georgian.')}
+                      />
+                    </div>
+                  </GlassCard>
 
-      async function ensureMusicReady() {
-        const sb = ensureSupabase();
-        if (!sb) {
-          addMessage("assistant", "⚠️ Music: ჯერ Supabase config არ არის დაყენებული. Settings-ში ჩასვი URL + anon key.");
-          openModal();
-          return null;
-        }
-        await readUser();
-        return sb;
-      }
+                  <GlassCard className="p-4">
+                    <div className="text-sm font-semibold text-white/85">System Console</div>
+                    <div className="mt-2 text-xs text-white/60">
+                      Live logs appear here and in Chat. This will later mirror backend job statuses.
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <MiniBadge text={`Status: ${status}`} />
+                      <MiniBadge text="Realtime: Supabase (later)" />
+                      <MiniBadge text="Drag & Drop: enabled (UI)" />
+                      <MiniBadge text="Modal services: overlay" />
+                    </div>
+                  </GlassCard>
+                </div>
+              </GlassCard>
+            </div>
 
-      async function createMusicJob() {
-        const sb = await ensureMusicReady();
-        if (!sb) return;
+            {/* Persistent Chat Dock */}
+            <ChatDock
+              tab={chatTab}
+              setTab={setChatTab}
+              status={status}
+              messages={messages}
+              history={filteredHistory}
+              library={filteredLibrary}
+              onSend={sendMessage}
+              onAttachHistory={attachFromHistory}
+              onAttachLibrary={attachFromLibrary}
+            />
+          </div>
+        </main>
+      </div>
 
-        const promptText = (musicPrompt?.value || "").trim();
-        if (!promptText) {
-          musicLogLine("❌ Prompt empty. ჩაწერე რა მუსიკა გინდა.");
-          return;
-        }
+      {/* Service Overlay Modal */}
+      {activeService && (
+        <Modal onClose={() => setActiveService(null)}>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-lg font-semibold">{activeService.title}</div>
+                <div className="text-sm text-white/60">{activeService.subtitle}</div>
+              </div>
+              <button
+                className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+                onClick={() => setActiveService(null)}
+              >
+                Close
+              </button>
+            </div>
 
-        btnCreateMusic.disabled = true;
-        try {
-          const { data, error } = await sb
-            .from("music_jobs")
-            .insert({
-              prompt: promptText,
-              status: "queued",
-              created_at: new Date().toISOString()
-            })
-            .select("id, status, prompt, audio_path")
-            .single();
+            <div className="grid gap-3 lg:grid-cols-2">
+              <GlassCard className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-semibold text-white/85">Prompt Builder</div>
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+                    Demo UI
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-2">
+                  <Field label="Goal">
+                    <select className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none">
+                      <option>Professional Ad</option>
+                      <option>Social Short</option>
+                      <option>Corporate Explainer</option>
+                      <option>Creative Story</option>
+                    </select>
+                  </Field>
+                  <Field label="Tone">
+                    <select className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none">
+                      <option>Premium</option>
+                      <option>Cinematic</option>
+                      <option>Friendly</option>
+                      <option>Bold</option>
+                    </select>
+                  </Field>
+                  <Field label="Language">
+                    <select className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none">
+                      <option>Georgian (KA)</option>
+                      <option>English (EN)</option>
+                      <option>Russian (RU)</option>
+                    </select>
+                  </Field>
+                  <Field label="Notes (optional)">
+                    <textarea
+                      className="min-h-[90px] w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none"
+                      placeholder="Describe your idea…"
+                    />
+                  </Field>
+                </div>
 
-          if (error) throw error;
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <PrimaryButton
+                    onClick={() => {
+                      simulateGenerate(activeService);
+                      setChatTab('history');
+                    }}
+                    label="Generate"
+                  />
+                  <GhostButton
+                    onClick={() => {
+                      pushSystemLog(`[insert] Prompt → Chat: ${activeService.title} (demo)`);
+                      setChatTab('chat');
+                      setMessages((prev) => [
+                        ...prev,
+                        {
+                          id: uid('m'),
+                          role: 'system',
+                          text: `Insert to Chat: ${activeService.title} prompt (demo)`,
+                          createdAt: nowLabel()
+                        }
+                      ]);
+                    }}
+                    label="Insert to Chat"
+                  />
+                  <GhostButton
+                    onClick={() => pushSystemLog(`[upload] ${activeService.title}: upload requested (demo)`)}
+                    label="Upload / Drag & Drop"
+                  />
+                </div>
+              </GlassCard>
 
-          musicLogLine("✅ Job created: " + data.id);
-          musicPrompt.value = "";
-          await refreshMusicJobs();
-        } catch (e) {
-          musicLogLine("❌ Create job error: " + safeText(e?.message || e));
-        } finally {
-          btnCreateMusic.disabled = false;
-        }
-      }
+              <GlassCard className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-semibold text-white/85">Library</div>
+                  <span className="text-xs text-white/60">View • Play • Download • Attach</span>
+                </div>
+                <div className="mt-3 space-y-2">
+                  {filteredLibrary.slice(0, 6).map((it) => (
+                    <LibraryRow
+                      key={it.id}
+                      item={it}
+                      onAttach={() => attachFromLibrary(it)}
+                      onDownload={() => pushSystemLog(`[download] ${it.title} (demo)`)}
+                      onView={() => pushSystemLog(`[view] ${it.title} (demo)`)}
+                    />
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <GhostButton onClick={() => setChatTab('library')} label="Open Global Library" />
+                  <GhostButton onClick={() => setChatTab('history')} label="Open History" />
+                </div>
+              </GlassCard>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
 
-      async function getSignedAudioUrl(audio_path) {
-        if (!audio_path || typeof audio_path !== "string") {
-          throw new Error("Invalid audio_path");
-        }
+/* ---------------------------
+   UI Components (single-file)
+---------------------------- */
 
-        const cfg = getCfg();
-        const base = normalizeUrl(cfg.apiBase || "");
-        if (!base || !isValidApiBase(base)) {
-          throw new Error("API_BASE not set. Open Settings and set backend domain.");
-        }
+function GlassCard({ className = '', children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div
+      className={[
+        'rounded-2xl border border-white/15 bg-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-[20px]',
+        // "silver metallic border" vibe:
+        'ring-1 ring-white/10',
+        className
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  );
+}
 
-        const pathStr = String(audio_path).trim();
-        const isUrl = pathStr.startsWith("http://") || pathStr.startsWith("https://") || pathStr.startsWith("data:");
+function LogoMark() {
+  return (
+    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-lg shadow-inner">
+      🤖
+    </div>
+  );
+}
 
-        const url = base + "/api/music/signed-url";
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            audio_path: pathStr,
-            is_url: isUrl
-          })
-        });
+function SidebarIcon({
+  icon,
+  label,
+  active,
+  onClick
+}: {
+  icon: string;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      title={label}
+      onClick={onClick}
+      className={[
+        'flex h-11 w-11 items-center justify-center rounded-2xl border transition',
+        active ? 'border-white/30 bg-white/10' : 'border-white/10 bg-white/5 hover:bg-white/10'
+      ].join(' ')}
+    >
+      <span className="text-lg">{icon}</span>
+    </button>
+  );
+}
 
-        const data = await res.json().catch(() => null);
-        if (!res.ok) throw new Error(data?.error || ("HTTP " + res.status));
-        if (!data?.signedUrl) throw new Error("No signedUrl returned");
+function StatPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/15 bg-white/5 px-3 py-2">
+      <div className="text-[10px] uppercase tracking-wider text-white/50">{label}</div>
+      <div className="text-xs font-semibold text-white/85">{value}</div>
+    </div>
+  );
+}
 
-        if (!isValidHttpUrl(data.signedUrl)) {
-          throw new Error("Invalid signedUrl returned from backend");
-        }
+function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void }) {
+  const ring = accentClasses(service.accent);
+  return (
+    <button
+      onClick={onOpen}
+      className={[
+        'group relative overflow-hidden rounded-2xl border border-white/15 bg-white/5 p-4 text-left transition',
+        'hover:bg-white/10'
+      ].join(' ')}
+    >
+      <div className={['pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition group-hover:opacity-100', ring].join(' ')} />
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-xl">
+            {service.icon}
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white/90">{service.title}</div>
+            <div className="text-xs text-white/55">{service.subtitle}</div>
+          </div>
+        </div>
+        <span className="relative mt-1 rounded-full border border-white/15 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+          Open
+        </span>
+      </div>
 
-        return data.signedUrl;
-      }
+      <div className="relative mt-3 flex flex-wrap gap-2">
+        <MiniBadge text="Prompt Builder" />
+        <MiniBadge text="Library" />
+        <MiniBadge text="Generate" />
+        <MiniBadge text="Upload" />
+      </div>
+    </button>
+  );
+}
 
-      async function refreshMusicJobs() {
-        const sb = await ensureMusicReady();
-        if (!sb) return;
+function MiniBadge({ text }: { text: string }) {
+  return (
+    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/65">
+      {text}
+    </span>
+  );
+}
 
-        if (musicJobsEl) musicJobsEl.innerHTML = "";
-        musicLogLine("↻ Loading jobs...");
+function QuickTemplate({ title, onClick }: { title: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:bg-white/10"
+    >
+      {title}
+    </button>
+  );
+}
 
-        try {
-          const { data, error } = await sb
-            .from("music_jobs")
-            .select("id, status, prompt, audio_path, created_at, error_message")
-            .order("created_at", { ascending: false })
-            .limit(10);
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <button
+        aria-label="Close overlay"
+        className="absolute inset-0 bg-black/60"
+        onClick={onClose}
+      />
+      <div className="relative w-full max-w-4xl">
+        <GlassCard className="p-5">{children}</GlassCard>
+      </div>
+    </div>
+  );
+}
 
-          if (error) throw error;
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="grid gap-1">
+      <div className="text-xs font-semibold text-white/70">{label}</div>
+      {children}
+    </div>
+  );
+}
 
-          if (!data || data.length === 0) {
-            musicJobsEl.innerHTML = `<div class="small" style="color:rgba(255,255,255,.65)">No jobs yet.</div>`;
-            musicLogLine("No jobs found.");
-            return;
-          }
+function PrimaryButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        'rounded-xl px-4 py-2 text-sm font-semibold',
+        'bg-gradient-to-r from-cyan-400/80 to-blue-500/80',
+        'border border-white/15 hover:brightness-110'
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  );
+}
 
-          for (const job of data) {
-            const row = document.createElement("div");
-            row.className = "jobRow";
+function GhostButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10"
+    >
+      {label}
+    </button>
+  );
+}
 
-            const meta = document.createElement("div");
-            meta.className = "jobMeta";
+/* ---------------------------
+   Chat Dock (Live / History / Library)
+---------------------------- */
 
-            const title = document.createElement("div");
-            title.className = "jobTitle";
-            title.textContent = job.prompt || "(no prompt)";
+function ChatDock(props: {
+  tab: 'chat' | 'history' | 'library';
+  setTab: (t: 'chat' | 'history' | 'library') => void;
+  status: 'idle' | 'processing' | 'error';
+  messages: ChatMessage[];
+  history: HistoryItem[];
+  library: LibraryItem[];
+  onSend: (text: string) => void;
+  onAttachHistory: (item: HistoryItem) => void;
+  onAttachLibrary: (item: LibraryItem) => void;
+}) {
+  const { tab, setTab, status, messages, history, library, onSend, onAttachHistory, onAttachLibrary } = props;
+  const [draft, setDraft] = useState('');
 
-            const sub = document.createElement("div");
-            sub.className = "jobSub";
-            sub.textContent = `id: ${shortId(job.id)}  •  ${job.created_at ? new Date(job.created_at).toLocaleString() : ""}`;
+  return (
+    <GlassCard className="min-w-0 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-semibold text-white/90">AI Helper</div>
+          <div className="text-xs text-white/55">Persistent assistant • logs • attachments</div>
+        </div>
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/70">
+          <span
+            className={[
+              'h-2 w-2 rounded-full',
+              status === 'idle' ? 'bg-emerald-400' : status === 'processing' ? 'bg-cyan-300' : 'bg-rose-400'
+            ].join(' ')}
+          />
+          {status}
+        </span>
+      </div>
 
-            meta.appendChild(title);
-            meta.appendChild(sub);
+      <div className="mt-3 flex gap-2">
+        <TabButton active={tab === 'chat'} onClick={() => setTab('chat')} label="Live Chat" />
+        <TabButton active={tab === 'history'} onClick={() => setTab('history')} label="History" />
+        <TabButton active={tab === 'library'} onClick={() => setTab('library')} label="Library" />
+      </div>
 
-            const right = document.createElement("div");
-            right.style.display = "flex";
-            right.style.flexDirection = "column";
-            right.style.gap = "8px";
-            right.style.alignItems = "flex-end";
+      <div className="mt-3 min-h-[420px]">
+        {tab === 'chat' && (
+          <div className="flex h-[420px] flex-col">
+            <div className="flex-1 space-y-2 overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
+              {messages.map((m) => (
+                <ChatBubble key={m.id} msg={m} />
+              ))}
+            </div>
 
-            const badge = document.createElement("div");
-            badge.className = "badge " + (job.status || "");
-            badge.textContent = job.status || "unknown";
+            <div className="mt-3 flex gap-2">
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Ask AI Helper… (e.g., build a pro prompt for a 9:16 ad)"
+                className="flex-1 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none placeholder:text-white/40"
+              />
+              <button
+                onClick={() => {
+                  onSend(draft);
+                  setDraft('');
+                }}
+                className="rounded-xl border border-white/15 bg-gradient-to-r from-cyan-400/80 to-blue-500/80 px-4 py-2 text-sm font-semibold hover:brightness-110"
+              >
+                Send
+              </button>
+            </div>
 
-            const btns = document.createElement("div");
-            btns.className = "jobBtns";
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+              <QuickChip text="Optimize my prompt" onClick={() => onSend('Optimize my last prompt to be professional and detailed.')} />
+              <QuickChip text="Surprise me" onClick={() => onSend('Auto-fill the best settings for premium results.')} />
+              <QuickChip text="Make it TikTok-ready" onClick={() => onSend('Adapt this for TikTok/Reels: fast hook + captions + 9:16.')} />
+              <QuickChip text="Insert to Music" onClick={() => onSend('Generate a Music prompt builder output: corporate cinematic, 110 BPM, loop.')} />
+            </div>
+          </div>
+        )}
 
-            const playBtn = document.createElement("button");
-            playBtn.className = "btn";
-            playBtn.style.padding = "8px 12px";
-            playBtn.style.fontSize = "12px";
-            playBtn.textContent = "▶️ Play";
-            playBtn.disabled = !(job.status === "done" && job.audio_path);
+        {tab === 'history' && (
+          <div className="h-[420px] overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div className="mb-2 text-xs text-white/60">
+              All activities by service • attach prompt + output back to Chat.
+            </div>
+            <div className="space-y-2">
+              {history.map((h) => (
+                <HistoryRow
+                  key={h.id}
+                  item={h}
+                  onAttach={() => onAttachHistory(h)}
+                  onCopyPrompt={() => navigator.clipboard?.writeText(h.promptSummary)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
-            const dlBtn = document.createElement("button");
-            dlBtn.className = "btn";
-            dlBtn.style.padding = "8px 12px";
-            dlBtn.style.fontSize = "12px";
-            dlBtn.textContent = "⬇️ Download";
-            dlBtn.disabled = !(job.status === "done" && job.audio_path);
+        {tab === 'library' && (
+          <div className="h-[420px] overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div className="mb-2 text-xs text-white/60">
+              Global assets • view/play/download/attach (demo UI).
+            </div>
+            <div className="space-y-2">
+              {library.map((it) => (
+                <LibraryRow
+                  key={it.id}
+                  item={it}
+                  onAttach={() => onAttachLibrary(it)}
+                  onDownload={() => {}}
+                  onView={() => {}}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </GlassCard>
+  );
+}
 
-            if (job.status === "error" && job.error_message) {
-              const err = document.createElement("div");
-              err.className = "small";
-              err.style.color = "rgba(255,120,120,.9)";
-              err.textContent = "Error: " + String(job.error_message).slice(0, 120);
-              right.appendChild(err);
-            }
+function TabButton({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        'rounded-xl border px-3 py-2 text-xs font-semibold transition',
+        active
+          ? 'border-white/25 bg-white/10 text-white/90'
+          : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  );
+}
 
-            playBtn.addEventListener("click", async () => {
-              try {
-                playBtn.disabled = true;
-                musicLogLine("🔗 Signing URL for: " + job.audio_path);
+function ChatBubble({ msg }: { msg: ChatMessage }) {
+  const isUser = msg.role === 'user';
+  const isSystem = msg.role === 'system';
 
-                const signedUrl = await getSignedAudioUrl(job.audio_path);
+  return (
+    <div className={['flex', isUser ? 'justify-end' : 'justify-start'].join(' ')}>
+      <div
+        className={[
+          'max-w-[92%] rounded-2xl border px-3 py-2 text-sm',
+          isUser
+            ? 'border-white/15 bg-gradient-to-br from-cyan-400/15 to-blue-500/10'
+            : isSystem
+              ? 'border-white/10 bg-white/5 text-white/75'
+              : 'border-white/12 bg-white/7'
+        ].join(' ')}
+      >
+        <div className="text-[11px] text-white/50">{msg.createdAt}</div>
+        <div className="mt-1 whitespace-pre-wrap text-white/90">{msg.text}</div>
+      </div>
+    </div>
+  );
+}
 
-                if (currentAudio) {
-                  currentAudio.pause();
-                  currentAudio.currentTime = 0;
-                  currentAudio = null;
-                }
+function QuickChip({ text, onClick }: { text: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/70 hover:bg-white/10"
+    >
+      {text}
+    </button>
+  );
+}
 
-                currentAudio = new Audio(signedUrl);
-                await currentAudio.play();
+function HistoryRow({
+  item,
+  onAttach,
+  onCopyPrompt
+}: {
+  item: HistoryItem;
+  onAttach: () => void;
+  onCopyPrompt: () => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-2 rounded-2xl border border-white/10 bg-white/5 p-3">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/65">
+            {item.service.toUpperCase()}
+          </span>
+          <span className="text-[11px] text-white/50">{item.createdAt}</span>
+          <span
+            className={[
+              'ml-auto hidden rounded-full px-2 py-1 text-[11px] sm:inline-flex',
+              item.status === 'ready'
+                ? 'bg-emerald-400/10 text-emerald-200'
+                : item.status === 'processing'
+                  ? 'bg-cyan-400/10 text-cyan-200'
+                  : 'bg-rose-400/10 text-rose-200'
+            ].join(' ')}
+          >
+            {item.status}
+          </span>
+        </div>
+        <div className="mt-1 truncate text-sm font-semibold text-white/90">{item.title}</div>
+        <div className="mt-1 line-clamp-2 text-xs text-white/60">{item.promptSummary}</div>
+      </div>
 
-                musicLogLine("▶️ Playing: " + shortId(job.id));
-              } catch (e) {
-                musicLogLine("❌ Play error: " + safeText(e?.message || e));
-                alert("Play failed: " + safeText(e?.message || e));
-              } finally {
-                playBtn.disabled = false;
-              }
-            });
+      <div className="flex shrink-0 flex-col gap-2">
+        <button
+          onClick={onAttach}
+          className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+        >
+          Attach
+        </button>
+        <button
+          onClick={onCopyPrompt}
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/70 hover:bg-white/10"
+        >
+          Copy Prompt
+        </button>
+      </div>
+    </div>
+  );
+}
 
-            dlBtn.addEventListener("click", async () => {
-              try {
-                dlBtn.disabled = true;
-                musicLogLine("🔗 Signing URL for download: " + job.audio_path);
+function LibraryRow({
+  item,
+  onAttach,
+  onView,
+  onDownload
+}: {
+  item: LibraryItem;
+  onAttach: () => void;
+  onView: () => void;
+  onDownload: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/5 p-3">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/65">
+            {item.type.toUpperCase()}
+          </span>
+          <span className="text-[11px] text-white/50">{item.createdAt}</span>
+          {item.sizeLabel && <span className="text-[11px] text-white/45">{item.sizeLabel}</span>}
+        </div>
+        <div className="mt-1 truncate text-sm font-semibold text-white/90">{item.title}</div>
+      </div>
 
-                const signedUrl = await getSignedAudioUrl(job.audio_path);
-
-                const a = document.createElement("a");
-                a.href = signedUrl;
-                a.download = (job.id || "music") + ".mp3";
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-
-                musicLogLine("⬇️ Download started: " + shortId(job.id));
-              } catch (e) {
-                musicLogLine("❌ Download error: " + safeText(e?.message || e));
-                alert("Download failed: " + safeText(e?.message || e));
-              } finally {
-                dlBtn.disabled = false;
-              }
-            });
-
-            btns.appendChild(playBtn);
-            btns.appendChild(dlBtn);
-
-            right.appendChild(badge);
-            right.appendChild(btns);
-
-            row.appendChild(meta);
-            row.appendChild(right);
-
-            musicJobsEl.appendChild(row);
-          }
-
-          musicLogLine("✅ Loaded " + data.length + " jobs.");
-        } catch (e) {
-          musicLogLine("❌ Refresh error: " + safeText(e?.message || e));
-        }
-      }
-
-      if (btnCreateMusic) btnCreateMusic.addEventListener("click", createMusicJob);
-      if (btnRefreshMusic) btnRefreshMusic.addEventListener("click", refreshMusicJobs);
-      if (btnOpenStorage) {
-        btnOpenStorage.addEventListener("click", () => {
-          alert("Open Supabase → Storage → music → jobs/ to see mp3 files.");
-        });
-      }
-
-      (async function init() {
-        setLog(syslog, "[boot] Avatar G Workspace loaded");
-        setStatus("Status: idle", "idle");
-
-        loadChat();
-        renderChat();
-
-        updateChips();
-
-        const cfg = getCfg();
-
-        if (cfg.supabaseUrl && cfg.supabaseAnon) {
-          ensureSupabase();
-          await readUser();
-
-          if (supabaseClient?.auth?.onAuthStateChange) {
-            supabaseClient.auth.onAuthStateChange((event, session) => {
-              currentUser = session?.user || null;
-              updateChips();
-              if (event === "SIGNED_IN" && currentUser?.email) {
-                log(syslog, "✅ Auth: Signed in as " + safeText(currentUser.email));
-              } else if (event === "SIGNED_OUT") {
-                log(syslog, "✅ Auth: Signed out");
-              }
-            });
-          }
-        } else {
-          if (!localStorage.getItem(KEY.SEEN_CFG_HINT)) {
-            log(syslog, "⚠️ Supabase not configured. Open Settings to connect.");
-            localStorage.setItem(KEY.SEEN_CFG_HINT, "1");
-          }
-        }
-
-        if (cfg.apiBase && isValidApiBase(cfg.apiBase)) {
-          log(syslog, "✅ API_BASE loaded: " + safeText(cfg.apiBase));
-        } else {
-          log(syslog, "⚠️ API_BASE not set or invalid. Open Settings.");
-        }
-
-        log(syslog, "✅ Ready. Test backend or start chatting!");
-
-        setTimeout(() => {
-          refreshMusicJobs();
-        }, 600);
-      })();
-    })();
-  </script>
-</body>
-</html>
-```
+      <div className="flex shrink-0 gap-2">
+        <button
+          onClick={onView}
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/70 hover:bg-white/10"
+        >
+          View
+        </button>
+        <button
+          onClick={onDownload}
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/70 hover:bg-white/10"
+        >
+          Download
+        </button>
+        <button
+          onClick={onAttach}
+          className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+        >
+          Attach
+        </button>
+      </div>
+    </div>
+  );
+}
